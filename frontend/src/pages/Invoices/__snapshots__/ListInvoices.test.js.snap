@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListInvoices component snapshot của giao diện ListInvoices 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-Qotzb iRCYKu"
+      data-testid="main-content"
+    >
+      <div>
+        Mocked Sidebar
+      </div>
+      <div
+        data-testid="content-wrapper"
+        style="flex: 1; padding: 1rem;"
+      >
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"
+        >
+          <h2>
+            Danh sách hóa đơn
+          </h2>
+          <input
+            class="sc-jJAtPt gJjuJV"
+            data-testid="search-input"
+            placeholder="Tìm kiếm hóa đơn theo mã..."
+            style="width: 300px;"
+            type="text"
+            value=""
+          />
+        </div>
+        <table
+          class="sc-kpOvIu gQPgZZ"
+          data-testid="invoices-table"
+        >
+          <thead>
+            <tr>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Mã hóa đơn
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Thời gian
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Khách hàng
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Địa chỉ
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Phương thức thanh toán
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Trạng thái
+              </th>
+              <th
+                class="sc-icnseD cEmiKW"
+              >
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                INV001
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              />
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Nguyen Van A
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                123 Ha Noi
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Cash
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Chưa thanh toán
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                <button
+                  class="sc-cXawGu fVWAra"
+                  data-testid="view-details-INV001"
+                >
+                  Xem chi tiết
+                </button>
+                <button
+                  class="sc-cXawGu fVWAra"
+                  style="margin-left: 0.5rem;"
+                >
+                  Xóa
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                INV002
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              />
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Tran Thi B
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                456 Da Nang
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Cash
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                Đã thanh toán
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                <button
+                  class="sc-cXawGu fVWAra"
+                  data-testid="view-details-INV002"
+                >
+                  Xem chi tiết
+                </button>
+                <button
+                  class="sc-cXawGu fVWAra"
+                  style="margin-left: 0.5rem;"
+                >
+                  Xóa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+`;

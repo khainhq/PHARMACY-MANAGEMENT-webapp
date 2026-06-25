@@ -1,0 +1,178 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Orders component snapshot của giao diện Orders 1`] = `
+<div>
+  <div
+    class="sc-Qotzb kLXhXJ"
+  >
+    <div>
+      Mocked Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw wOsuk"
+    >
+      <div
+        class="sc-dKREkF lanocw"
+      >
+        <div>
+          <button
+            class="sc-fWnslK hDeycy"
+          >
+            THÊM
+          </button>
+        </div>
+        <div>
+          <input
+            class="sc-icnseD jfhtGu"
+            placeholder="Tìm kiếm đơn đặt hàng..."
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <h2>
+        DANH SÁCH ĐƠN ĐẶT HÀNG
+      </h2>
+      <table
+        class="sc-dIMoHT jlMlVp"
+      >
+        <thead>
+          <tr>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              STT
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Mã đơn hàng
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Thời gian đặt
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Nhân viên
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Khách hàng
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Tổng tiền
+            </th>
+            <th
+              class="sc-iQQCXo kWcbrk"
+            >
+              Hành động
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              1
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              ORD001
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              1/1/2025, 5:00:00 PM
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              EMP001
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              CUS001
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              500,000
+               VND
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              <button
+                class="sc-fWnslK hDeycy"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK hDeycy"
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              2
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              ORD002
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              1/2/2025, 7:00:00 PM
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              EMP002
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              CUS002
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              750,000
+               VND
+            </td>
+            <td
+              class="sc-gDpztx hxlBwX"
+            >
+              <button
+                class="sc-fWnslK hDeycy"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK hDeycy"
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;

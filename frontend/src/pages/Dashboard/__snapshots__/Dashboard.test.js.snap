@@ -1,0 +1,555 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard component kiểm tra giao diện responsive trên màn hình nhỏ 1`] = `
+<div>
+  <div
+    class="sc-Qotzb fmqIqi"
+  >
+    <div>
+      Mocked Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw hZiLdl"
+    >
+      <h1>
+        Dashboard
+      </h1>
+      <div
+        class="sc-dKREkF jzvpw"
+      >
+        <a
+          class="sc-fWnslK fREUSE success"
+          href="/invoices/list"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 640 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M621.16 54.46C582.37 38.19 543.55 32 504.75 32c-123.17-.01-246.33 62.34-369.5 62.34-30.89 0-61.76-3.92-92.65-13.72-3.47-1.1-6.95-1.62-10.35-1.62C15.04 79 0 92.32 0 110.81v317.26c0 12.63 7.23 24.6 18.84 29.46C57.63 473.81 96.45 480 135.25 480c123.17 0 246.34-62.35 369.51-62.35 30.89 0 61.76 3.92 92.65 13.72 3.47 1.1 6.95 1.62 10.35 1.62 17.21 0 32.25-13.32 32.25-31.81V83.93c-.01-12.64-7.24-24.6-18.85-29.47zM48 132.22c20.12 5.04 41.12 7.57 62.72 8.93C104.84 170.54 79 192.69 48 192.69v-60.47zm0 285v-47.78c34.37 0 62.18 27.27 63.71 61.4-22.53-1.81-43.59-6.31-63.71-13.62zM320 352c-44.19 0-80-42.99-80-96 0-53.02 35.82-96 80-96s80 42.98 80 96c0 53.03-35.83 96-80 96zm272 27.78c-17.52-4.39-35.71-6.85-54.32-8.44 5.87-26.08 27.5-45.88 54.32-49.28v57.72zm0-236.11c-30.89-3.91-54.86-29.7-55.81-61.55 19.54 2.17 38.09 6.23 55.81 12.66v48.89z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Tổng thu nhập
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+             VND
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            View Detailed Report »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE info"
+          href="/employees"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 448 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm95.8 32.6L272 480l-32-136 32-56h-96l32 56-32 136-47.8-191.4C56.9 292 0 350.3 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-72.1-56.9-130.4-128.2-133.8z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Số nhân viên
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+            0
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            View Detailed Employees »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE danger"
+          href="/medicines"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 576 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Thuốc đã hết hạn
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+            0
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            Resolve Now »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE warning"
+          href="/medicines"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 576 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M112 32C50.1 32 0 82.1 0 144v224c0 61.9 50.1 112 112 112s112-50.1 112-112V144c0-61.9-50.1-112-112-112zm48 224H64V144c0-26.5 21.5-48 48-48s48 21.5 48 48v112zm139.7-29.7c-3.5-3.5-9.4-3.1-12.3.8-45.3 62.5-40.4 150.1 15.9 206.4 56.3 56.3 143.9 61.2 206.4 15.9 4-2.9 4.3-8.8.8-12.3L299.7 226.3zm229.8-19c-56.3-56.3-143.9-61.2-206.4-15.9-4 2.9-4.3 8.8-.8 12.3l210.8 210.8c3.5 3.5 9.4 3.1 12.3-.8 45.3-62.6 40.5-150.1-15.9-206.4z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Số loại thuốc
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          />
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            Visit Inventory »
+          </p>
+        </a>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <h2>
+          Chi phí nhập thuốc theo thời gian
+        </h2>
+        <div>
+          <div
+            data-testid="mocked-linechart"
+          >
+            Mocked LineChart
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <div
+          style="display: flex; gap: 2rem;"
+        >
+          <div
+            style="flex: 1;"
+          >
+            <h2>
+              Hóa đơn gần đây
+            </h2>
+            <table
+              class="sc-kpOvIu zsiyg"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Mã hóa đơn
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Thời gian
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Khách hàng
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Tổng tiền
+                  </th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          </div>
+          <div
+            style="flex: 1;"
+          >
+            <h2>
+              Thuốc gần hết hạn
+            </h2>
+            <table
+              class="sc-kpOvIu zsiyg"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Mã thuốc
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Tên thuốc
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Hạn sử dụng
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Số lượng
+                  </th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <h2>
+          Top thuốc bán chạy nhất
+        </h2>
+        <div>
+          <div
+            data-testid="mocked-barchart"
+          >
+            Mocked BarChart
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
+<div>
+  <div
+    class="sc-Qotzb fmqIqi"
+  >
+    <div>
+      Mocked Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw hZiLdl"
+    >
+      <h1>
+        Dashboard
+      </h1>
+      <div
+        class="sc-dKREkF jzvpw"
+      >
+        <a
+          class="sc-fWnslK fREUSE success"
+          href="/invoices/list"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 640 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M621.16 54.46C582.37 38.19 543.55 32 504.75 32c-123.17-.01-246.33 62.34-369.5 62.34-30.89 0-61.76-3.92-92.65-13.72-3.47-1.1-6.95-1.62-10.35-1.62C15.04 79 0 92.32 0 110.81v317.26c0 12.63 7.23 24.6 18.84 29.46C57.63 473.81 96.45 480 135.25 480c123.17 0 246.34-62.35 369.51-62.35 30.89 0 61.76 3.92 92.65 13.72 3.47 1.1 6.95 1.62 10.35 1.62 17.21 0 32.25-13.32 32.25-31.81V83.93c-.01-12.64-7.24-24.6-18.85-29.47zM48 132.22c20.12 5.04 41.12 7.57 62.72 8.93C104.84 170.54 79 192.69 48 192.69v-60.47zm0 285v-47.78c34.37 0 62.18 27.27 63.71 61.4-22.53-1.81-43.59-6.31-63.71-13.62zM320 352c-44.19 0-80-42.99-80-96 0-53.02 35.82-96 80-96s80 42.98 80 96c0 53.03-35.83 96-80 96zm272 27.78c-17.52-4.39-35.71-6.85-54.32-8.44 5.87-26.08 27.5-45.88 54.32-49.28v57.72zm0-236.11c-30.89-3.91-54.86-29.7-55.81-61.55 19.54 2.17 38.09 6.23 55.81 12.66v48.89z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Tổng thu nhập
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+             VND
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            View Detailed Report »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE info"
+          href="/employees"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 448 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm95.8 32.6L272 480l-32-136 32-56h-96l32 56-32 136-47.8-191.4C56.9 292 0 350.3 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-72.1-56.9-130.4-128.2-133.8z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Số nhân viên
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+            0
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            View Detailed Employees »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE danger"
+          href="/medicines"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 576 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Thuốc đã hết hạn
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          >
+            0
+          </p>
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            Resolve Now »
+          </p>
+        </a>
+        <a
+          class="sc-fWnslK fREUSE warning"
+          href="/medicines"
+        >
+          <div
+            class="sc-jJAtPt bWWKlC"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 576 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M112 32C50.1 32 0 82.1 0 144v224c0 61.9 50.1 112 112 112s112-50.1 112-112V144c0-61.9-50.1-112-112-112zm48 224H64V144c0-26.5 21.5-48 48-48s48 21.5 48 48v112zm139.7-29.7c-3.5-3.5-9.4-3.1-12.3.8-45.3 62.5-40.4 150.1 15.9 206.4 56.3 56.3 143.9 61.2 206.4 15.9 4-2.9 4.3-8.8.8-12.3L299.7 226.3zm229.8-19c-56.3-56.3-143.9-61.2-206.4-15.9-4 2.9-4.3 8.8-.8 12.3l210.8 210.8c3.5 3.5 9.4 3.1 12.3-.8 45.3-62.6 40.5-150.1-15.9-206.4z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="sc-dIMoHT cUACZf"
+          >
+            Số loại thuốc
+          </h3>
+          <p
+            class="sc-iQQCXo kuuxoU"
+          />
+          <p
+            class="sc-cUiCeM hJYuc"
+          >
+            Visit Inventory »
+          </p>
+        </a>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <h2>
+          Chi phí nhập thuốc theo thời gian
+        </h2>
+        <div>
+          <div
+            data-testid="mocked-linechart"
+          >
+            Mocked LineChart
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <div
+          style="display: flex; gap: 2rem;"
+        >
+          <div
+            style="flex: 1;"
+          >
+            <h2>
+              Hóa đơn gần đây
+            </h2>
+            <table
+              class="sc-kpOvIu zsiyg"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Mã hóa đơn
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Thời gian
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Khách hàng
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Tổng tiền
+                  </th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          </div>
+          <div
+            style="flex: 1;"
+          >
+            <h2>
+              Thuốc gần hết hạn
+            </h2>
+            <table
+              class="sc-kpOvIu zsiyg"
+            >
+              <thead>
+                <tr>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Mã thuốc
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Tên thuốc
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Hạn sử dụng
+                  </th>
+                  <th
+                    class="sc-icnseD ySQFZ"
+                  >
+                    Số lượng
+                  </th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-gDpztx cZWidb"
+      >
+        <h2>
+          Top thuốc bán chạy nhất
+        </h2>
+        <div>
+          <div
+            data-testid="mocked-barchart"
+          >
+            Mocked BarChart
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

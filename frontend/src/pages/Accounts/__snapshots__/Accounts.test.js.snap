@@ -1,0 +1,342 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách tài khoản 1`] = `
+<div>
+  <div
+    class="sc-Qotzb kXLuAq"
+  >
+    <div
+      data-testid="sidebar"
+    >
+      Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw iVIbeH"
+    >
+      <div
+        class="sc-dKREkF cbBVLp"
+      >
+        <div>
+          <button
+            class="sc-fWnslK csgtCp"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 448 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
+              />
+            </svg>
+             THÊM
+          </button>
+        </div>
+        <div>
+          <input
+            class="sc-dIMoHT kyHkWK"
+            placeholder="Tìm kiếm tài khoản..."
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <h2>
+        DANH SÁCH TÀI KHOẢN
+      </h2>
+      <table
+        class="sc-iQQCXo bGAlqu"
+      >
+        <thead>
+          <tr>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              STT
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Tên tài khoản
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Nhân viên
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Quyền
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Trạng thái
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Hành động
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              user1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              emp1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Nhân viên bán hàng
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Hoạt động
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              <button
+                class="sc-fWnslK csgtCp"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Xóa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Vô hiệu hóa
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              user2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              emp2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Nhân viên quản lí sản phẩm
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Vô hiệu
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              <button
+                class="sc-fWnslK csgtCp"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Xóa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Kích hoạt
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp snapshot 1`] = `
+<div>
+  <div
+    class="sc-Qotzb kXLuAq"
+  >
+    <div
+      data-testid="sidebar"
+    >
+      Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw iVIbeH"
+    >
+      <div
+        class="sc-dKREkF cbBVLp"
+      >
+        <div>
+          <button
+            class="sc-fWnslK csgtCp"
+          >
+            <svg
+              fill="currentColor"
+              height="1em"
+              stroke="currentColor"
+              stroke-width="0"
+              viewBox="0 0 448 512"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
+              />
+            </svg>
+             THÊM
+          </button>
+        </div>
+        <div>
+          <input
+            class="sc-dIMoHT kyHkWK"
+            placeholder="Tìm kiếm tài khoản..."
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <form
+        class="sc-icnseD dZUPxJ"
+      >
+        <input
+          class="sc-jMsorb hoHyT"
+          placeholder="Tên tài khoản"
+          required=""
+          type="text"
+          value=""
+        />
+        <input
+          class="sc-jMsorb hoHyT"
+          placeholder="Mật khẩu"
+          required=""
+          type="password"
+          value=""
+        />
+        <select
+          class="sc-cXawGu dhLZyz"
+          required=""
+        >
+          <option
+            value=""
+          >
+            Chọn quyền
+          </option>
+          <option
+            value="2"
+          >
+            Nhân viên bán hàng
+          </option>
+          <option
+            value="3"
+          >
+            Nhân viên quản lý sản phẩm
+          </option>
+        </select>
+        <input
+          class="sc-jMsorb hoHyT"
+          placeholder="Nhân viên (ID)"
+          type="text"
+          value=""
+        />
+        <div
+          style="display: flex; gap: 1rem;"
+        >
+          <button
+            class="sc-fWnslK csgtCp"
+            type="submit"
+          >
+            Tạo tài khoản
+          </button>
+          <button
+            class="sc-fWnslK csgtCp"
+            type="button"
+          >
+            Hủy
+          </button>
+        </div>
+      </form>
+      <h2>
+        DANH SÁCH TÀI KHOẢN
+      </h2>
+      <table
+        class="sc-iQQCXo bGAlqu"
+      >
+        <thead>
+          <tr>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              STT
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Tên tài khoản
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Nhân viên
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Quyền
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Trạng thái
+            </th>
+            <th
+              class="sc-gDpztx jNuAI"
+            >
+              Hành động
+            </th>
+          </tr>
+        </thead>
+        <tbody />
+      </table>
+    </div>
+  </div>
+</div>
+`;
