@@ -5,7 +5,7 @@ import { theme } from '../styles/theme';
 const FooterContainer = styled.footer`
   background: #082f49;
   color: #ffffff;
-  padding: 3rem 4rem 2rem;
+  padding: 3rem 2.5rem 2rem;
 
   @media (max-width: 768px) {
     padding: 2.5rem 1.5rem;
@@ -14,13 +14,17 @@ const FooterContainer = styled.footer`
 `;
 
 const FooterSections = styled.div`
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1fr 0.7fr 1fr 1.35fr;
   gap: 2rem;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1050px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 700px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -70,6 +74,13 @@ const FooterBottom = styled.div`
   padding-top: 1rem;
 `;
 
+const FooterMap = styled.iframe`
+  width: 100%;
+  height: 240px;
+  border: 0;
+  border-radius: 8px;
+`;
+
 const Footer = () => {
   return (
     <FooterContainer>
@@ -88,17 +99,20 @@ const Footer = () => {
           <FooterLink href="/login">Sign In</FooterLink>
         </div>
         <div>
-          <FooterTitle>Nghiệp vụ</FooterTitle>
-          <FooterLink href="/medicines">Quản lý thuốc</FooterLink>
-          <FooterLink href="/suppliers">Nhà cung cấp</FooterLink>
-          <FooterLink href="/invoices/list">Hóa đơn</FooterLink>
-          <FooterLink href="/reports">Báo cáo</FooterLink>
-        </div>
-        <div>
           <FooterTitle>Thông tin</FooterTitle>
           <FooterText>Điện thoại: +84 816151762</FooterText>
           <FooterText>Email: khainhq0310@ut.edu.vn</FooterText>
           <FooterText>TP. Hồ Chí Minh, Việt Nam</FooterText>
+        </div>
+        <div>
+          <FooterTitle>Bản đồ</FooterTitle>
+          <FooterMap
+            title="Bản đồ PharmaCare ở chân trang"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.088637973106!2d106.71414257326435!3d10.804523058678429!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175293dceb22197%3A0x755bb0f39a48d4a6!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBHaWFvIFRow7RuZyBW4bqtbiBU4bqjaSBUaMOgbmggUGjhu5EgSOG7kyBDaMOtIE1pbmggLSBDxqEgc-G7nyAx!5e0!3m2!1svi!2s!4v1782382664831!5m2!1svi!2s"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
         </div>
       </FooterSections>
       <FooterBottom>

@@ -10,12 +10,14 @@ describe('Footer component', () => {
     expect(screen.getByText(/Giải pháp quản lý nhà thuốc với giao diện thân thiện/)).toBeInTheDocument();
   });
 
-  test('hiển thị liên kết và nghiệp vụ chính', () => {
+  test('hiển thị liên kết nhanh và không còn nhóm nghiệp vụ', () => {
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: 'Contact Us' })).toHaveAttribute('href', '/contact');
     expect(screen.getByRole('link', { name: 'About Us' })).toHaveAttribute('href', '/about');
     expect(screen.getByRole('link', { name: 'Sign In' })).toHaveAttribute('href', '/login');
-    expect(screen.getByRole('link', { name: 'Quản lý thuốc' })).toHaveAttribute('href', '/medicines');
+    expect(screen.queryByRole('heading', { name: 'Nghiệp vụ' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Quản lý thuốc' })).not.toBeInTheDocument();
+    expect(screen.getByTitle('Bản đồ PharmaCare ở chân trang')).toBeInTheDocument();
   });
 
   test('hiển thị thông tin liên hệ và bản quyền', () => {
