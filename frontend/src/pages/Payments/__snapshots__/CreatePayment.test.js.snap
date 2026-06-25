@@ -1,0 +1,237 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreatePayment component snapshot của giao diện CreatePayment 1`] = `
+<div>
+  <div
+    class="sc-Qotzb bcHSZN"
+  >
+    <div>
+      Mocked Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw jCqfVm"
+    >
+      <div
+        class="sc-dIMoHT ptlkG"
+      >
+        <h2>
+          Danh sách thuốc
+        </h2>
+        <input
+          class="sc-jJAtPt gtDicj"
+          placeholder="Tìm kiếm thuốc..."
+          type="text"
+          value=""
+        />
+        <table
+          class="sc-kpOvIu gSorJh"
+        >
+          <thead>
+            <tr>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Mã thuốc
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Tên thuốc
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Số lượng tồn kho
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Giá nhập
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                MED001
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                Paracetamol
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                100
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                5,000
+                 VND
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                <button
+                  class="sc-cXawGu gZANlz"
+                >
+                  Chọn
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                MED002
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                Amoxicillin
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                50
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                10,000
+                 VND
+              </td>
+              <td
+                class="sc-jMsorb fUuZqH"
+              >
+                <button
+                  class="sc-cXawGu gZANlz"
+                >
+                  Chọn
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div
+      class="sc-dKREkF bIxqHp"
+    >
+      <div
+        class="sc-iQQCXo dQvgIP"
+      >
+        <h2>
+          Chi tiết phiếu nhập
+        </h2>
+        <table
+          class="sc-kpOvIu gSorJh"
+        >
+          <thead>
+            <tr>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                ID
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Mã thuốc
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Số lượng
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Đơn giá
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Thành tiền
+              </th>
+              <th
+                class="sc-icnseD jvQAJP"
+              >
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody />
+        </table>
+      </div>
+      <div
+        class="sc-gDpztx gNpSQv"
+      >
+        <h2>
+          Thông tin phiếu nhập
+        </h2>
+        <select
+          class="sc-cUiCeM lfofRi"
+          required=""
+        >
+          <option
+            value=""
+          >
+            Chọn nhân viên
+          </option>
+          <option
+            value="EMP001"
+          >
+            Nguyễn Văn A
+          </option>
+          <option
+            value="EMP002"
+          >
+            Trần Thị B
+          </option>
+        </select>
+        <select
+          class="sc-cUiCeM lfofRi"
+          required=""
+        >
+          <option
+            value=""
+          >
+            Chọn nhà cung cấp
+          </option>
+          <option
+            value="SUP001"
+          >
+            Công ty Dược A
+          </option>
+          <option
+            value="SUP002"
+          >
+            Công ty Dược B
+          </option>
+        </select>
+        <h3>
+          Tổng tiền: 
+          0
+           VND
+        </h3>
+        <button
+          class="sc-cXawGu sc-jPkiSJ gZANlz hMUUkj"
+        >
+          Tạo Phiếu Nhập
+        </button>
+                
+      </div>
+    </div>
+  </div>
+</div>
+`;

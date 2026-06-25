@@ -1,0 +1,199 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Employees component snapshot của giao diện Employees 1`] = `
+<div>
+  <div
+    class="sc-Qotzb kXLuAq"
+  >
+    <div>
+      Mocked Sidebar
+    </div>
+    <div
+      class="sc-fYsHOw iVIbeH"
+    >
+      <div
+        class="sc-dKREkF iApnru"
+      >
+        <div>
+          <button
+            class="sc-fWnslK crIFxk"
+          >
+            <span>
+              FaUserPlus
+            </span>
+             Thêm Nhân viên
+          </button>
+        </div>
+        <div>
+          <input
+            class="sc-dIMoHT kyHkWK"
+            placeholder="Tìm kiếm nhân viên..."
+            type="text"
+            value=""
+          />
+          <span>
+            FaSearch
+          </span>
+        </div>
+      </div>
+      <h2>
+        DANH SÁCH THÔNG TIN NHÂN VIÊN
+      </h2>
+      <table
+        class="sc-iQQCXo imaQCp"
+      >
+        <thead>
+          <tr>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              STT
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Mã nhân viên
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Họ tên
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Số điện thoại
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Giới tính
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Năm sinh
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Ngày vào làm
+            </th>
+            <th
+              class="sc-gDpztx eBAPhe"
+            >
+              Hành động
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              1
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              AB12CDEF
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              Nguyen Van A
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              0123456789
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              Nam
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              1990
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              2023-01-15
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              <button
+                class="sc-fWnslK crIFxk"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK crIFxk"
+                style="margin-left: 0.5rem;"
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              2
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              XY34WXYZ
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              Tran Thi B
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              0987654321
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              Nữ
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              1995
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              2023-06-20
+            </td>
+            <td
+              class="sc-kpOvIu kKQyyu"
+            >
+              <button
+                class="sc-fWnslK crIFxk"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK crIFxk"
+                style="margin-left: 0.5rem;"
+              >
+                Xóa
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+`;
