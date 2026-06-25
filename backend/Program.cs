@@ -116,11 +116,28 @@ app.MapPost("/chatbot/", async (JsonElement body) =>
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PharmacyDbContext>();
-    await db.Database.MigrateAsync();
-    await DataSeeder.SeedAsync(db);
+    await InitializeDatabaseAsync(db);
 }
 
 app.Run();
+
+static async Task InitializeDatabaseAsync(PharmacyDbContext db)
+{
+    const int maxAttempts = 30;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++)
+    {
+        try
+        {
+            await db.Database.MigrateAsync();
+            await DataSeeder.SeedAsync(db);
+            return;
+        }
+        catch when (attempt < maxAttempts)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+        }
+    }
+}
 
 static void MapCrud<TEntity, TKey>(
     WebApplication app,

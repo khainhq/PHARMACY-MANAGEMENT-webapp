@@ -36,9 +36,11 @@ public sealed class Account
     [JsonIgnore] public string PasswordHash { get; set; } = "";
     [JsonPropertyName("employee")]
     public string? EmployeeID { get; set; }
+    [JsonIgnore]
     public Employee? Employee { get; set; }
     [JsonPropertyName("role")]
     public int RoleID { get; set; }
+    [JsonIgnore]
     public Role Role { get; set; } = null!;
     [JsonPropertyName("is_staff")] public bool IsStaff { get; set; }
     [JsonPropertyName("is_active")] public bool IsActive { get; set; } = true;
