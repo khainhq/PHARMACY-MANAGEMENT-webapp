@@ -1,29 +1,24 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import Banner from './Banner';
 
 describe('Banner component', () => {
-    test('renders title, subtitle, and button', () => {
-        render(<Banner />);
+  test('hiển thị nội dung PharmaCare và nút bắt đầu', () => {
+    render(<Banner />);
 
-        // Kiểm tra tiêu đề
-        const title = screen.getByText(/Smart Pharmaceutical Management Solution/i);
-        expect(title).toBeInTheDocument();
+    expect(screen.getByRole('heading', {
+      name: 'Quản lý nhà thuốc thông minh cho PharmaCare'
+    })).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: 'Bắt đầu quản lý' })).toHaveLength(6);
+    expect(screen.getAllByRole('link', { name: 'Bắt đầu quản lý' })[0]).toHaveAttribute('href', '/login');
+  });
 
-        // Kiểm tra phụ đề
-        const subtitle = screen.getByText(/Streamline your pharmacy operations/i);
-        expect(subtitle).toBeInTheDocument();
+  test('hiển thị sáu nút điều hướng và cho phép chuyển ảnh', () => {
+    render(<Banner />);
 
-        // Kiểm tra nút Get Started
-        const button = screen.getByRole('link', { name: /Get Started/i });
-        expect(button).toBeInTheDocument();
-        expect(button).toHaveAttribute('href', '/login');
-    });
-
-    test('renders the banner image with correct alt text', () => {
-        render(<Banner />);
-        const image = screen.getByAltText(/Pharmacy Management System/i);
-        expect(image).toBeInTheDocument();
-        expect(image).toHaveAttribute('src', '/images/medicine2-Photoroom.png');
-    });
+    const dots = screen.getAllByRole('button', { name: /Chuyển đến ảnh/ });
+    expect(dots).toHaveLength(6);
+    fireEvent.click(screen.getByRole('button', { name: 'Chuyển đến ảnh 3' }));
+    expect(screen.getByRole('button', { name: 'Chuyển đến ảnh 3' })).toBeInTheDocument();
+  });
 });

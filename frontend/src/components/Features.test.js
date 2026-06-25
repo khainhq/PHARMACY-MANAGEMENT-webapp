@@ -2,38 +2,37 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Features from './Features';
 
-// Mock framer-motion properly
 jest.mock('framer-motion', () => {
-    const React = require('react');
-    return {
-        motion: new Proxy({}, {
-            get: (target, prop) => (props) => <div {...props} />
-        })
-    };
+  const React = require('react');
+  const ignored = new Set(['initial', 'animate', 'exit', 'transition', 'whileInView', 'whileHover', 'whileTap', 'viewport']);
+  return {
+    motion: new Proxy({}, {
+      get: (_, tag) => ({ children, ...props }) => {
+        const validProps = Object.fromEntries(Object.entries(props).filter(([key]) => !ignored.has(key)));
+        return React.createElement(tag, validProps, children);
+      }
+    })
+  };
 });
 
 describe('Features component', () => {
-    test('renders section title and subtitle', () => {
-        render(<Features />);
-        expect(screen.getByText(/Powerful Features/i)).toBeInTheDocument();
-        expect(screen.getByText(/Everything you need to manage your pharmacy/i)).toBeInTheDocument();
+  test('hiển thị tiêu đề và nội dung giới thiệu tiếng Việt', () => {
+    render(<Features />);
+
+    expect(screen.getByRole('heading', { name: 'Tính năng nổi bật' })).toBeInTheDocument();
+    expect(screen.getByText(/PharmaCare hỗ trợ những nghiệp vụ quan trọng/)).toBeInTheDocument();
+  });
+
+  test('hiển thị đủ bốn tính năng', () => {
+    render(<Features />);
+
+    [
+      'Quản lý tồn kho',
+      'Danh mục thuốc rõ ràng',
+      'Báo cáo bán hàng',
+      'Phân quyền nhân viên'
+    ].forEach((title) => {
+      expect(screen.getByRole('heading', { name: title, level: 3 })).toBeInTheDocument();
     });
-
-    test('renders all feature cards', () => {
-        render(<Features />);
-        const featureTitles = [
-            'Inventory Management',
-            'Medicine Database',
-            'Sales Analytics',
-            'Employee Management'
-        ];
-
-        featureTitles.forEach(title => {
-            const heading = screen.getByRole('heading', { name: new RegExp(title, 'i'), level: 3 });
-            expect(heading).toBeInTheDocument();
-        });
-
-        const cards = screen.getAllByRole('heading', { level: 3 });
-        expect(cards).toHaveLength(4);
-    });
+  });
 });

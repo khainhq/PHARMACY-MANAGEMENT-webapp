@@ -4,32 +4,24 @@ import { MemoryRouter } from 'react-router-dom';
 import Header from './Header';
 
 describe('Header component', () => {
-    beforeEach(() => {
-        render(
-            <MemoryRouter>
-                <Header />
-            </MemoryRouter>
-        );
-    });
+  beforeEach(() => {
+    render(
+      <MemoryRouter>
+        <Header />
+      </MemoryRouter>
+    );
+  });
 
-    test('renders logo image and text', () => {
-        const logoImg = screen.getByAltText(/PharmaCore Logo/i);
-        expect(logoImg).toBeInTheDocument();
-        expect(logoImg).toHaveAttribute('src', '/images/logo.jpg');
+  test('hiển thị logo PharmaCare mới', () => {
+    const logo = screen.getByAltText('PharmaCare Logo');
+    expect(logo).toHaveAttribute('src', '/images/pharmacare/pharmacare-logo.png');
+    expect(screen.getByRole('link', { name: /PharmaCare Logo Pharma\s*Care/ })).toHaveAttribute('href', '/');
+  });
 
-        const logoText = screen.getByText(/PharmaCore/i);
-        expect(logoText).toBeInTheDocument();
-    });
-
-    test('renders navigation links', () => {
-        const homeLink = screen.getByRole('link', { name: /Home/i });
-        const contactLink = screen.getByRole('link', { name: /Contact Us/i });
-        const aboutLink = screen.getByRole('link', { name: /About Us/i });
-        const signInButton = screen.getByRole('link', { name: /Sign In/i });
-
-        expect(homeLink).toHaveAttribute('href', '/');
-        expect(contactLink).toHaveAttribute('href', '/contact');
-        expect(aboutLink).toHaveAttribute('href', '/about');
-        expect(signInButton).toHaveAttribute('href', '/login');
-    });
+  test('hiển thị đúng các liên kết điều hướng', () => {
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Contact Us' })).toHaveAttribute('href', '/contact');
+    expect(screen.getByRole('link', { name: 'About Us' })).toHaveAttribute('href', '/about');
+    expect(screen.getByRole('link', { name: 'Sign In' })).toHaveAttribute('href', '/login');
+  });
 });
