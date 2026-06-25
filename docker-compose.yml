@@ -1,0 +1,32 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_password123"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      ASPNETCORE_URLS: "http://+:8000"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=PharmacyManagement;User Id=sa;Password=Your_password123;TrustServerCertificate=True"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - sqlserver
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  sqlserver_data:
