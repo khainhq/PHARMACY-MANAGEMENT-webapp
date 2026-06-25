@@ -3,54 +3,24 @@ import { render, screen } from '@testing-library/react';
 import Footer from './Footer';
 
 describe('Footer component', () => {
-    test('renders brand title and description', () => {
-        render(<Footer />);
-        const brandHeading = screen.getByRole('heading', { name: /PharmaCore/i, level: 4 });
-        expect(brandHeading).toBeInTheDocument();
-    
-        expect(screen.getByText(/Your favourite online pharmacy store/i)).toBeInTheDocument();
-    });
+  beforeEach(() => render(<Footer />));
 
-    test('renders quick links', () => {
-        render(<Footer />);
-        const links = [
-            { name: /Contact Us/i, href: '/contact' },
-            { name: /About Us/i, href: '/about' },
-            { name: /Careers/i, href: '/careers' }
-        ];
+  test('hiển thị thương hiệu và mô tả PharmaCare', () => {
+    expect(screen.getByRole('heading', { name: /Pharma\s*Care/, level: 4 })).toBeInTheDocument();
+    expect(screen.getByText(/Giải pháp quản lý nhà thuốc với giao diện thân thiện/)).toBeInTheDocument();
+  });
 
-        links.forEach(link => {
-            const element = screen.getByRole('link', { name: link.name });
-            expect(element).toBeInTheDocument();
-            expect(element).toHaveAttribute('href', link.href);
-        });
-    });
+  test('hiển thị liên kết và nghiệp vụ chính', () => {
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'Contact Us' })).toHaveAttribute('href', '/contact');
+    expect(screen.getByRole('link', { name: 'About Us' })).toHaveAttribute('href', '/about');
+    expect(screen.getByRole('link', { name: 'Sign In' })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: 'Quản lý thuốc' })).toHaveAttribute('href', '/medicines');
+  });
 
-    test('renders services links', () => {
-        render(<Footer />);
-        const services = [
-            { name: /Delivery/i, href: '/delivery' },
-            { name: /Purchase/i, href: '/purchase' },
-            { name: /Consult Specialist/i, href: '/consult' }
-        ];
-
-        services.forEach(link => {
-            const element = screen.getByRole('link', { name: link.name });
-            expect(element).toBeInTheDocument();
-            expect(element).toHaveAttribute('href', link.href);
-        });
-    });
-
-    test('renders address and contact info', () => {
-        render(<Footer />);
-        expect(screen.getByText(/123 Main Street/i)).toBeInTheDocument();
-        expect(screen.getByText(/Phone: \+1 234 567 890/i)).toBeInTheDocument();
-        expect(screen.getByText(/Email: support@d-express\.com/i)).toBeInTheDocument();
-    });
-
-    test('renders footer bottom with current year', () => {
-        render(<Footer />);
-        const year = new Date().getFullYear();
-        expect(screen.getByText(new RegExp(`© ${year} PharmaCore. All rights reserved.`, 'i'))).toBeInTheDocument();
-    });
+  test('hiển thị thông tin liên hệ và bản quyền', () => {
+    expect(screen.getByText('Điện thoại: +84 816151762')).toBeInTheDocument();
+    expect(screen.getByText('Email: khainhq0310@ut.edu.vn')).toBeInTheDocument();
+    expect(screen.getByText(`© ${new Date().getFullYear()} PharmaCare. Đã đăng ký bản quyền.`)).toBeInTheDocument();
+  });
 });
