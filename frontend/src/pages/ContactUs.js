@@ -83,15 +83,6 @@ const MapFrame = styled.iframe`
   border-radius: 8px;
 `;
 
-const Note = styled.div`
-  margin-top: 1.5rem;
-  padding: 1.2rem;
-  background: #ecfeff;
-  border-left: 4px solid ${theme.colors.accent};
-  color: #164e63;
-  line-height: 1.65;
-`;
-
 const ContactUs = () => {
   return (
     <Page>
@@ -119,9 +110,6 @@ const ContactUs = () => {
             <span>Địa chỉ</span>
             <strong>Trường Đại học Giao thông Vận tải TP. Hồ Chí Minh - Cơ sở 1</strong>
           </InfoItem>
-          <Note>
-            Bạn có thể liên hệ để được hỗ trợ đăng nhập, kiểm tra dữ liệu mẫu, cấu hình Docker hoặc hướng dẫn chạy hệ thống trên máy cá nhân.
-          </Note>
         </Panel>
         <Panel>
           <h2>Bản đồ</h2>

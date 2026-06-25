@@ -29,8 +29,9 @@ describe('Testimonials component', () => {
   });
 
   test('hiển thị các thương hiệu tài trợ minh hoạ', () => {
-    expect(screen.getAllByText('FPT Long Châu')).toHaveLength(3);
-    expect(screen.getAllByText('Nhà thuốc An Khang')).toHaveLength(3);
-    expect(screen.getAllByText('Pharmacity')).toHaveLength(3);
+    expect(screen.getAllByAltText('FPT Long Châu')).toHaveLength(3);
+    expect(screen.getAllByAltText('Nhà thuốc An Khang')).toHaveLength(3);
+    expect(screen.getAllByAltText('Pharmacity')).toHaveLength(3);
+    expect(screen.getAllByAltText('MEDiCARE')).toHaveLength(3);
   });
 });

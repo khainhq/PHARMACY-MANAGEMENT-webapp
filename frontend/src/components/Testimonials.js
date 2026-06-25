@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import { theme } from '../styles/theme';
 
 const reviews = [
   {
@@ -41,7 +40,12 @@ const reviews = [
   }
 ];
 
-const sponsors = ['FPT Long Châu', 'Nhà thuốc An Khang', 'Pharmacity', 'MEDiCARE', 'Nhà thuốc 365', 'PharmaCare'];
+const sponsors = [
+  { name: 'FPT Long Châu', image: '/images/sponsors/long-chau.png' },
+  { name: 'Nhà thuốc An Khang', image: '/images/sponsors/an-khang.png' },
+  { name: 'Pharmacity', image: '/images/sponsors/pharmacity.svg' },
+  { name: 'MEDiCARE', image: '/images/sponsors/medicare.svg' }
+];
 
 const marquee = keyframes`
   from { transform: translateX(0); }
@@ -59,6 +63,7 @@ const Header = styled.div`
   max-width: 1200px;
   margin: 0 auto 2.5rem;
   padding: 0 2rem;
+  text-align: center;
 
   h2 {
     font-size: 2.5rem;
@@ -68,6 +73,8 @@ const Header = styled.div`
 
   p {
     max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
     line-height: 1.7;
     color: #e0f2fe;
   }
@@ -91,11 +98,13 @@ const ReviewTrack = styled.div`
 const ReviewCard = styled.article`
   width: 360px;
   min-height: 245px;
-  background: rgba(255, 255, 255, 0.96);
-  color: ${theme.colors.darkGray};
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 16px 36px rgba(7, 89, 133, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 16px 36px rgba(7, 89, 133, 0.18);
+  backdrop-filter: blur(10px);
 `;
 
 const Reviewer = styled.div`
@@ -120,13 +129,13 @@ const Reviewer = styled.div`
 
   p {
     margin: 0.2rem 0 0;
-    color: ${theme.colors.muted};
+    color: #dbeafe;
     font-size: 0.9rem;
   }
 `;
 
 const Quote = styled.p`
-  color: #334155;
+  color: #f0f9ff;
   line-height: 1.65;
   margin: 0;
 `;
@@ -137,6 +146,7 @@ const SponsorTitle = styled.h3`
   padding: 0 2rem;
   font-size: 1.5rem;
   font-weight: 800;
+  text-align: center;
 `;
 
 const SponsorTrack = styled.div`
@@ -147,17 +157,22 @@ const SponsorTrack = styled.div`
 `;
 
 const SponsorLogo = styled.div`
-  min-width: 220px;
-  height: 74px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  color: ${theme.colors.primary};
+  min-width: 250px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 1.1rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 0.6rem 1.25rem;
+
+  img {
+    display: block;
+    max-width: 210px;
+    max-height: 76px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 10px rgba(3, 69, 105, 0.24));
+  }
 `;
 
 const Testimonials = () => {
@@ -192,7 +207,9 @@ const Testimonials = () => {
       <MarqueeWindow>
         <SponsorTrack>
           {sponsorItems.map((sponsor, index) => (
-            <SponsorLogo key={`${sponsor}-${index}`}>{sponsor}</SponsorLogo>
+            <SponsorLogo key={`${sponsor.name}-${index}`}>
+              <img src={sponsor.image} alt={sponsor.name} />
+            </SponsorLogo>
           ))}
         </SponsorTrack>
       </MarqueeWindow>

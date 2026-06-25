@@ -24,4 +24,9 @@ test('hiển thị trang chủ PharmaCare', () => {
   expect(screen.getByRole('heading', {
     name: 'Quản lý nhà thuốc thông minh cho PharmaCare'
   })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Hiện số điện thoại' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'Liên hệ qua Zalo' })).toHaveAttribute(
+    'href',
+    'https://zalo.me/0816151762'
+  );
 });
