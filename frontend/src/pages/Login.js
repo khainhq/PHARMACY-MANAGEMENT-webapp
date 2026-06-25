@@ -11,14 +11,14 @@ const LoginContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, ${theme.colors.primary}, #34d399);
+  background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary}, ${theme.colors.accent});
   padding: 1rem;
 `;
 
 const LoginForm = styled.form`
   background-color: ${theme.colors.white};
   padding: 2.5rem;
-  border-radius: 20px;
+  border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
@@ -39,7 +39,8 @@ const Logo = styled.img`
   width: 120px;
   height: 120px;
   margin-bottom: 1rem;
-  border-radius: 15px;
+  border-radius: 8px;
+  object-fit: cover;
 `;
 
 const LoginTitle = styled.h2`
@@ -73,7 +74,7 @@ const FormControl = styled.input`
   width: 100%;
   padding: 0.875rem 1rem;
   border: 2px solid ${props => props.error ? theme.colors.error : '#e0e0e0'};
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s ease;
   background-color: ${theme.colors.white};
@@ -134,7 +135,7 @@ const LoginButton = styled.button`
   background-color: ${theme.colors.primary};
   color: ${theme.colors.white};
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -159,7 +160,7 @@ const ErrorMessage = styled.div`
   color: ${theme.colors.error};
   background-color: #fee2e2;
   padding: 1rem;
-  border-radius: 10px;
+  border-radius: 8px;
   margin-bottom: 1rem;
   text-align: center;
   font-size: 0.9rem;
@@ -218,9 +219,11 @@ const Login = () => {
         case 'Admin':
           navigate('/dashboard');
           break;
+        case 'Sales':
         case 'Nhân viên bán hàng':
           navigate('/sales-dashboard');
           break;
+        case 'Product_manager':
         case 'Nhân viên quản lý sản phẩm':
           navigate('/product-manager-dashboard');
           break;
@@ -228,7 +231,7 @@ const Login = () => {
           navigate('/');
       }
     } catch (err) {
-      setError('Invalid username or password. Please try again.');
+      setError('Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
     }
@@ -238,19 +241,19 @@ const Login = () => {
     <LoginContainer>
       <LoginForm onSubmit={handleSubmit}>
         <LogoContainer>
-          <Logo src="/images/logo.jpg" alt="PharmaCore Logo" />
-          <LoginTitle>Welcome Back</LoginTitle>
-          <LoginSubtitle>Please sign in to continue</LoginSubtitle>
+          <Logo src="/images/pharmacare/pharmacare-logo.png" alt="PharmaCare Logo" />
+          <LoginTitle>Chào mừng trở lại</LoginTitle>
+          <LoginSubtitle>Đăng nhập để tiếp tục quản lý nhà thuốc</LoginSubtitle>
         </LogoContainer>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <FormGroup>
-          <FormLabel htmlFor="username">Username</FormLabel>
+          <FormLabel htmlFor="username">Tên đăng nhập</FormLabel>
           <FormControl
             id="username"
             type="text"
-            placeholder="Enter your username"
+            placeholder="Nhập tên đăng nhập"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -259,12 +262,12 @@ const Login = () => {
         </FormGroup>
 
         <FormGroup>
-          <FormLabel htmlFor="password">Password</FormLabel>
+          <FormLabel htmlFor="password">Mật khẩu</FormLabel>
           <PasswordWrapper>
             <FormControl
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -286,14 +289,14 @@ const Login = () => {
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
           />
-          <RememberMeLabel htmlFor="rememberMe">Remember me</RememberMeLabel>
+          <RememberMeLabel htmlFor="rememberMe">Ghi nhớ đăng nhập</RememberMeLabel>
         </RememberMeContainer>
 
         <LoginButton type="submit" disabled={isLoading}>
           {isLoading ? (
             <>
               <LoadingSpinner size={20} />
-              Signing in...
+              Đang đăng nhập...
             </>
           ) : (
             'Sign In'

@@ -1,71 +1,72 @@
 import React from 'react';
 import styled from 'styled-components';
+import { theme } from '../styles/theme';
 
 const FooterContainer = styled.footer`
-  background: #0f172a;
+  background: #082f49;
   color: #ffffff;
-  padding: 2rem 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  padding: 3rem 4rem 2rem;
 
   @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
     text-align: center;
-    gap: 1.5rem;
   }
 `;
 
 const FooterSections = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 2rem;
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-`;
-
-const FooterSection = styled.div`
-  flex: 1;
-  margin: 0 1rem;
-
-  @media (max-width: 768px) {
-    margin: 0;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 `;
 
 const FooterTitle = styled.h4`
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 800;
   margin-bottom: 1rem;
+  color: #e0f2fe;
+`;
+
+const Brand = styled(FooterTitle)`
+  font-size: 1.55rem;
+
+  strong {
+    color: ${theme.colors.green};
+  }
 `;
 
 const FooterText = styled.p`
-  font-size: 0.875rem;
-  opacity: 0.8;
-  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #bae6fd;
+  line-height: 1.65;
+  margin-bottom: 0.55rem;
 `;
 
 const FooterLink = styled.a`
   display: block;
-  font-size: 0.875rem;
-  color: #ffffff;
+  font-size: 0.95rem;
+  color: #bae6fd;
   text-decoration: none;
-  margin-bottom: 0.5rem;
-  opacity: 0.8;
+  margin-bottom: 0.55rem;
 
   &:hover {
-    opacity: 1;
+    color: white;
     text-decoration: underline;
   }
 `;
 
 const FooterBottom = styled.div`
+  max-width: 1200px;
+  margin: 2rem auto 0;
   text-align: center;
   font-size: 0.875rem;
-  opacity: 0.8;
-  border-top: 1px solid #374151;
+  color: #93c5fd;
+  border-top: 1px solid rgba(186, 230, 253, 0.24);
   padding-top: 1rem;
 `;
 
@@ -73,32 +74,35 @@ const Footer = () => {
   return (
     <FooterContainer>
       <FooterSections>
-        <FooterSection>
-          <FooterTitle>PharmaCore</FooterTitle>
-          <FooterText>Your favourite online pharmacy store. We offer onsite delivery and your health is our priority.</FooterText>
-        </FooterSection>
-        <FooterSection>
-          <FooterTitle>Quick Links</FooterTitle>
+        <div>
+          <Brand>Pharma<strong>Care</strong></Brand>
+          <FooterText>
+            Giải pháp quản lý nhà thuốc với giao diện thân thiện, hỗ trợ vận hành kho thuốc, bán hàng, khách hàng và báo cáo.
+          </FooterText>
+        </div>
+        <div>
+          <FooterTitle>Liên kết nhanh</FooterTitle>
+          <FooterLink href="/">Home</FooterLink>
           <FooterLink href="/contact">Contact Us</FooterLink>
           <FooterLink href="/about">About Us</FooterLink>
-          <FooterLink href="/careers">Careers</FooterLink>
-        </FooterSection>
-        <FooterSection>
-          <FooterTitle>Services</FooterTitle>
-          <FooterLink href="/delivery">Delivery</FooterLink>
-          <FooterLink href="/purchase">Purchase</FooterLink>
-          <FooterLink href="/consult">Consult Specialist</FooterLink>
-        </FooterSection>
-        <FooterSection>
-          <FooterTitle>Address</FooterTitle>
-          <FooterText>123 Main Street</FooterText>
-          <FooterText>City, Country</FooterText>
-          <FooterText>Phone: +1 234 567 890</FooterText>
-          <FooterText>Email: support@d-express.com</FooterText>
-        </FooterSection>
+          <FooterLink href="/login">Sign In</FooterLink>
+        </div>
+        <div>
+          <FooterTitle>Nghiệp vụ</FooterTitle>
+          <FooterLink href="/medicines">Quản lý thuốc</FooterLink>
+          <FooterLink href="/suppliers">Nhà cung cấp</FooterLink>
+          <FooterLink href="/invoices/list">Hóa đơn</FooterLink>
+          <FooterLink href="/reports">Báo cáo</FooterLink>
+        </div>
+        <div>
+          <FooterTitle>Thông tin</FooterTitle>
+          <FooterText>Điện thoại: +84 816151762</FooterText>
+          <FooterText>Email: khainhq0310@ut.edu.vn</FooterText>
+          <FooterText>TP. Hồ Chí Minh, Việt Nam</FooterText>
+        </div>
       </FooterSections>
       <FooterBottom>
-        © {new Date().getFullYear()} PharmaCore. All rights reserved.
+        © {new Date().getFullYear()} PharmaCare. Đã đăng ký bản quyền.
       </FooterBottom>
     </FooterContainer>
   );

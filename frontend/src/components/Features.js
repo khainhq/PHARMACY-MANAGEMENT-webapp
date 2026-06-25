@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaClipboardList, FaPills, FaChartLine, FaUserTie } from 'react-icons/fa';
+import { theme } from '../styles/theme';
 
 const FeaturesSection = styled.section`
   padding: 6rem 2rem;
-  background: #f8fafc;
+  background: #f3f8fb;
 `;
 
 const FeaturesContainer = styled.div`
@@ -17,123 +18,107 @@ const SectionTitle = styled(motion.h2)`
   text-align: center;
   font-size: 2.5rem;
   font-weight: 800;
-  color: #0f172a;
+  color: ${theme.colors.darkGray};
   margin-bottom: 1rem;
 `;
 
 const SectionSubtitle = styled(motion.p)`
   text-align: center;
-  font-size: 1.2rem;
-  color: #64748b;
+  font-size: 1.15rem;
+  color: ${theme.colors.muted};
   margin-bottom: 4rem;
-  max-width: 600px;
+  max-width: 680px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.7;
 `;
 
 const FeaturesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  gap: 1.5rem;
 `;
 
 const FeatureCard = styled(motion.div)`
   background: white;
   padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  }
+  border-radius: 8px;
+  border: 1px solid #dbeafe;
+  box-shadow: ${theme.shadows.medium};
+  min-height: 250px;
 `;
 
 const IconWrapper = styled.div`
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #059669 0%, #34d399 100%);
-  border-radius: 12px;
+  width: 58px;
+  height: 58px;
+  background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.accent});
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
-  
+  margin-bottom: 1.35rem;
+
   svg {
     color: white;
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
 `;
 
 const FeatureTitle = styled.h3`
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 1rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: ${theme.colors.darkGray};
+  margin-bottom: 0.9rem;
 `;
 
 const FeatureDescription = styled.p`
-  color: #64748b;
-  line-height: 1.6;
+  color: ${theme.colors.muted};
+  line-height: 1.65;
 `;
 
 const Features = () => {
   const features = [
     {
       icon: <FaClipboardList />,
-      title: "Inventory Management",
-      description: "Efficiently track and manage your pharmaceutical inventory with real-time updates and automated reordering."
+      title: 'Quản lý tồn kho',
+      description: 'Theo dõi số lượng thuốc, hạn sử dụng, giá nhập và giá bán để hạn chế thiếu hàng hoặc tồn kho quá lâu.'
     },
     {
       icon: <FaPills />,
-      title: "Medicine Database",
-      description: "Comprehensive database of medicines with detailed information about composition, dosage, and contraindications."
+      title: 'Danh mục thuốc rõ ràng',
+      description: 'Lưu thông tin thuốc, đơn vị tính, xuất xứ, hoạt chất và nhóm thuốc trong cùng một nơi dễ tra cứu.'
     },
     {
       icon: <FaChartLine />,
-      title: "Sales Analytics",
-      description: "Advanced analytics and reporting tools to track sales performance and identify trends."
+      title: 'Báo cáo bán hàng',
+      description: 'Xem nhanh doanh thu, hóa đơn, sản phẩm bán chạy và dữ liệu phục vụ ra quyết định cho nhà thuốc.'
     },
     {
       icon: <FaUserTie />,
-      title: "Employee Management",
-      description: "Streamline employee management with tools to track roles, performance, and work schedules efficiently."
+      title: 'Phân quyền nhân viên',
+      description: 'Tách vai trò quản trị, bán hàng và quản lý sản phẩm để quy trình vận hành gọn và an toàn hơn.'
     }
   ];
 
   return (
     <FeaturesSection>
       <FeaturesContainer>
-        <SectionTitle
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          Powerful Features
+        <SectionTitle initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }}>
+          Tính năng nổi bật
         </SectionTitle>
-        <SectionSubtitle
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-        >
-          Everything you need to manage your pharmacy efficiently
+        <SectionSubtitle initial={{ y: 30, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true }}>
+          PharmaCare hỗ trợ những nghiệp vụ quan trọng của nhà thuốc từ nhập hàng, bán hàng, chăm sóc khách hàng đến báo cáo quản lý.
         </SectionSubtitle>
         <FeaturesGrid>
           {features.map((feature, index) => (
             <FeatureCard
-              key={index}
+              key={feature.title}
               initial={{ y: 30, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
               viewport={{ once: true }}
             >
-              <IconWrapper>
-                {feature.icon}
-              </IconWrapper>
+              <IconWrapper>{feature.icon}</IconWrapper>
               <FeatureTitle>{feature.title}</FeatureTitle>
               <FeatureDescription>{feature.description}</FeatureDescription>
             </FeatureCard>

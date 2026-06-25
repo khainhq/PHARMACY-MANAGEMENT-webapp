@@ -6,9 +6,9 @@ import { FiMessageSquare, FiSend, FiX } from 'react-icons/fi';
 import { sendMessageToChatbot } from '../services/chatbotService';
 
 // Theme Colors
-const primaryGreen = '#2E7D32';
-const lightGreenBackground = '#E8F5E9';
-const chatBodyBg = '#F7F9F7';
+const primaryGreen = '#0369a1';
+const lightGreenBackground = '#e0f2fe';
+const chatBodyBg = '#f3f8fb';
 const textColor = '#333333';
 const borderColor = '#D0D0D0';
 
@@ -32,7 +32,7 @@ const ChatbotToggle = styled.button`
   transition: background-color 0.3s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: #1B5E20;
+    background-color: #075985;
     transform: scale(1.05);
   }
 `;
@@ -178,7 +178,7 @@ const Input = styled.input`
   &:focus {
     outline: none;
     border-color: ${primaryGreen};
-    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.18);
   }
 
   &::placeholder {
@@ -201,11 +201,11 @@ const SendButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #1B5E20;
+    background-color: #075985;
   }
 
   &:disabled {
-    background-color: #A5D6A7;
+    background-color: #93c5fd;
     cursor: not-allowed;
   }
 `;
@@ -213,7 +213,7 @@ const SendButton = styled.button`
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { text: "Hello! Welcome to PharmaCore. How can I assist you today?", isUser: false, timestamp: new Date() }
+    { text: 'Xin chào! PharmaCare có thể hỗ trợ gì cho bạn hôm nay?', isUser: false, timestamp: new Date() }
   ]);
   const [inputValue, setInputValue] = useState('');
   const chatBodyRef = useRef(null);
@@ -242,7 +242,7 @@ const Chatbot = () => {
       const botMessage = { text: reply, isUser: false, timestamp: new Date() };
       setMessages(prevMessages => [...prevMessages, botMessage]);
     } catch (error) {
-      const errorMessage = { text: 'Lỗi: Không thể kết nối với chatbot', isUser: false, timestamp: new Date() };
+      const errorMessage = { text: 'Lỗi: Không thể kết nối với chatbot.', isUser: false, timestamp: new Date() };
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     }
   };
@@ -255,7 +255,7 @@ const Chatbot = () => {
         </ChatbotToggle>
         <ChatbotContainer $isOpen={isOpen}>
           <ChatHeader>
-            Pharmacy Assistant
+            Trợ lý PharmaCare
             <CloseButton onClick={toggleChat} aria-label="Close chat"><FiX /></CloseButton>
           </ChatHeader>
           <ChatBody ref={chatBodyRef}>
@@ -273,7 +273,7 @@ const Chatbot = () => {
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              placeholder="Ask me anything..."
+              placeholder="Nhập câu hỏi của bạn..."
               aria-label="Chat input"
             />
             <SendButton type="submit" disabled={!inputValue.trim()} aria-label="Send message">
