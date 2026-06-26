@@ -88,7 +88,7 @@ describe('Sidebar component', () => {
       );
       expect(sessionStorage.getItem('token')).toBeNull();
       expect(sessionStorage.getItem('role')).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith('/login');
+      expect(mockNavigate).toHaveBeenCalledWith('/');
     });
   });
 });
