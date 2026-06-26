@@ -5,10 +5,8 @@ import Sidebar from './Sidebar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// Giả lập axios
 jest.mock('axios');
 
-// Giả lập useNavigate
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
@@ -18,15 +16,12 @@ describe('Sidebar component', () => {
   let mockNavigate;
 
   beforeEach(() => {
-    // Thiết lập sessionStorage
     sessionStorage.setItem('token', 'dummyToken');
-    sessionStorage.setItem('role', 'Admin'); // Sử dụng chữ hoa 'Admin' để khớp với logic trong Sidebar
+    sessionStorage.setItem('role', 'Admin');
 
-    // Thiết lập mockNavigate
     mockNavigate = jest.fn();
     useNavigate.mockReturnValue(mockNavigate);
 
-    // Reset mocks
     axios.post.mockReset();
   });
 
@@ -35,69 +30,64 @@ describe('Sidebar component', () => {
     jest.clearAllMocks();
   });
 
-  test('hiển thị avatar, tên admin và các mục menu dành riêng cho admin', () => {
-    render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Sidebar />
-      </MemoryRouter>
-    );
+  const renderSidebar = () => render(
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Sidebar />
+    </MemoryRouter>
+  );
 
-    // Kiểm tra avatar
+  test('hiển thị menu dành cho admin', () => {
+    renderSidebar();
+
     expect(screen.getByAltText('User Avatar')).toBeInTheDocument();
-
-    // Kiểm tra vai trò admin
     expect(screen.getAllByText(/Admin/i).length).toBeGreaterThan(0);
-
-    // Kiểm tra các mục menu cụ thể
     expect(screen.getByText(/Trang Chủ/i)).toBeInTheDocument();
     expect(screen.getByText(/Báo Cáo/i)).toBeInTheDocument();
-
-    // Kiểm tra nhiều mục Hóa Đơn
-    const hoaDonItems = screen.getAllByText(/Hóa Đơn/i);
-    expect(hoaDonItems.length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Hóa Đơn/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Nhân Viên/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tài Khoản/i)).toBeInTheDocument();
   });
 
-  test('hiển thị avatar và tên người dùng (không phải admin)', () => {
-    sessionStorage.setItem('role', 'Nhân viên bán hàng');
+  test('hiển thị menu bán hàng khi backend trả role Sales', () => {
+    sessionStorage.setItem('role', 'Sales');
 
-    render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Sidebar />
-      </MemoryRouter>
-    );
+    renderSidebar();
 
-    expect(screen.getByAltText('User Avatar')).toBeInTheDocument();
+    expect(screen.getByText(/Nhân viên bán hàng/i)).toBeInTheDocument();
+    expect(screen.getByText(/Trang Chủ/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Hóa Đơn/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Khách Hàng/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Thuốc/i)).not.toBeInTheDocument();
+  });
 
-    const roleElements = screen.getAllByText(/Nhân viên bán hàng/i);
-    expect(roleElements.length).toBeGreaterThan(0);
+  test('hiển thị menu quản lý sản phẩm khi backend trả role Product_manager', () => {
+    sessionStorage.setItem('role', 'Product_manager');
+
+    renderSidebar();
+
+    expect(screen.getByText(/Nhân viên quản lý sản phẩm/i)).toBeInTheDocument();
+    expect(screen.getByText(/Trang Chủ/i)).toBeInTheDocument();
+    expect(screen.getByText(/Thuốc/i)).toBeInTheDocument();
+    expect(screen.getByText(/Nhà Cung Cấp/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Phiếu Nhập/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Khách Hàng/i)).not.toBeInTheDocument();
   });
 
   test('gọi handleLogout khi nhấn nút đăng xuất', async () => {
-    // Giả lập axios.post trả về thành công
     axios.post.mockResolvedValue({});
 
-    render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Sidebar />
-      </MemoryRouter>
-    );
+    renderSidebar();
 
-    const logoutButton = screen.getByText(/Đăng Xuất/i);
-    fireEvent.click(logoutButton);
+    fireEvent.click(screen.getByText(/Đăng Xuất/i));
 
     await waitFor(() => {
-      // Kiểm tra axios.post được gọi với đúng tham số
       expect(axios.post).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/logout/',
         {},
-        { headers: { Authorization: `Token dummyToken` } }
+        { headers: { Authorization: 'Token dummyToken' } }
       );
-
-      // Kiểm tra sessionStorage đã được xóa
       expect(sessionStorage.getItem('token')).toBeNull();
       expect(sessionStorage.getItem('role')).toBeNull();
-
-      // Kiểm tra điều hướng đến trang đăng nhập
       expect(mockNavigate).toHaveBeenCalledWith('/login');
     });
   });

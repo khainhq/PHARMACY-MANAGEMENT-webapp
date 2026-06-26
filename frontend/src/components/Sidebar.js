@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BiHome, BiFile, BiUser, BiPackage, BiLock, BiLogOut, BiChevronDown, BiChevronUp, BiReceipt, BiBuildings, BiCart, BiGroup } from 'react-icons/bi';
+import {
+  BiHome,
+  BiFile,
+  BiUser,
+  BiPackage,
+  BiLock,
+  BiLogOut,
+  BiChevronDown,
+  BiChevronUp,
+  BiReceipt,
+  BiBuildings,
+  BiCart,
+  BiGroup,
+} from 'react-icons/bi';
 import axios from 'axios';
 
 const SidebarContainer = styled.div`
@@ -10,7 +23,7 @@ const SidebarContainer = styled.div`
   left: 0;
   height: 100vh;
   width: 260px;
-  background: linear-gradient(135deg, #1e293b,rgb(2, 87, 53));
+  background: linear-gradient(135deg, #1e293b, rgb(2, 87, 53));
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -123,12 +136,54 @@ const LogoutButton = styled.div`
   }
 `;
 
+const ROLE_KEYS = {
+  ADMIN: 'admin',
+  SALES: 'sales',
+  PRODUCT_MANAGER: 'product_manager',
+};
+
+const ROLE_LABELS = {
+  [ROLE_KEYS.ADMIN]: 'Admin',
+  [ROLE_KEYS.SALES]: 'Nhân viên bán hàng',
+  [ROLE_KEYS.PRODUCT_MANAGER]: 'Nhân viên quản lý sản phẩm',
+};
+
+export const normalizeRole = (role) => {
+  if (!role) return '';
+
+  const normalizedRole = role.trim().toLowerCase();
+
+  if (normalizedRole === 'admin') return ROLE_KEYS.ADMIN;
+  if (
+    normalizedRole === 'sales' ||
+    normalizedRole === 'nhân viên bán hàng' ||
+    normalizedRole === 'nhã¢n viãªn bã¡n hã ng'
+  ) {
+    return ROLE_KEYS.SALES;
+  }
+  if (
+    normalizedRole === 'product_manager' ||
+    normalizedRole === 'product manager' ||
+    normalizedRole === 'nhân viên quản lý sản phẩm' ||
+    normalizedRole === 'nhã¢n viãªn quáº£n lã½ sáº£n pháº©m'
+  ) {
+    return ROLE_KEYS.PRODUCT_MANAGER;
+  }
+
+  return normalizedRole;
+};
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isInvoiceSubMenuOpen, setInvoiceSubMenuOpen] = useState(false);
   const [isPaymentSubMenuOpen, setPaymentSubMenuOpen] = useState(false);
 
   const role = sessionStorage.getItem('role');
+  const roleKey = normalizeRole(role);
+  const roleLabel = ROLE_LABELS[roleKey] || role || 'Người dùng';
+  const isAdmin = roleKey === ROLE_KEYS.ADMIN;
+  const isSales = roleKey === ROLE_KEYS.SALES;
+  const isProductManager = roleKey === ROLE_KEYS.PRODUCT_MANAGER;
 
   const handleLogout = async () => {
     try {
@@ -150,35 +205,35 @@ const Sidebar = () => {
       <ProfileSection>
         <Avatar src="https://png.pngtree.com/png-clipart/20200721/original/pngtree-customer-service-free-avatar-user-icon-business-user-icon-users-group-png-image_4823037.jpg" alt="User Avatar" />
         <ProfileInfo>
-          <Name>{role === 'Admin' ? 'Admin' : 'User'}</Name>
-          <Role>{role}</Role>
+          <Name>{isAdmin ? 'Admin' : 'User'}</Name>
+          <Role>{roleLabel}</Role>
         </ProfileInfo>
       </ProfileSection>
 
       <Menu>
-        {role === 'Admin' && (
-          <MenuItem to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+        {isAdmin && (
+          <MenuItem to="/dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
             <BiHome /> Trang Chủ
           </MenuItem>
         )}
-        {role === 'Nhân viên bán hàng' && (
-          <MenuItem to="/sales-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+        {isSales && (
+          <MenuItem to="/sales-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
             <BiHome /> Trang Chủ
           </MenuItem>
         )}
-        {role === 'Nhân viên quản lý sản phẩm' && (
-          <MenuItem to="/product-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
+        {isProductManager && (
+          <MenuItem to="/product-manager-dashboard" className={({ isActive }) => (isActive ? 'active' : '')}>
             <BiHome /> Trang Chủ
           </MenuItem>
         )}
 
-        {role === 'Admin' && (
-          <MenuItem to="/reports" className={({ isActive }) => (isActive ? "active" : "")}>
+        {isAdmin && (
+          <MenuItem to="/reports" className={({ isActive }) => (isActive ? 'active' : '')}>
             <BiFile /> Báo Cáo
           </MenuItem>
         )}
 
-        {(role === 'Nhân viên bán hàng' || role === 'Admin') && (
+        {(isSales || isAdmin) && (
           <>
             <MenuItem
               as="div"
@@ -189,25 +244,25 @@ const Sidebar = () => {
               {isInvoiceSubMenuOpen ? <BiChevronUp style={{ marginLeft: 'auto' }} /> : <BiChevronDown style={{ marginLeft: 'auto' }} />}
             </MenuItem>
             <SubMenu isOpen={isInvoiceSubMenuOpen}>
-              <MenuItem to="/invoices/create" className={({ isActive }) => (isActive ? "active" : "")}>
+              <MenuItem to="/invoices/create" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Tạo Hóa Đơn
               </MenuItem>
-              <MenuItem to="/invoices/list" className={({ isActive }) => (isActive ? "active" : "")}>
+              <MenuItem to="/invoices/list" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Danh Sách Hóa Đơn
               </MenuItem>
             </SubMenu>
-            <MenuItem to="/customers" className={({ isActive }) => (isActive ? "active" : "")}>
+            <MenuItem to="/customers" className={({ isActive }) => (isActive ? 'active' : '')}>
               <BiUser /> Khách Hàng
             </MenuItem>
           </>
         )}
 
-        {(role === 'Nhân viên quản lý sản phẩm' || role === 'Admin') && (
+        {(isProductManager || isAdmin) && (
           <>
-            <MenuItem to="/medicines" className={({ isActive }) => (isActive ? "active" : "")}>
+            <MenuItem to="/medicines" className={({ isActive }) => (isActive ? 'active' : '')}>
               <BiPackage /> Thuốc
             </MenuItem>
-            <MenuItem to="/suppliers" className={({ isActive }) => (isActive ? "active" : "")}>
+            <MenuItem to="/suppliers" className={({ isActive }) => (isActive ? 'active' : '')}>
               <BiBuildings /> Nhà Cung Cấp
             </MenuItem>
             <MenuItem
@@ -219,22 +274,22 @@ const Sidebar = () => {
               {isPaymentSubMenuOpen ? <BiChevronUp style={{ marginLeft: 'auto' }} /> : <BiChevronDown style={{ marginLeft: 'auto' }} />}
             </MenuItem>
             <SubMenu isOpen={isPaymentSubMenuOpen}>
-              <MenuItem to="/payments/create" className={({ isActive }) => (isActive ? "active" : "")}>
+              <MenuItem to="/payments/create" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Tạo Phiếu Nhập
               </MenuItem>
-              <MenuItem to="/payments/list" className={({ isActive }) => (isActive ? "active" : "")}>
+              <MenuItem to="/payments/list" className={({ isActive }) => (isActive ? 'active' : '')}>
                 Danh Sách Phiếu Nhập
               </MenuItem>
             </SubMenu>
           </>
         )}
 
-        {role === 'Admin' && (
+        {isAdmin && (
           <>
-            <MenuItem to="/employees" className={({ isActive }) => (isActive ? "active" : "")}>
+            <MenuItem to="/employees" className={({ isActive }) => (isActive ? 'active' : '')}>
               <BiGroup /> Nhân Viên
             </MenuItem>
-            <MenuItem to="/accounts" className={({ isActive }) => (isActive ? "active" : "")}>
+            <MenuItem to="/accounts" className={({ isActive }) => (isActive ? 'active' : '')}>
               <BiLock /> Tài Khoản
             </MenuItem>
           </>
