@@ -280,7 +280,3 @@ Khi tạo issue, nên ghi rõ:
 - Bạn đang ở màn hình nào.
 - Bạn đã bấm gì trước khi lỗi xảy ra.
 - Ảnh chụp màn hình lỗi nếu có.
-
-## Ghi chú cho thành viên được mời vào repo
-
-Nhóm trưởng đã gửi lời mời collaborator trên GitHub. Mỗi thành viên cần mở GitHub và chấp nhận lời mời thì mới có quyền sửa code hoặc push lên repository.
