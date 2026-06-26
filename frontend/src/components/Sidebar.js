@@ -193,10 +193,10 @@ const Sidebar = () => {
       });
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('role');
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Error during logout:', error);
-      navigate('/login');
+      navigate('/');
     }
   };
 
