@@ -9,7 +9,9 @@ test-results.json
 *.user
 *.suo
 legacy_backend_not_pushed/
-docs/
+docs/*
+!docs/screenshots/
+!docs/screenshots/*
 img/
 backend/bin/
 backend/obj/
