@@ -5,8 +5,8 @@ export const Container = styled.div`
   margin-left: 250px;
   padding: 1.5rem;
   gap: 1.5rem;
-  background-color: #f3f4f6; /* Màu nền nhẹ nhàng */
-  font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
 `;
 
 export const LeftSection = styled.div`
@@ -77,7 +77,7 @@ export const Table = styled.table`
 `;
 
 export const TableHeader = styled.th`
-  background-color:rgb(6, 150, 102); /* Màu xanh lá cây */
+  background-color: rgb(6, 150, 102);
   color: #ffffff;
   padding: 0.8rem;
   text-align: left;
@@ -138,16 +138,15 @@ export const Form = styled.form`
 export const Content = styled.div`
   flex: 1;
   padding: 1rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
-  padding: 1rem;
+  margin-left: 250px;
 `;
 
 export const unitMap = {
-  CVBDF123T: 'Viên',
-  CV123GERT: 'Chai',
-  CVB123ERT: 'Hộp',
-  CVB141ERT: 'Gói',
-  CV1223ERT: 'Vỉ',
+  UNT001: 'Hộp',
+  UNT002: 'Chai',
+  UNT003: 'Vỉ',
+  UNT004: 'Viên',
+  UNT005: 'Gói',
 };
 
 export const Modal = styled.div`

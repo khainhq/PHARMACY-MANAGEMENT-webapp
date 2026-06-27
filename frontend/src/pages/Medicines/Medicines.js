@@ -21,46 +21,53 @@ import {
   ActionButton,
 } from './MedicinesStyles';
 
+const API_BASE = 'http://127.0.0.1:8000';
+const emptyForm = {
+  medicineName: '',
+  ingredients: '',
+  stockQuantity: '',
+  importPrice: '',
+  unitPrice: '',
+  expiryDate: '',
+  unit: '',
+  catalog: '',
+  origin: '',
+};
+const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+
 const Medicines = () => {
   const [medicines, setMedicines] = useState([]);
   const [filteredMedicines, setFilteredMedicines] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [form, setForm] = useState({
-    medicineName: '',
-    ingredients: '',
-    stockQuantity: '',
-    importPrice: '',
-    unitPrice: '',
-    expiryDate: '',
-    unit: '',
-    catalog: '',
-    origin: '',
-  });
-  const [imageFile, setImageFile] = useState(null); // State để lưu ảnh
+  const [form, setForm] = useState(emptyForm);
+  const [imageFile, setImageFile] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingMedicineID, setEditingMedicineID] = useState(null);
+  const [error, setError] = useState('');
+
+  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
 
   const fetchMedicines = async () => {
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
     try {
-      const response = await axios.get('http://localhost:8000/api/medicines/medicines/', { headers });
+      const response = await axios.get(`${API_BASE}/api/medicines/medicines/`, { headers: authHeaders() });
       setMedicines(response.data);
-      setFilteredMedicines(response.data); // Hiển thị tất cả thuốc ban đầu
-    } catch (error) {
-      console.error('Error fetching medicines:', error.response?.data || error.message);
+      setFilteredMedicines(response.data);
+    } catch (fetchError) {
+      setError('Không tải được danh sách thuốc.');
     }
   };
+
+  useEffect(() => {
+    fetchMedicines();
+  }, []);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setSearchKeyword(keyword);
-    const filtered = medicines.filter((medicine) =>
+    setFilteredMedicines(medicines.filter((medicine) =>
       medicine.medicineName.toLowerCase().includes(keyword) ||
       medicine.medicineID.toLowerCase().includes(keyword)
-    );
-    setFilteredMedicines(filtered);
+    ));
   };
 
   const handleDownloadExcel = () => {
@@ -73,68 +80,45 @@ const Medicines = () => {
   };
 
   const generateMedicineID = () => {
-    const prefix = Math.random().toString(36).substring(2, 4).toUpperCase(); // Hai ký tự chữ cái
-    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // Tạo chuỗi ngẫu nhiên
+    const prefix = Math.random().toString(36).substring(2, 4).toUpperCase();
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
     return `${prefix}${randomPart}`;
+  };
+
+  const buildPayload = (medicineID) => ({
+    medicineID,
+    medicineName: form.medicineName.trim(),
+    ingredients: form.ingredients.trim(),
+    image: imageFile ? `/images/medicines/${imageFile.name}` : null,
+    stockQuantity: Number(form.stockQuantity),
+    importPrice: Number(form.importPrice),
+    unitPrice: Number(form.unitPrice),
+    expiryDate: form.expiryDate,
+    unit: form.unit,
+    catalog: form.catalog,
+    origin: form.origin,
+  });
+
+  const resetForm = () => {
+    setForm(emptyForm);
+    setImageFile(null);
+    setShowForm(false);
+    setEditingMedicineID(null);
   };
 
   const handleAddOrUpdateMedicine = async (e) => {
     e.preventDefault();
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
+    setError('');
     try {
-      const formData = new FormData();
-      formData.append('medicineName', form.medicineName);
-      formData.append('ingredients', form.ingredients);
-      formData.append('stockQuantity', form.stockQuantity);
-      formData.append('importPrice', form.importPrice);
-      formData.append('unitPrice', form.unitPrice);
-      formData.append('expiryDate', form.expiryDate);
-      formData.append('unit', form.unit);
-      formData.append('catalog', form.catalog);
-      formData.append('origin', form.origin);
-
-      if (imageFile) {
-        formData.append('image', imageFile); // Thêm ảnh vào FormData
-      }
-
       if (editingMedicineID) {
-        // Update medicine
-        formData.append('medicineID', editingMedicineID);
-        await axios.put(
-          `http://localhost:8000/api/medicines/medicines/${editingMedicineID}/`,
-          formData,
-          { headers }
-        );
+        await axios.put(`${API_BASE}/api/medicines/medicines/${editingMedicineID}/`, buildPayload(editingMedicineID), { headers: authHeaders() });
       } else {
-        // Add new medicine
-        const newMedicineID = generateMedicineID();
-        formData.append('medicineID', newMedicineID);
-        await axios.post(
-          'http://localhost:8000/api/medicines/medicines/',
-          formData,
-          { headers }
-        );
+        await axios.post(`${API_BASE}/api/medicines/medicines/`, buildPayload(generateMedicineID()), { headers: authHeaders() });
       }
-
-      setForm({
-        medicineName: '',
-        ingredients: '',
-        stockQuantity: '',
-        importPrice: '',
-        unitPrice: '',
-        expiryDate: '',
-        unit: '',
-        catalog: '',
-        origin: '',
-      });
-      setImageFile(null); // Reset ảnh
-      setShowForm(false);
-      setEditingMedicineID(null);
-      fetchMedicines();
-    } catch (error) {
-      console.error('Error saving medicine:', error.response?.data || error.message);
+      resetForm();
+      await fetchMedicines();
+    } catch (saveError) {
+      setError(saveError.response?.data?.error || 'Không lưu được thông tin thuốc. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
@@ -145,7 +129,7 @@ const Medicines = () => {
       stockQuantity: medicine.stockQuantity,
       importPrice: medicine.importPrice,
       unitPrice: medicine.unitPrice,
-      expiryDate: medicine.expiryDate,
+      expiryDate: medicine.expiryDate ? medicine.expiryDate.split('T')[0] : '',
       unit: medicine.unit,
       catalog: medicine.catalog,
       origin: medicine.origin,
@@ -157,21 +141,13 @@ const Medicines = () => {
   const handleDeleteMedicine = async (medicineID) => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa thuốc này?');
     if (!confirmDelete) return;
-
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
     try {
-      await axios.delete(`http://localhost:8000/api/medicines/medicines/${medicineID}/`, { headers });
-      fetchMedicines();
-    } catch (error) {
-      console.error('Error deleting medicine:', error.response?.data || error.message);
+      await axios.delete(`${API_BASE}/api/medicines/medicines/${medicineID}/`, { headers: authHeaders() });
+      await fetchMedicines();
+    } catch (deleteError) {
+      setError('Không xóa được thuốc này vì có thể thuốc đang được dùng trong hóa đơn hoặc phiếu nhập.');
     }
   };
-
-  useEffect(() => {
-    fetchMedicines();
-  }, []);
 
   return (
     <Container>
@@ -179,130 +155,45 @@ const Medicines = () => {
       <Content>
         <Toolbar>
           <div>
-            <Button onClick={() => { setShowForm(!showForm); setEditingMedicineID(null); }}><FaPlus style={{ marginRight: '0.5rem' }} /> THÊM</Button>
+            <Button onClick={() => { setShowForm(!showForm); setEditingMedicineID(null); }}>
+              <FaPlus style={{ marginRight: '0.5rem' }} /> THÊM
+            </Button>
           </div>
           <div>
-            <Input
-              type="text"
-              placeholder="Tìm kiếm thuốc..."
-              value={searchKeyword}
-              onChange={handleSearch}
-            />
+            <Input type="text" placeholder="Tìm kiếm thuốc..." value={searchKeyword} onChange={handleSearch} />
             <Button onClick={handleDownloadExcel}>
               <FaDownload style={{ marginRight: '0.5rem' }} />
-                Tải xuống
+              Tải xuống
             </Button>
           </div>
         </Toolbar>
 
+        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
+
         {showForm && (
           <Form onSubmit={handleAddOrUpdateMedicine}>
-            <Input
-              type="text"
-              placeholder="Tên thuốc"
-              value={form.medicineName}
-              onChange={(e) => setForm({ ...form, medicineName: e.target.value })}
-              required
-            />
-            <Input
-              type="text"
-              placeholder="Thành phần"
-              value={form.ingredients}
-              onChange={(e) => setForm({ ...form, ingredients: e.target.value })}
-              required
-            />
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImageFile(e.target.files[0])} // Lưu ảnh vào state
-            />
-            <Input
-              type="number"
-              placeholder="Số lượng"
-              value={form.stockQuantity}
-              onChange={(e) => setForm({ ...form, stockQuantity: e.target.value })}
-              required
-            />
-            <Input
-              type="number"
-              placeholder="Giá nhập"
-              value={form.importPrice}
-              onChange={(e) => setForm({ ...form, importPrice: e.target.value })}
-              required
-            />
-            <Input
-              type="number"
-              placeholder="Đơn giá"
-              value={form.unitPrice}
-              onChange={(e) => setForm({ ...form, unitPrice: e.target.value })}
-              required
-            />
-            <Input
-              type="date"
-              placeholder="Hạn sử dụng"
-              value={form.expiryDate}
-              onChange={(e) => setForm({ ...form, expiryDate: e.target.value })}
-              required
-            />
-            <Select
-              value={form.unit}
-              onChange={(e) => setForm({ ...form, unit: e.target.value })}
-              required
-            >
+            <Input type="text" placeholder="Tên thuốc" value={form.medicineName} onChange={(e) => setForm({ ...form, medicineName: e.target.value })} required />
+            <Input type="text" placeholder="Thành phần" value={form.ingredients} onChange={(e) => setForm({ ...form, ingredients: e.target.value })} required />
+            <Input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
+            <Input type="number" placeholder="Số lượng" value={form.stockQuantity} onChange={(e) => setForm({ ...form, stockQuantity: e.target.value })} required />
+            <Input type="number" placeholder="Giá nhập" value={form.importPrice} onChange={(e) => setForm({ ...form, importPrice: e.target.value })} required />
+            <Input type="number" placeholder="Đơn giá" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} required />
+            <Input type="date" placeholder="Hạn sử dụng" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} required />
+            <Select value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} required>
               <option value="">Chọn đơn vị tính</option>
-              {Object.entries(unitMap).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
+              {Object.entries(unitMap).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
             </Select>
-            <Select
-              value={form.catalog}
-              onChange={(e) => setForm({ ...form, catalog: e.target.value })}
-              required
-            >
+            <Select value={form.catalog} onChange={(e) => setForm({ ...form, catalog: e.target.value })} required>
               <option value="">Chọn danh mục</option>
-              {Object.entries(catalogMap).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
+              {Object.entries(catalogMap).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
             </Select>
-            <Select
-              value={form.origin}
-              onChange={(e) => setForm({ ...form, origin: e.target.value })}
-              required
-            >
+            <Select value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value })} required>
               <option value="">Chọn xuất xứ</option>
-              {Object.entries(originMap).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
+              {Object.entries(originMap).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
             </Select>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Button type="submit">{editingMedicineID ? 'Cập nhật' : 'Thêm mới'}</Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  setForm({
-                    medicineName: '',
-                    ingredients: '',
-                    stockQuantity: '',
-                    importPrice: '',
-                    unitPrice: '',
-                    expiryDate: '',
-                    unit: '',
-                    catalog: '',
-                    origin: '',
-                  });
-                  setImageFile(null);
-                  setEditingMedicineID(null);
-                }}
-              >
-                Hủy
-              </Button>
+              <Button type="button" onClick={resetForm}>Hủy</Button>
             </div>
           </Form>
         )}
@@ -331,12 +222,12 @@ const Medicines = () => {
                 <TableCell>{medicine.medicineID}</TableCell>
                 <TableCell>{medicine.medicineName}</TableCell>
                 <TableCell>{medicine.ingredients}</TableCell>
-                <TableCell>{catalogMap[medicine.catalog]}</TableCell>
-                <TableCell>{originMap[medicine.origin]}</TableCell>
-                <TableCell>{unitMap[medicine.unit]}</TableCell>
+                <TableCell>{catalogMap[medicine.catalog] || medicine.catalog}</TableCell>
+                <TableCell>{originMap[medicine.origin] || medicine.origin}</TableCell>
+                <TableCell>{unitMap[medicine.unit] || medicine.unit}</TableCell>
                 <TableCell>{medicine.stockQuantity}</TableCell>
-                <TableCell>{medicine.unitPrice.toLocaleString()} VND</TableCell>
-                <TableCell>{medicine.expiryDate}</TableCell>
+                <TableCell>{formatMoney(medicine.unitPrice)} VND</TableCell>
+                <TableCell>{medicine.expiryDate ? medicine.expiryDate.split('T')[0] : ''}</TableCell>
                 <TableCell>
                   <ActionButton onClick={() => handleEditMedicine(medicine)}>Sửa</ActionButton>
                   <ActionButton onClick={() => handleDeleteMedicine(medicine.medicineID)}>Xóa</ActionButton>

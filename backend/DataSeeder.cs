@@ -4,6 +4,8 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(PharmacyDbContext db)
     {
+        await EnsureReferenceDataAsync(db);
+
         if (await db.Roles.AnyAsync()) return;
 
         db.Roles.AddRange(
@@ -24,18 +26,6 @@ public static class DataSeeder
         db.Customers.AddRange(
             new Customer { CustomerID = "CUS001", FullName = "Khach hang 1", PhoneNumber = "0910000001", Gender = "Male" },
             new Customer { CustomerID = "CUS002", FullName = "Khach hang 2", PhoneNumber = "0910000002", Gender = "Female" });
-
-        db.Catalogs.AddRange(
-            new Catalog { CatalogID = "CAT001", CatalogName = "Giam dau" },
-            new Catalog { CatalogID = "CAT002", CatalogName = "Tieu hoa" });
-
-        db.Units.AddRange(
-            new Unit { UnitID = "UNT001", UnitName = "Hop" },
-            new Unit { UnitID = "UNT002", UnitName = "Chai" });
-
-        db.Origins.AddRange(
-            new Origin { OriginID = "ORG001", OriginName = "Viet Nam" },
-            new Origin { OriginID = "ORG002", OriginName = "Phap" });
 
         db.Suppliers.AddRange(
             new Supplier { SupplierID = "SUP001", SupplierName = "Cong ty Duoc A", PhoneNumber = "0920000001", Address = "Thanh pho Ho Chi Minh" },
@@ -62,5 +52,53 @@ public static class DataSeeder
         await db.SaveChangesAsync();
         db.InvoiceDetails.Add(new InvoiceDetail { InvoiceID = invoice.InvoiceID, MedicineID = "MED001", Quantity = 1, UnitPrice = 35000 });
         await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureReferenceDataAsync(PharmacyDbContext db)
+    {
+        await AddCatalogIfMissing(db, "CAT001", "Thuoc giam dau");
+        await AddCatalogIfMissing(db, "CAT002", "Tieu hoa");
+        await AddCatalogIfMissing(db, "CAT003", "Thuoc khang sinh");
+        await AddCatalogIfMissing(db, "CAT004", "Vitamin - Khoang chat");
+        await AddCatalogIfMissing(db, "CAT005", "Cam cum - Ho");
+        await AddCatalogIfMissing(db, "CAT006", "Tim mach - Huyet ap");
+        await AddCatalogIfMissing(db, "CAT007", "Da lieu");
+
+        await AddUnitIfMissing(db, "UNT001", "Hop");
+        await AddUnitIfMissing(db, "UNT002", "Chai");
+        await AddUnitIfMissing(db, "UNT003", "Vi");
+        await AddUnitIfMissing(db, "UNT004", "Vien");
+        await AddUnitIfMissing(db, "UNT005", "Goi");
+
+        await AddOriginIfMissing(db, "ORG001", "Viet Nam");
+        await AddOriginIfMissing(db, "ORG002", "Phap");
+        await AddOriginIfMissing(db, "ORG003", "My");
+        await AddOriginIfMissing(db, "ORG004", "Nhat Ban");
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task AddCatalogIfMissing(PharmacyDbContext db, string id, string name)
+    {
+        if (!await db.Catalogs.AnyAsync(x => x.CatalogID == id || x.CatalogName == name))
+        {
+            db.Catalogs.Add(new Catalog { CatalogID = id, CatalogName = name });
+        }
+    }
+
+    private static async Task AddUnitIfMissing(PharmacyDbContext db, string id, string name)
+    {
+        if (!await db.Units.AnyAsync(x => x.UnitID == id || x.UnitName == name))
+        {
+            db.Units.Add(new Unit { UnitID = id, UnitName = name });
+        }
+    }
+
+    private static async Task AddOriginIfMissing(PharmacyDbContext db, string id, string name)
+    {
+        if (!await db.Origins.AnyAsync(x => x.OriginID == id || x.OriginName == name))
+        {
+            db.Origins.Add(new Origin { OriginID = id, OriginName = name });
+        }
     }
 }

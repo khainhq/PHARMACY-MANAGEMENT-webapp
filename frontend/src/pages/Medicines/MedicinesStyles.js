@@ -2,17 +2,17 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  background-color: #f3f4f6; /* Màu nền sáng */
-  font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
 `;
 
 export const Content = styled.div`
   flex: 1;
   padding: 2rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
-  background-color: #ffffff; /* Màu nền trắng */
+  margin-left: 250px;
+  background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 export const Toolbar = styled.div`
@@ -23,7 +23,7 @@ export const Toolbar = styled.div`
 `;
 
 export const Button = styled.button`
-  background-color:rgb(6, 150, 102); /* Màu xanh lá cây */
+  background-color: rgb(6, 150, 102);
   color: #ffffff;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -34,7 +34,7 @@ export const Button = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color:rgb(3, 93, 64); /* Màu xanh lá cây đậm hơn */
+    background-color: rgb(3, 93, 64);
   }
 `;
 
@@ -45,7 +45,7 @@ export const Table = styled.table`
   background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TableHeader = styled.th`
@@ -63,24 +63,28 @@ export const TableCell = styled.td`
 `;
 
 export const catalogMap = {
-  ZXC311QWE: 'Hệ tim mạch & tạo máu',
-  ZXC321QWE: 'Hệ tiêu hóa & gan mật',
-  ZAQ321QWE: 'Thuốc giảm đau',
+  CAT001: 'Thuốc giảm đau',
+  CAT002: 'Tiêu hóa',
+  CAT003: 'Thuốc kháng sinh',
+  CAT004: 'Vitamin - Khoáng chất',
+  CAT005: 'Cảm cúm - Ho',
+  CAT006: 'Tim mạch - Huyết áp',
+  CAT007: 'Da liễu',
 };
 
 export const originMap = {
-  XCVSDF123: 'Việt Nam',
-  XCVSDF122: 'Mỹ',
-  XCVSDF125: 'Pháp',
-  XCVSDF124: 'Nhật Bản',
+  ORG001: 'Việt Nam',
+  ORG002: 'Pháp',
+  ORG003: 'Mỹ',
+  ORG004: 'Nhật Bản',
 };
 
 export const unitMap = {
-  CVBDF123T: 'Viên',
-  CV123GERT: 'Chai',
-  CVB123ERT: 'Hộp',
-  CVB141ERT: 'Gói',
-  CV1223ERT: 'Vỉ',
+  UNT001: 'Hộp',
+  UNT002: 'Chai',
+  UNT003: 'Vỉ',
+  UNT004: 'Viên',
+  UNT005: 'Gói',
 };
 
 export const Form = styled.form`
@@ -92,7 +96,7 @@ export const Form = styled.form`
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const Input = styled.input`
@@ -126,11 +130,12 @@ export const SectionDivider = styled.hr`
 `;
 
 export const ActionButton = styled(Button)`
-  width: 80px; /* Chiều rộng riêng cho nút Sửa và Xóa */
-  padding: 0.5rem 1rem; /* Điều chỉnh padding nếu cần */
-  margin-right: 0.5rem; /* Thêm khoảng cách giữa các nút */
+  width: 80px;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
   margin-bottom: 0.2rem;
+
   &:last-child {
-    margin-right: 0; /* Loại bỏ khoảng cách cho nút cuối cùng */
+    margin-right: 0;
   }
 `;
