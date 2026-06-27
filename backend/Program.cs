@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
+using System.Globalization;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
@@ -406,13 +408,114 @@ static async Task<string> AskGeminiAsync(HttpClient httpClient, string apiKey, s
 
 static string BuildOfflineChatbotReply(string message)
 {
-    var normalized = message.ToLowerInvariant();
-    if (normalized.Contains("ban la ai") || normalized.Contains("bạn là ai") || normalized.Contains("chatbot"))
+    var normalized = NormalizeVietnameseSearchText(message);
+    if (normalized.Contains("ban la ai") || normalized.Contains("chatbot") || normalized.Contains("tro ly"))
     {
         return "Tôi là Trợ lý PharmaCare, nhiệm vụ của tôi là hướng dẫn bạn sử dụng hệ thống quản lý nhà thuốc PharmaCare.";
     }
 
+    if (normalized.Contains("dang nhap") || normalized.Contains("login") || normalized.Contains("sign in"))
+    {
+        return """
+            Cách đăng nhập PharmaCare:
+
+            1. Nếu bạn là Admin, vào `/admin-login`.
+            2. Nếu bạn là nhân viên bán hàng hoặc quản lý sản phẩm, vào `/login`.
+            3. Tài khoản mẫu:
+               - Admin: `admin / admin123`
+               - Bán hàng: `sales / sales123`
+               - Quản lý sản phẩm: `product / product123`
+            4. Nếu đăng nhập đúng nhưng không vào được, hãy kiểm tra backend Docker có đang chạy ở `http://127.0.0.1:8000` không.
+            """;
+    }
+
+    if (normalized.Contains("hoa don") || normalized.Contains("ban hang") || normalized.Contains("gio hang"))
+    {
+        return """
+            Cách tạo hóa đơn:
+
+            1. Đăng nhập bằng tài khoản bán hàng.
+            2. Vào `Hóa đơn` rồi chọn `Tạo hóa đơn`.
+            3. Tìm thuốc, bấm `Chọn`, nhập số lượng và thêm vào giỏ hàng.
+            4. Nhập thông tin khách hàng.
+            5. Chọn phương thức thanh toán, trạng thái rồi bấm `TẠO HÓA ĐƠN`.
+            6. Nếu lỗi, hãy kiểm tra giỏ hàng, tồn kho và thông tin khách hàng.
+            """;
+    }
+
+    if (normalized.Contains("thuoc") || normalized.Contains("san pham") || normalized.Contains("kho"))
+    {
+        return """
+            Cách quản lý thuốc:
+
+            1. Vào menu `Thuốc`.
+            2. Bấm `THÊM` để thêm thuốc mới.
+            3. Nhập tên thuốc, thành phần, số lượng, giá nhập, đơn giá và hạn sử dụng.
+            4. Chọn đơn vị tính, danh mục và xuất xứ.
+            5. Bấm `Thêm mới` để lưu.
+            """;
+    }
+
+    if (normalized.Contains("nhan vien") || normalized.Contains("tai khoan") || normalized.Contains("phan quyen"))
+    {
+        return """
+            Chức năng nhân viên và tài khoản dành cho Admin:
+
+            1. Vào `Nhân viên` để thêm, sửa, xóa thông tin nhân viên.
+            2. Vào `Tài khoản` để tạo tài khoản đăng nhập.
+            3. Gắn tài khoản với nhân viên và chọn vai trò: `Admin`, `Sales` hoặc `Product_manager`.
+            4. Nếu tài khoản thấy sai menu, hãy kiểm tra lại vai trò và cổng đăng nhập.
+            """;
+    }
+
+    if (normalized.Contains("khach hang"))
+    {
+        return "Vào trang `Khách hàng` để thêm, sửa, xóa và tìm kiếm khách hàng theo tên, số điện thoại hoặc mã khách hàng. Khi tạo hóa đơn, hệ thống cũng có thể tự tạo khách hàng mới theo số điện thoại.";
+    }
+
+    if (normalized.Contains("nha cung cap") || normalized.Contains("phieu nhap") || normalized.Contains("nhap hang"))
+    {
+        return """
+            Với nhà cung cấp và phiếu nhập:
+
+            1. Vào `Nhà cung cấp` để thêm, sửa, xóa hoặc tìm kiếm nhà cung cấp.
+            2. Vào `Phiếu nhập` rồi chọn `Tạo phiếu nhập`.
+            3. Chọn thuốc, nhập số lượng, đơn giá nhập, nhân viên và nhà cung cấp.
+            4. Khi lưu phiếu nhập thành công, tồn kho thuốc sẽ tăng lên.
+            """;
+    }
+
+    if (normalized.Contains("docker") || normalized.Contains("backend") || normalized.Contains("container") || normalized.Contains("localhost"))
+    {
+        return """
+            Cách kiểm tra khi chạy Docker:
+
+            1. Mở Docker Desktop và chờ Docker chạy ổn định.
+            2. Chạy `docker compose up -d --build`.
+            3. Mở frontend tại `http://localhost:3000`.
+            4. Backend chạy tại `http://127.0.0.1:8000`.
+            5. Nếu backend bật lên rồi tắt, chạy `docker compose logs backend` để xem lỗi.
+            """;
+    }
+
     return "Chức năng của tôi là hướng dẫn sử dụng PharmaCare. Bạn có thể hỏi tôi về đăng nhập, dashboard, thuốc, hóa đơn, khách hàng, nhân viên, nhà cung cấp, phiếu nhập, báo cáo hoặc tài khoản.";
+}
+
+static string NormalizeVietnameseSearchText(string value)
+{
+    var normalized = value.ToLowerInvariant().Normalize(NormalizationForm.FormD);
+    var builder = new StringBuilder(normalized.Length);
+
+    foreach (var character in normalized)
+    {
+        var category = CharUnicodeInfo.GetUnicodeCategory(character);
+        if (category != UnicodeCategory.NonSpacingMark)
+        {
+            builder.Append(character == 'đ' ? 'd' : character);
+        }
+    }
+
+    return builder.ToString().Normalize(NormalizationForm.FormC);
 }
 
 static void NormalizeAccount(Account account)
