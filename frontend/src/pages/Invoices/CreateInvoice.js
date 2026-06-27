@@ -18,6 +18,9 @@ import {
   unitMap,
 } from './InvoicesStyles';
 
+const API_BASE = 'http://127.0.0.1:8000';
+const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+
 const CreateInvoice = () => {
   const [medicines, setMedicines] = useState([]);
   const [filteredMedicines, setFilteredMedicines] = useState([]);
@@ -35,149 +38,93 @@ const CreateInvoice = () => {
   });
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [error, setError] = useState('');
 
-  // Fetch medicines from API
+  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+
+  const fetchMedicines = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/medicines/medicines/`, { headers: authHeaders() });
+      setMedicines(response.data);
+      setFilteredMedicines(response.data);
+    } catch (fetchError) {
+      setError('Không tải được danh sách thuốc. Vui lòng thử lại.');
+    }
+  };
+
   useEffect(() => {
-    const fetchMedicines = async () => {
-      const token = sessionStorage.getItem('token');
-      const headers = { Authorization: `Token ${token}` };
-
-      try {
-        const response = await axios.get('http://localhost:8000/api/medicines/medicines/', { headers });
-        setMedicines(response.data);
-        setFilteredMedicines(response.data);
-      } catch (error) {
-        console.error('Error fetching medicines:', error.response?.data || error.message);
-      }
-    };
-
     fetchMedicines();
   }, []);
 
-  // Handle search
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setSearchKeyword(keyword);
     setFilteredMedicines(
-      medicines.filter(
-        (medicine) =>
-          medicine.medicineName.toLowerCase().includes(keyword) ||
-          medicine.medicineID.toLowerCase().includes(keyword)
+      medicines.filter((medicine) =>
+        medicine.medicineName.toLowerCase().includes(keyword) ||
+        medicine.medicineID.toLowerCase().includes(keyword)
       )
     );
   };
 
-  // Add medicine to cart
   const handleAddToCart = () => {
+    setError('');
     if (!selectedMedicine || quantity <= 0) return;
+
+    const currentQuantity = cart.find((item) => item.medicineID === selectedMedicine.medicineID)?.quantity || 0;
+    if (currentQuantity + quantity > selectedMedicine.stockQuantity) {
+      setError(`Thuốc ${selectedMedicine.medicineName} chỉ còn ${selectedMedicine.stockQuantity} trong kho.`);
+      return;
+    }
 
     const existingItem = cart.find((item) => item.medicineID === selectedMedicine.medicineID);
     if (existingItem) {
-      setCart(
-        cart.map((item) =>
-          item.medicineID === selectedMedicine.medicineID
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
-      );
+      setCart(cart.map((item) =>
+        item.medicineID === selectedMedicine.medicineID
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      ));
     } else {
       setCart([...cart, { ...selectedMedicine, quantity }]);
     }
+
     setSelectedMedicine(null);
     setQuantity(1);
   };
 
-  // Remove medicine from cart
-  const handleRemoveFromCart = (medicineID) => {
-    setCart(cart.filter((item) => item.medicineID !== medicineID));
+  const calculateTotal = () => cart.reduce((total, item) => total + item.quantity * item.unitPrice, 0);
+
+  const validateCheckout = () => {
+    if (cart.length === 0) return 'Giỏ hàng trống, không thể tạo hóa đơn.';
+    if (!form.customerName.trim()) return 'Vui lòng nhập tên khách hàng.';
+    if (!form.phoneNumber.trim()) return 'Vui lòng nhập số điện thoại.';
+    if (!form.gender) return 'Vui lòng chọn giới tính.';
+    if (!form.address.trim()) return 'Vui lòng nhập địa chỉ.';
+    return '';
   };
 
-  // Calculate total amount
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.quantity * item.unitPrice, 0);
-  };
-
-  // Generate unique customer ID
-  const generateCustomerID = () => {
-    const letters = Array.from({ length: 6 }, () =>
-      String.fromCharCode(65 + Math.floor(Math.random() * 26))
-    ).join('');
-    const numbers = Math.floor(100 + Math.random() * 900);
-    return `${letters}${numbers}`;
-  };
-
-  // Handle checkout
   const handleCheckout = async () => {
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
+    const validationError = validateCheckout();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
+    setError('');
     try {
-      if (cart.length === 0) {
-        alert('Giỏ hàng trống, không thể thực hiện thanh toán.');
-        return;
-      }
+      const payload = {
+        ...form,
+        customerName: form.customerName.trim(),
+        phoneNumber: form.phoneNumber.trim(),
+        address: form.address.trim(),
+        items: cart.map((item) => ({
+          medicine: item.medicineID,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        })),
+      };
 
-      // Check if customer exists
-      let customerID;
-      try {
-        const customersRes = await axios.get('http://localhost:8000/api/sales/customers/', { headers });
-        const existingCustomer = customersRes.data.find(
-          (c) =>
-            c.fullName.trim().toLowerCase() === form.customerName.trim().toLowerCase() &&
-            c.phoneNumber.trim() === form.phoneNumber.trim()
-        );
-        if (existingCustomer) {
-          customerID = existingCustomer.customerID;
-        } else {
-          const customerResponse = await axios.post(
-            'http://localhost:8000/api/sales/customers/',
-            {
-              customerID: generateCustomerID(),
-              fullName: form.customerName.trim(),
-              phoneNumber: form.phoneNumber.trim(),
-              gender: form.gender,
-              joinDate: new Date().toISOString().split('T')[0],
-            },
-            { headers }
-          );
-          customerID = customerResponse.data.customerID;
-        }
-      } catch (error) {
-        console.error('Error checking or creating customer:', error.response?.data || error.message);
-        return;
-      }
-
-      // Create invoice
-      const invoiceResponse = await axios.post(
-        'http://localhost:8000/api/sales/invoices/',
-        {
-          customer: customerID,
-          address: form.address,
-          paymentMethod: form.paymentMethod,
-          status: form.status,
-        },
-        { headers }
-      );
-      const invoiceID = invoiceResponse.data.invoiceID;
-      const invoiceTime = invoiceResponse.data.invoiceTime; // Lấy thời gian tạo hóa đơn
-
-      // Add invoice details
-      await Promise.all(
-        cart.map((item) =>
-          axios.post(
-            'http://localhost:8000/api/sales/invoice-details/',
-            {
-              invoice: invoiceID,
-              medicine: item.medicineID,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-            },
-            { headers }
-          )
-        )
-      );
-
-      // Save invoice data and show modal
+      const response = await axios.post(`${API_BASE}/api/sales/checkout/`, payload, { headers: authHeaders() });
       setInvoiceData({
         customerName: form.customerName,
         customerPhone: form.phoneNumber,
@@ -186,22 +133,14 @@ const CreateInvoice = () => {
         status: form.status,
         medicines: cart,
         totalAmount: calculateTotal(),
-        invoiceTime, // Thêm thời gian tạo hóa đơn
+        invoiceTime: response.data.invoiceTime,
       });
       setShowInvoiceModal(true);
-
-      // Reset form and cart
       setCart([]);
-      setForm({
-        customerName: '',
-        phoneNumber: '',
-        address: '',
-        paymentMethod: 'Cash',
-        status: 'Paid',
-        gender: '',
-      });
-    } catch (error) {
-      console.error('Error during checkout:', error.response?.data || error.message);
+      setForm({ customerName: '', phoneNumber: '', address: '', paymentMethod: 'Cash', status: 'Paid', gender: '' });
+      await fetchMedicines();
+    } catch (checkoutError) {
+      setError(checkoutError.response?.data?.error || 'Không tạo được hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -209,7 +148,8 @@ const CreateInvoice = () => {
     <Container>
       <Sidebar />
       <LeftSection>
-        {/* Medicine Details */}
+        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
+
         {selectedMedicine && (
           <MedicineDetails>
             <h2>THÔNG TIN THUỐC</h2>
@@ -218,49 +158,33 @@ const CreateInvoice = () => {
                 <img
                   src={selectedMedicine.image}
                   alt={selectedMedicine.medicineName}
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    border: '1px solid #ddd',
-                  }}
+                  style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
                 />
               )}
               <div style={{ flex: 1 }}>
                 <p><strong>Mã thuốc:</strong> {selectedMedicine.medicineID}</p>
                 <p><strong>Tên thuốc:</strong> {selectedMedicine.medicineName}</p>
                 <p><strong>Thành phần:</strong> {selectedMedicine.ingredients}</p>
-                <p><strong>Đơn vị tính:</strong> {unitMap[selectedMedicine.unit]}</p>
-                <p><strong>Đơn giá:</strong> {selectedMedicine.unitPrice.toLocaleString()} VND</p>
-                <Input
-                  type="number"
-                  value={quantity}
-                  min="1"
-                  max={selectedMedicine.stockQuantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                />
+                <p><strong>Đơn vị tính:</strong> {unitMap[selectedMedicine.unit] || selectedMedicine.unit}</p>
+                <p><strong>Tồn kho:</strong> {selectedMedicine.stockQuantity}</p>
+                <p><strong>Đơn giá:</strong> {formatMoney(selectedMedicine.unitPrice)} VND</p>
+                <Input type="number" value={quantity} min="1" max={selectedMedicine.stockQuantity} onChange={(e) => setQuantity(Number(e.target.value))} />
                 <Button onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>
               </div>
             </div>
           </MedicineDetails>
         )}
 
-        {/* Medicine List */}
         <MedicineList>
           <h2>Danh sách thuốc</h2>
-          <Input
-            type="text"
-            placeholder="Tìm kiếm thuốc..."
-            value={searchKeyword}
-            onChange={handleSearch}
-          />
+          <Input type="text" placeholder="Tìm kiếm thuốc..." value={searchKeyword} onChange={handleSearch} />
           <Table>
             <thead>
               <tr>
                 <TableHeader>Mã thuốc</TableHeader>
                 <TableHeader>Tên thuốc</TableHeader>
                 <TableHeader>Đơn vị tính</TableHeader>
+                <TableHeader>Tồn kho</TableHeader>
                 <TableHeader>Đơn giá</TableHeader>
                 <TableHeader>Hành động</TableHeader>
               </tr>
@@ -270,11 +194,10 @@ const CreateInvoice = () => {
                 <tr key={medicine.medicineID}>
                   <TableCell>{medicine.medicineID}</TableCell>
                   <TableCell>{medicine.medicineName}</TableCell>
-                  <TableCell>{unitMap[medicine.unit]}</TableCell>
-                  <TableCell>{medicine.unitPrice.toLocaleString()} VND</TableCell>
-                  <TableCell>
-                    <Button onClick={() => setSelectedMedicine(medicine)}>Chọn</Button>
-                  </TableCell>
+                  <TableCell>{unitMap[medicine.unit] || medicine.unit}</TableCell>
+                  <TableCell>{medicine.stockQuantity}</TableCell>
+                  <TableCell>{formatMoney(medicine.unitPrice)} VND</TableCell>
+                  <TableCell><Button onClick={() => setSelectedMedicine(medicine)}>Chọn</Button></TableCell>
                 </tr>
               ))}
             </tbody>
@@ -283,7 +206,6 @@ const CreateInvoice = () => {
       </LeftSection>
 
       <RightSection>
-        {/* Cart */}
         <Cart>
           <h2>Giỏ hàng</h2>
           <Table>
@@ -301,68 +223,35 @@ const CreateInvoice = () => {
                 <tr key={item.medicineID}>
                   <TableCell>{item.medicineName}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{item.unitPrice.toLocaleString()} VND</TableCell>
-                  <TableCell>{(item.quantity * item.unitPrice).toLocaleString()} VND</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleRemoveFromCart(item.medicineID)}>Xóa</Button>
-                  </TableCell>
+                  <TableCell>{formatMoney(item.unitPrice)} VND</TableCell>
+                  <TableCell>{formatMoney(item.quantity * item.unitPrice)} VND</TableCell>
+                  <TableCell><Button onClick={() => setCart(cart.filter((cartItem) => cartItem.medicineID !== item.medicineID))}>Xóa</Button></TableCell>
                 </tr>
               ))}
             </tbody>
           </Table>
         </Cart>
 
-        {/* Invoice Info */}
         <InvoiceInfo>
           <h2>Thông tin hóa đơn</h2>
-          <Input
-            type="text"
-            placeholder="Tên khách hàng"
-            value={form.customerName}
-            onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-            required
-          />
-          <Input
-            type="text"
-            placeholder="Số điện thoại"
-            value={form.phoneNumber}
-            onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
-            required
-          />
-          <Select
-            aria-label="Chọn giới tính"
-            value={form.gender}
-            onChange={(e) => setForm({ ...form, gender: e.target.value })}
-            required
-          >
+          <Input type="text" placeholder="Tên khách hàng" value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} required />
+          <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required />
+          <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
             <option value="">Chọn giới tính</option>
             <option value="Male">Nam</option>
             <option value="Female">Nữ</option>
+            <option value="Other">Khác</option>
           </Select>
-          <Input
-            type="text"
-            placeholder="Địa chỉ"
-            value={form.address}
-            onChange={(e) => setForm({ ...form, address: e.target.value })}
-            required
-          />
-          <Select
-            value={form.paymentMethod}
-            onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })}
-            required
-          >
+          <Input type="text" placeholder="Địa chỉ" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required />
+          <Select value={form.paymentMethod} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} required>
             <option value="Cash">Tiền mặt</option>
             <option value="Card">Thẻ</option>
           </Select>
-          <Select
-            value={form.status}
-            onChange={(e) => setForm({ ...form, status: e.target.value })}
-            required
-          >
+          <Select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} required>
             <option value="Paid">Đã thanh toán</option>
             <option value="Pending">Chưa thanh toán</option>
           </Select>
-          <h3>Tổng hóa đơn: {calculateTotal().toLocaleString()} VND</h3>
+          <h3>Tổng hóa đơn: {formatMoney(calculateTotal())} VND</h3>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
             <Button style={{ backgroundColor: 'red' }} onClick={() => setCart([])}>HỦY BỎ</Button>
             <Button style={{ backgroundColor: 'green' }} onClick={handleCheckout}>TẠO HÓA ĐƠN</Button>
@@ -370,7 +259,6 @@ const CreateInvoice = () => {
         </InvoiceInfo>
       </RightSection>
 
-      {/* Invoice Modal */}
       {showInvoiceModal && invoiceData && (
         <div id="invoice-print-area" style={{ padding: '1rem', backgroundColor: '#fff', borderRadius: '8px' }}>
           <h2>HÓA ĐƠN THANH TOÁN</h2>
@@ -393,18 +281,18 @@ const CreateInvoice = () => {
               </tr>
             </thead>
             <tbody>
-              {invoiceData.medicines.map((item, index) => (
-                <tr key={index}>
+              {invoiceData.medicines.map((item) => (
+                <tr key={item.medicineID}>
                   <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.medicineName}</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{unitMap[item.unit]}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{unitMap[item.unit] || item.unit}</td>
                   <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.quantity}</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.unitPrice.toLocaleString()} VND</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{(item.quantity * item.unitPrice).toLocaleString()} VND</td>
+                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatMoney(item.unitPrice)} VND</td>
+                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatMoney(item.quantity * item.unitPrice)} VND</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <h3>Tổng tiền: {invoiceData.totalAmount.toLocaleString()} VND</h3>
+          <h3>Tổng tiền: {formatMoney(invoiceData.totalAmount)} VND</h3>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
             <button onClick={() => setShowInvoiceModal(false)}>Đóng</button>
             <button onClick={() => window.print()}>In hóa đơn</button>

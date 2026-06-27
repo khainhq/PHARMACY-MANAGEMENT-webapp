@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import { BiShow, BiHide } from 'react-icons/bi';
@@ -21,9 +21,7 @@ const LoginForm = styled.form`
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
-  position: relative;
-  overflow: hidden;
+  max-width: 420px;
 
   @media (max-width: 480px) {
     padding: 2rem;
@@ -54,8 +52,26 @@ const LoginTitle = styled.h2`
 const LoginSubtitle = styled.p`
   color: ${theme.colors.gray};
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+`;
+
+const SwitchPanel = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+const SwitchLink = styled(Link)`
+  text-align: center;
+  text-decoration: none;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid ${({ $active }) => ($active ? theme.colors.primary : '#d1d5db')};
+  background: ${({ $active }) => ($active ? '#e0f2fe' : '#ffffff')};
+  color: ${({ $active }) => ($active ? theme.colors.primary : theme.colors.darkGray)};
+  font-weight: 700;
 `;
 
 const FormGroup = styled.div`
@@ -82,7 +98,7 @@ const FormControl = styled.input`
   &:focus {
     outline: none;
     border-color: ${theme.colors.primary};
-    box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
   }
 
   &::placeholder {
@@ -164,9 +180,6 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
   text-align: center;
   font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const LoadingSpinner = styled(AiOutlineLoading3Quarters)`
@@ -177,6 +190,12 @@ const LoadingSpinner = styled(AiOutlineLoading3Quarters)`
   }
 `;
 
+const roleHome = {
+  Admin: '/dashboard',
+  Sales: '/sales-dashboard',
+  Product_manager: '/product-manager-dashboard',
+};
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -185,15 +204,16 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminLogin = location.pathname === '/admin-login';
 
   useEffect(() => {
-    // Check for saved credentials
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      setUsername(savedUsername);
-      setRememberMe(true);
-    }
-  }, []);
+    const savedUsername = localStorage.getItem(isAdminLogin ? 'adminUsername' : 'username');
+    setUsername(savedUsername || '');
+    setRememberMe(Boolean(savedUsername));
+    setPassword('');
+    setError('');
+  }, [isAdminLogin]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -201,35 +221,27 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login/', { username, password });
+      const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', { username, password });
       const { token, role } = response.data;
-      
-      // Save credentials if remember me is checked
+      const isAdminAccount = role === 'Admin';
+
+      if (isAdminLogin !== isAdminAccount) {
+        setError(isAdminLogin
+          ? 'Tài khoản này không thuộc quyền quản trị viên.'
+          : 'Tài khoản quản trị viên vui lòng đăng nhập ở cổng Admin.');
+        return;
+      }
+
+      const storageKey = isAdminLogin ? 'adminUsername' : 'username';
       if (rememberMe) {
-        localStorage.setItem('username', username);
+        localStorage.setItem(storageKey, username);
       } else {
-        localStorage.removeItem('username');
+        localStorage.removeItem(storageKey);
       }
 
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('role', role);
-
-      // Navigate based on role
-      switch (role) {
-        case 'Admin':
-          navigate('/dashboard');
-          break;
-        case 'Sales':
-        case 'Nhân viên bán hàng':
-          navigate('/sales-dashboard');
-          break;
-        case 'Product_manager':
-        case 'Nhân viên quản lý sản phẩm':
-          navigate('/product-manager-dashboard');
-          break;
-        default:
-          navigate('/');
-      }
+      navigate(roleHome[role] || '/');
     } catch (err) {
       setError('Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.');
     } finally {
@@ -242,9 +254,18 @@ const Login = () => {
       <LoginForm onSubmit={handleSubmit}>
         <LogoContainer>
           <Logo src="/images/pharmacare/pharmacare-logo.png" alt="PharmaCare Logo" />
-          <LoginTitle>Chào mừng trở lại</LoginTitle>
-          <LoginSubtitle>Đăng nhập để tiếp tục quản lý nhà thuốc</LoginSubtitle>
+          <LoginTitle>{isAdminLogin ? 'Đăng nhập Admin' : 'Đăng nhập nhân viên'}</LoginTitle>
+          <LoginSubtitle>
+            {isAdminLogin
+              ? 'Cổng dành riêng cho quản trị viên hệ thống.'
+              : 'Cổng dành cho nhân viên bán hàng và quản lý sản phẩm.'}
+          </LoginSubtitle>
         </LogoContainer>
+
+        <SwitchPanel aria-label="Chọn cổng đăng nhập">
+          <SwitchLink to="/login" $active={!isAdminLogin}>Nhân viên</SwitchLink>
+          <SwitchLink to="/admin-login" $active={isAdminLogin}>Admin</SwitchLink>
+        </SwitchPanel>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -266,7 +287,7 @@ const Login = () => {
           <PasswordWrapper>
             <FormControl
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Nhập mật khẩu"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -276,6 +297,7 @@ const Login = () => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               tabIndex="-1"
+              aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
             >
               {showPassword ? <BiHide size={20} /> : <BiShow size={20} />}
             </PasswordToggle>

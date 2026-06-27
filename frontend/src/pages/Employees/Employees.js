@@ -17,126 +17,27 @@ import {
   genderMap,
 } from './EmployeesStyles';
 
+const API_BASE = 'http://127.0.0.1:8000';
+const emptyForm = { fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' };
+
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [form, setForm] = useState({
-    fullName: '',
-    phoneNumber: '',
-    gender: '',
-    yearOfBirth: '',
-    hireDate: '',
-  });
+  const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployeeID, setEditingEmployeeID] = useState(null);
+  const [error, setError] = useState('');
 
-  // Fetch danh sách nhân viên
+  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+
   const fetchEmployees = async () => {
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
     try {
-      const response = await axios.get('http://localhost:8000/api/auth/employees/', { headers });
+      const response = await axios.get(`${API_BASE}/api/auth/employees/`, { headers: authHeaders() });
       setEmployees(response.data);
-      setFilteredEmployees(response.data); // Hiển thị tất cả nhân viên ban đầu
-    } catch (error) {
-      console.error('Error fetching employees:', error.response?.data || error.message);
-    }
-  };
-
-  // Tìm kiếm nhân viên
-  const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase();
-    setSearchKeyword(keyword);
-    const filtered = employees.filter((employee) =>
-      employee.fullName.toLowerCase().includes(keyword) ||
-      employee.phoneNumber.includes(keyword) ||
-      employee.employeeID.toLowerCase().includes(keyword)
-    );
-    setFilteredEmployees(filtered);
-  };
-
-  // Tạo mã nhân viên ngẫu nhiên
-  const generateEmployeeID = () => {
-    const prefix = Math.random().toString(36).substring(2, 4).toUpperCase(); // Hai ký tự chữ cái
-    const middle = Math.floor(10 + Math.random() * 90); // Hai chữ số
-    const suffix = Math.random().toString(36).substring(2, 6).toUpperCase(); // Bốn ký tự chữ cái hoặc số
-    return `${prefix}${middle}${suffix}`;
-  };
-
-  // Thêm nhân viên mới
-  const handleAddEmployee = async (e) => {
-    e.preventDefault();
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-    const employeeID = generateEmployeeID();
-    try {
-      const payload = { ...form, employeeID };
-      await axios.post('http://localhost:8000/api/auth/employees/', payload, { headers });
-      setForm({ fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' });
-      setShowForm(false);
-      fetchEmployees();
-    } catch (error) {
-      console.error('Error adding employee:', error.response?.data || error.message);
-    }
-  };
-
-  // Hiển thị form chỉnh sửa nhân viên
-  const handleEditEmployee = (employee) => {
-    setForm({
-      fullName: employee.fullName,
-      phoneNumber: employee.phoneNumber,
-      gender: employee.gender,
-      yearOfBirth: employee.yearOfBirth,
-      hireDate: employee.hireDate,
-    });
-    setShowForm(true);
-    setEditingEmployeeID(employee.employeeID); // Lưu ID nhân viên đang chỉnh sửa
-  };
-
-  // Cập nhật thông tin nhân viên
-  const handleUpdateEmployee = async (e) => {
-    e.preventDefault();
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-  
-    try {
-      // Kiểm tra và chuẩn hóa dữ liệu trước khi gửi
-      const payload = {
-        employeeID: editingEmployeeID,
-        fullName: form.fullName.trim(),
-        phoneNumber: form.phoneNumber.trim(),
-        gender: form.gender,
-        yearOfBirth: parseInt(form.yearOfBirth, 10),
-        hireDate: form.hireDate, // Đảm bảo định dạng YYYY-MM-DD
-        is_active: true, // Thêm trường is_active nếu cần
-      };
-  
-      // Gửi yêu cầu PUT đến API
-      await axios.put(`http://localhost:8000/api/auth/employees/${editingEmployeeID}/`, payload, { headers });
-  
-      // Reset form và cập nhật danh sách nhân viên
-      setForm({ fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' });
-      setShowForm(false);
-      setEditingEmployeeID(null);
-      fetchEmployees();
-    } catch (error) {
-      console.error('Error updating employee:', error.response?.data || error.message);
-    }
-  };
-
-  // Xóa nhân viên
-  const handleDeleteEmployee = async (employeeID) => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa nhân viên này?');
-    if (!confirmDelete) return;
-
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-    try {
-      await axios.delete(`http://localhost:8000/api/auth/employees/${employeeID}/`, { headers });
-      fetchEmployees();
-    } catch (error) {
-      console.error('Error deleting employee:', error.response?.data || error.message);
+      setFilteredEmployees(response.data);
+    } catch (fetchError) {
+      setError('Không tải được danh sách nhân viên.');
     }
   };
 
@@ -144,80 +45,122 @@ const Employees = () => {
     fetchEmployees();
   }, []);
 
+  const handleSearch = (e) => {
+    const keyword = e.target.value.toLowerCase();
+    setSearchKeyword(keyword);
+    setFilteredEmployees(employees.filter((employee) =>
+      employee.fullName.toLowerCase().includes(keyword) ||
+      employee.phoneNumber.includes(keyword) ||
+      employee.employeeID.toLowerCase().includes(keyword)
+    ));
+  };
+
+  const generateEmployeeID = () => {
+    const prefix = Math.random().toString(36).substring(2, 4).toUpperCase();
+    const middle = Math.floor(10 + Math.random() * 90);
+    const suffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `${prefix}${middle}${suffix}`;
+  };
+
+  const buildPayload = (employeeID) => ({
+    employeeID,
+    fullName: form.fullName.trim(),
+    phoneNumber: form.phoneNumber.trim(),
+    gender: form.gender,
+    yearOfBirth: Number(form.yearOfBirth),
+    hireDate: form.hireDate,
+    is_active: true,
+  });
+
+  const resetForm = () => {
+    setForm(emptyForm);
+    setShowForm(false);
+    setEditingEmployeeID(null);
+  };
+
+  const handleAddEmployee = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await axios.post(`${API_BASE}/api/auth/employees/`, buildPayload(generateEmployeeID()), { headers: authHeaders() });
+      resetForm();
+      await fetchEmployees();
+    } catch (addError) {
+      setError(addError.response?.data?.error || 'Không thêm được nhân viên. Vui lòng kiểm tra số điện thoại hoặc dữ liệu nhập.');
+    }
+  };
+
+  const handleEditEmployee = (employee) => {
+    setForm({
+      fullName: employee.fullName,
+      phoneNumber: employee.phoneNumber,
+      gender: employee.gender,
+      yearOfBirth: employee.yearOfBirth,
+      hireDate: employee.hireDate ? employee.hireDate.split('T')[0] : '',
+    });
+    setShowForm(true);
+    setEditingEmployeeID(employee.employeeID);
+  };
+
+  const handleUpdateEmployee = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await axios.put(`${API_BASE}/api/auth/employees/${editingEmployeeID}/`, buildPayload(editingEmployeeID), { headers: authHeaders() });
+      resetForm();
+      await fetchEmployees();
+    } catch (updateError) {
+      setError(updateError.response?.data?.error || 'Không cập nhật được nhân viên. Vui lòng kiểm tra lại dữ liệu.');
+    }
+  };
+
+  const handleDeleteEmployee = async (employeeID) => {
+    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa nhân viên này?');
+    if (!confirmDelete) return;
+    setError('');
+    try {
+      await axios.delete(`${API_BASE}/api/auth/employees/${employeeID}/`, { headers: authHeaders() });
+      await fetchEmployees();
+    } catch (deleteError) {
+      setError('Không xóa được nhân viên này vì có thể đang liên kết với tài khoản hoặc chứng từ.');
+    }
+  };
+
   return (
     <Container>
       <Sidebar />
       <Content>
         <Toolbar>
-        <div>
+          <div>
             <Button onClick={() => { setShowForm(!showForm); setEditingEmployeeID(null); }}>
-              <FaUserPlus /> Thêm Nhân viên
+              <FaUserPlus /> Thêm nhân viên
             </Button>
           </div>
           <div>
-            <SearchInput
-              type="text"
-              placeholder="Tìm kiếm nhân viên..."
-              value={searchKeyword}
-              onChange={handleSearch}
-            />
+            <SearchInput type="text" placeholder="Tìm kiếm nhân viên..." value={searchKeyword} onChange={handleSearch} />
             <FaSearch style={{ marginLeft: '0.5rem', color: '#374151' }} />
           </div>
         </Toolbar>
 
+        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
+
         {showForm && (
           <Form onSubmit={editingEmployeeID ? handleUpdateEmployee : handleAddEmployee}>
-            <Input
-              type="text"
-              placeholder="Họ tên"
-              value={form.fullName}
-              onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-              required
-            />
-            <Input
-              type="text"
-              placeholder="Số điện thoại"
-              value={form.phoneNumber}
-              onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
-              required
-            />
-            <Select
-              value={form.gender}
-              onChange={(e) => setForm({ ...form, gender: e.target.value })}
-              required
-            >
+            <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
+            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required />
+            <Select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
+              <option value="Other">Khác</option>
             </Select>
-            <Input
-              type="number"
-              placeholder="Năm sinh"
-              value={form.yearOfBirth}
-              onChange={(e) => setForm({ ...form, yearOfBirth: e.target.value })}
-              required
-            />
-            <Input
-              type="date"
-              placeholder="Ngày vào làm"
-              value={form.hireDate}
-              onChange={(e) => setForm({ ...form, hireDate: e.target.value })}
-              required
-            />
+            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => setForm({ ...form, yearOfBirth: e.target.value })} required />
+            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => setForm({ ...form, hireDate: e.target.value })} required />
             <div style={{ display: 'flex', gap: '1rem' }}>
-                  <Button type="submit">{editingEmployeeID ? 'Cập nhật' : 'Thêm nhân viên'}</Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setShowForm(false);
-                      setForm({ fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' });
-                      setEditingEmployeeID(null);
-                    }}
-                  >
-                    Hủy
-                  </Button>
-                </div>
-              </Form>
+              <Button type="submit">{editingEmployeeID ? 'Cập nhật' : 'Thêm nhân viên'}</Button>
+              <Button type="button" onClick={resetForm}>Hủy</Button>
+            </div>
+          </Form>
         )}
 
         <h2>DANH SÁCH THÔNG TIN NHÂN VIÊN</h2>
@@ -241,12 +184,12 @@ const Employees = () => {
                 <TableCell>{employee.employeeID}</TableCell>
                 <TableCell>{employee.fullName}</TableCell>
                 <TableCell>{employee.phoneNumber}</TableCell>
-                <TableCell>{genderMap[employee.gender]}</TableCell>
+                <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
                 <TableCell>{employee.yearOfBirth}</TableCell>
-                <TableCell>{employee.hireDate}</TableCell>
+                <TableCell>{employee.hireDate ? employee.hireDate.split('T')[0] : ''}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>
-                  <Button onClick={() => handleDeleteEmployee(employee.employeeID)}style={{ marginLeft: '0.5rem' }}>Xóa</Button>
+                  <Button onClick={() => handleDeleteEmployee(employee.employeeID)} style={{ marginLeft: '0.5rem' }}>Xóa</Button>
                 </TableCell>
               </tr>
             ))}

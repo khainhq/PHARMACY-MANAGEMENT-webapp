@@ -92,6 +92,93 @@ MapCrud<InvoiceDetail, int>(app, "/api/sales/invoice-details/", db => db.Invoice
 MapCrud<Payment, string>(app, "/api/medicines/payments/", db => db.Payments, x => x.PaymentID);
 MapCrud<PaymentDetail, int>(app, "/api/medicines/payment-details/", db => db.PaymentDetails, x => x.Id);
 
+app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbContext db) =>
+{
+    if (request.items.Count == 0)
+    {
+        return Results.BadRequest(new { error = "Gio hang dang trong" });
+    }
+
+    var customerName = request.customerName.Trim();
+    var phoneNumber = request.phoneNumber.Trim();
+    if (string.IsNullOrWhiteSpace(customerName) || string.IsNullOrWhiteSpace(phoneNumber))
+    {
+        return Results.BadRequest(new { error = "Vui long nhap ten khach hang va so dien thoai" });
+    }
+
+    await using var transaction = await db.Database.BeginTransactionAsync();
+
+    var customer = await db.Customers.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+    if (customer is null)
+    {
+        customer = new Customer
+        {
+            CustomerID = await GenerateCustomerIdAsync(db),
+            FullName = customerName,
+            PhoneNumber = phoneNumber,
+            Gender = string.IsNullOrWhiteSpace(request.gender) ? "Other" : request.gender,
+            JoinDate = DateTime.UtcNow.Date
+        };
+        db.Customers.Add(customer);
+        await db.SaveChangesAsync();
+    }
+
+    var medicineIds = request.items.Select(x => x.medicine).Distinct().ToList();
+    var medicines = await db.Medicines.Where(x => medicineIds.Contains(x.MedicineID)).ToDictionaryAsync(x => x.MedicineID);
+
+    foreach (var item in request.items)
+    {
+        if (!medicines.TryGetValue(item.medicine, out var medicine))
+        {
+            return Results.BadRequest(new { error = $"Khong tim thay thuoc {item.medicine}" });
+        }
+
+        if (item.quantity <= 0)
+        {
+            return Results.BadRequest(new { error = "So luong thuoc phai lon hon 0" });
+        }
+
+        if (medicine.StockQuantity < item.quantity)
+        {
+            return Results.BadRequest(new { error = $"Thuoc {medicine.MedicineName} khong du so luong ton kho" });
+        }
+    }
+
+    var invoice = new Invoice
+    {
+        CustomerID = customer.CustomerID,
+        Address = request.address.Trim(),
+        PaymentMethod = request.paymentMethod,
+        Status = request.status
+    };
+    db.Invoices.Add(invoice);
+    await db.SaveChangesAsync();
+
+    foreach (var item in request.items)
+    {
+        var medicine = medicines[item.medicine];
+        db.InvoiceDetails.Add(new InvoiceDetail
+        {
+            InvoiceID = invoice.InvoiceID,
+            MedicineID = item.medicine,
+            Quantity = item.quantity,
+            UnitPrice = item.unitPrice > 0 ? item.unitPrice : medicine.UnitPrice
+        });
+        medicine.StockQuantity -= item.quantity;
+    }
+
+    await db.SaveChangesAsync();
+    await transaction.CommitAsync();
+
+    return Results.Ok(new
+    {
+        invoiceID = invoice.InvoiceID,
+        invoiceTime = invoice.InvoiceTime,
+        customerID = customer.CustomerID,
+        totalAmount = request.items.Sum(x => x.quantity * x.unitPrice)
+    });
+}).RequireToken();
+
 app.MapGet("/api/sales/invoice-statistics/", async (PharmacyDbContext db) =>
     Results.Ok(new
     {
@@ -221,6 +308,20 @@ static object? ConvertJson(JsonElement value, Type type) => type.Name switch
     _ => JsonSerializer.Deserialize(value.GetRawText(), type)
 };
 
+static async Task<string> GenerateCustomerIdAsync(PharmacyDbContext db)
+{
+    var next = await db.Customers.CountAsync() + 1;
+    string id;
+    do
+    {
+        id = $"CUS{next:000}";
+        next++;
+    }
+    while (await db.Customers.AnyAsync(x => x.CustomerID == id));
+
+    return id;
+}
+
 static void NormalizeAccount(Account account)
 {
     if (!string.IsNullOrWhiteSpace(account.Password))
@@ -273,3 +374,12 @@ sealed class TokenStore
 record Session(int AccountID, string Username, string Role);
 record LoginRequest(string username, string password);
 record ResetPasswordRequest(string username, string new_password);
+record CheckoutItem(string medicine, int quantity, decimal unitPrice);
+record CheckoutRequest(
+    string customerName,
+    string phoneNumber,
+    string address,
+    string gender,
+    string paymentMethod,
+    string status,
+    List<CheckoutItem> items);
