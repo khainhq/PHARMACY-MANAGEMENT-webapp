@@ -1,138 +1,295 @@
-# Huong dan su dung PharmaCare cho chatbot
+# Hướng dẫn sử dụng PharmaCare cho chatbot
 
-Tai lieu nay la nguon kien thuc noi bo de tro ly PharmaCare huong dan nguoi dung thao tac trong he thong quan ly nha thuoc. Chatbot chi tra loi cac cau hoi lien quan den cach su dung ung dung, phan quyen, quy trinh thao tac va cac loi thuong gap trong PharmaCare.
+Tài liệu này là nguồn kiến thức nội bộ để Trợ lý PharmaCare hướng dẫn người dùng thao tác trong hệ thống quản lý nhà thuốc. Khi trả lời, chatbot chỉ dựa vào nội dung trong tài liệu này và các câu hỏi liên quan đến cách sử dụng ứng dụng, phân quyền, quy trình thao tác, lỗi thường gặp và cách chạy dự án.
 
-## Vai tro cua chatbot
+## Quy tắc trả lời của chatbot
 
-- Ten hien thi: Tro ly PharmaCare.
-- Nhiem vu: huong dan nguoi dung su dung cac phan he cua he thong nha thuoc PharmaCare.
-- Khong tu nhan la Gemini, Google, OpenAI hay mot mo hinh AI ben ngoai.
-- Khi duoc hoi "ban la ai", hay tra loi: "Toi la Tro ly PharmaCare, nhiem vu cua toi la huong dan ban su dung he thong quan ly nha thuoc PharmaCare."
-- Neu cau hoi nam ngoai pham vi su dung he thong, hay tu choi ngan gon va noi ro: "Chuc nang cua toi la huong dan su dung PharmaCare. Ban co the hoi toi ve dang nhap, dashboard, thuoc, hoa don, khach hang, nhan vien, nha cung cap, phieu nhap, bao cao hoac tai khoan."
+- Tên hiển thị: Trợ lý PharmaCare.
+- Vai trò: hỗ trợ người dùng sử dụng hệ thống quản lý nhà thuốc PharmaCare.
+- Luôn trả lời bằng tiếng Việt tự nhiên, rõ ràng, ngắn gọn nhưng đủ bước.
+- Không tự nhận là Gemini, Google, OpenAI, ChatGPT hay bất kỳ mô hình AI bên ngoài nào.
+- Khi được hỏi "bạn là ai", hãy trả lời: "Tôi là Trợ lý PharmaCare, nhiệm vụ của tôi là hướng dẫn bạn sử dụng hệ thống quản lý nhà thuốc PharmaCare."
+- Nếu người dùng hỏi ngoài phạm vi hệ thống, hãy trả lời: "Chức năng của tôi là hướng dẫn sử dụng PharmaCare. Bạn có thể hỏi tôi về đăng nhập, dashboard, thuốc, hóa đơn, khách hàng, nhân viên, nhà cung cấp, phiếu nhập, báo cáo hoặc tài khoản."
+- Nếu câu hỏi chưa rõ, hãy hỏi lại một câu ngắn để xác định người dùng đang gặp lỗi ở frontend, backend, Docker, đăng nhập hay thao tác nghiệp vụ.
+- Không bịa dữ liệu doanh thu, khách hàng, hóa đơn hoặc tài khoản nếu tài liệu không nêu rõ.
+- Khi hướng dẫn thao tác, ưu tiên viết theo từng bước đánh số.
 
-## Dang nhap va phan quyen
+## Cách chạy dự án bằng Docker
 
-He thong co hai cong dang nhap:
+Người dùng có thể chạy toàn bộ hệ thống bằng Docker Desktop:
 
-- Cong nhan vien: duong dan `/login`, dung cho nhan vien ban hang va quan ly san pham.
-- Cong Admin: duong dan `/admin-login`, dung rieng cho quan tri vien.
+1. Mở Docker Desktop và chờ Docker chạy ổn định.
+2. Mở terminal tại thư mục dự án.
+3. Nếu muốn chatbot dùng Gemini thật, tạo file `.env` từ file `.env.example`.
+4. Điền khóa vào dòng `GEMINI_API_KEY=...` trong file `.env`.
+5. Chạy lệnh `docker compose up -d --build`.
+6. Mở frontend tại `http://localhost:3000`.
+7. Backend chạy tại `http://127.0.0.1:8000`.
+8. SQL Server chạy trong container và được backend tự kết nối.
 
-Tai khoan mau:
+Nếu không có `GEMINI_API_KEY`, chatbot vẫn hoạt động ở chế độ dự phòng nhưng câu trả lời sẽ đơn giản hơn. Khi có khóa Gemini hợp lệ, backend sẽ gọi Gemini 2.5 Flash để trả lời dựa trên tài liệu này.
 
-- Admin: `admin / admin123`, vao dashboard quan tri.
-- Ban hang: `sales / sales123`, vao dashboard ban hang.
-- Quan ly san pham: `product / product123`, vao dashboard quan ly san pham.
+## Đăng nhập và phân quyền
 
-Neu dang nhap sai cong, he thong se nhac dung cong phu hop voi vai tro.
+Hệ thống có hai cổng đăng nhập:
 
-## Dashboard quan tri
+- Cổng nhân viên: `/login`, dùng cho nhân viên bán hàng và quản lý sản phẩm.
+- Cổng Admin: `/admin-login`, dùng riêng cho quản trị viên.
 
-Dashboard quan tri giup xem tong quan doanh thu, hoa don gan day, so nhan vien, so loai thuoc, thuoc het han va thuoc sap het han. Tu cac the thong ke, nguoi dung co the bam de di nhanh den trang lien quan.
+Tài khoản mẫu:
 
-## Dashboard ban hang
+- Admin: `admin / admin123`, vào dashboard quản trị.
+- Bán hàng: `sales / sales123`, vào dashboard bán hàng.
+- Quản lý sản phẩm: `product / product123`, vào dashboard quản lý sản phẩm.
 
-Dashboard ban hang tap trung vao quy trinh ban hang. Nguoi dung co the vao:
+Nếu đăng nhập sai cổng, hệ thống sẽ nhắc người dùng dùng đúng cổng theo vai trò. Nếu nhập đúng tài khoản nhưng không vào được, hãy kiểm tra backend có đang chạy không, URL API có dùng `http://127.0.0.1:8000` không và container backend có bị tắt không.
 
-- Hoa Don: tao hoa don moi hoac xem danh sach hoa don.
-- Khach Hang: them, sua, xoa va tim kiem khach hang.
+## Dashboard quản trị
 
-## Dashboard quan ly san pham
+Dashboard quản trị dành cho Admin. Trang này hiển thị tổng quan tình hình nhà thuốc:
 
-Dashboard quan ly san pham tap trung vao kho va nhap hang. Nguoi dung co the vao:
+- Doanh thu và số liệu tổng hợp.
+- Số hóa đơn gần đây.
+- Số lượng nhân viên.
+- Số loại thuốc đang quản lý.
+- Thuốc hết hạn hoặc sắp hết hạn.
+- Các chỉ số giúp quản lý kiểm tra nhanh hoạt động kinh doanh.
 
-- Thuoc: them, sua, xoa, tim kiem va tai danh sach thuoc.
-- Nha Cung Cap: quan ly thong tin nha cung cap.
-- Phieu Nhap: tao phieu nhap va xem danh sach phieu nhap.
+Admin có thể dùng các thẻ thống kê hoặc menu bên trái để đi tới nhân viên, tài khoản, thuốc, hóa đơn, nhà cung cấp, phiếu nhập và báo cáo.
 
-## Quan ly thuoc
+## Dashboard bán hàng
 
-Tai trang Thuoc, nguoi dung co the:
+Dashboard bán hàng dành cho vai trò Sales. Người dùng nhóm này tập trung vào quy trình bán thuốc và chăm sóc khách hàng.
 
-1. Bam `THEM` de mo form them thuoc.
-2. Nhap ten thuoc, thanh phan, so luong, gia nhap, don gia, han su dung.
-3. Chon don vi tinh, danh muc va xuat xu.
-4. Bam `Them moi` de luu.
-5. Bam `Sua` tren tung dong de cap nhat thuoc.
-6. Bam `Xoa` de xoa neu thuoc chua bi lien ket voi hoa don hoac phieu nhap.
-7. Bam `Tai xuong` de xuat danh sach thuoc ra Excel.
+Các mục thường dùng:
 
-Danh muc thuoc hien co:
+- Hóa đơn: tạo hóa đơn mới, xem danh sách hóa đơn, in hóa đơn.
+- Khách hàng: thêm, sửa, xóa và tìm kiếm khách hàng.
+- Thuốc: xem danh sách thuốc để kiểm tra tên thuốc, giá bán và số lượng tồn.
 
-- Thuoc giam dau.
-- Tieu hoa.
-- Thuoc khang sinh.
-- Vitamin - Khoang chat.
-- Cam cum - Ho.
-- Tim mach - Huyet ap.
-- Da lieu.
+Nhân viên bán hàng không nên thấy các chức năng quản trị nhạy cảm như quản lý tài khoản hoặc phân quyền.
 
-## Tao hoa don
+## Dashboard quản lý sản phẩm
 
-Quy trinh tao hoa don:
+Dashboard quản lý sản phẩm dành cho vai trò Product_manager. Người dùng nhóm này phụ trách kho, thuốc, nhà cung cấp và nhập hàng.
 
-1. Vao `Hoa Don` > `Tao Hoa Don`.
-2. Tim thuoc theo ma hoac ten.
-3. Bam `Chon` tai thuoc can ban.
-4. Nhap so luong, sau do bam `Them vao gio hang`.
-5. Nhap thong tin khach hang: ten, so dien thoai, gioi tinh, dia chi.
-6. Chon phuong thuc thanh toan va trang thai.
-7. Bam `TAO HOA DON`.
-8. Neu thanh cong, he thong hien hoa don thanh toan va co nut in.
+Các mục thường dùng:
 
-Luu y:
+- Thuốc: thêm, sửa, xóa, tìm kiếm, tải danh sách thuốc.
+- Nhà cung cấp: quản lý thông tin nhà cung cấp.
+- Phiếu nhập: tạo phiếu nhập, xem danh sách phiếu nhập.
+- Báo cáo hoặc thống kê kho nếu tài khoản được cấp quyền xem.
 
-- Khong the tao hoa don khi gio hang rong.
-- So luong ban khong duoc vuot ton kho.
-- Khi tao hoa don thanh cong, ton kho se tu dong giam.
-- He thong tao khach hang moi neu chua co so dien thoai trong danh sach khach hang.
+## Quản lý thuốc
 
-## Danh sach hoa don
+Tại trang Thuốc, người dùng có thể quản lý danh mục thuốc trong nhà thuốc.
 
-Tai trang danh sach hoa don, nguoi dung co the xem cac hoa don da tao, tim kiem hoa don, xem chi tiet va xoa hoa don neu can.
+Quy trình thêm thuốc:
 
-## Quan ly khach hang
+1. Vào menu `Thuốc`.
+2. Bấm nút `THÊM`.
+3. Nhập tên thuốc, thành phần, số lượng, giá nhập, đơn giá và hạn sử dụng.
+4. Chọn đơn vị tính, danh mục và xuất xứ.
+5. Kiểm tra lại dữ liệu bắt buộc.
+6. Bấm `Thêm mới` để lưu.
 
-Tai trang Khach Hang, nguoi dung co the them, sua, xoa va tim kiem khach hang theo ten, so dien thoai hoac ma khach hang.
+Quy trình sửa thuốc:
 
-## Quan ly nhan vien
+1. Tìm thuốc cần sửa trong danh sách.
+2. Bấm `Sửa`.
+3. Cập nhật thông tin cần thay đổi.
+4. Bấm lưu để hoàn tất.
 
-Tai trang Nhan Vien, Admin co the:
+Quy trình xóa thuốc:
 
-1. Bam `Them nhan vien`.
-2. Nhap ho ten, so dien thoai, gioi tinh, nam sinh va ngay vao lam.
-3. Bam `Them nhan vien` de luu.
-4. Bam `Sua` de cap nhat thong tin.
-5. Bam `Xoa` de xoa neu nhan vien khong bi rang buoc voi tai khoan hoac chung tu.
+1. Tìm thuốc cần xóa.
+2. Bấm `Xóa`.
+3. Xác nhận thao tác nếu hệ thống yêu cầu.
+4. Nếu thuốc đã liên kết với hóa đơn hoặc phiếu nhập, hệ thống có thể không cho xóa để bảo toàn dữ liệu.
 
-Neu them nhan vien loi, hay kiem tra so dien thoai co trung hay khong va cac truong bat buoc da duoc nhap day du chua.
+Danh mục thuốc hiện có:
 
-## Quan ly tai khoan
+- Thuốc giảm đau.
+- Tiêu hóa.
+- Thuốc kháng sinh.
+- Vitamin - Khoáng chất.
+- Cảm cúm - Ho.
+- Tim mạch - Huyết áp.
+- Da liễu.
 
-Tai trang Tai Khoan, Admin co the tao tai khoan, gan nhan vien voi vai tro, kich hoat hoac vo hieu hoa tai khoan. Vai tro backend gom: Admin, Sales va Product_manager.
+Lỗi thường gặp khi thêm hoặc sửa thuốc:
 
-## Quan ly nha cung cap
+- Thiếu tên thuốc, số lượng, giá hoặc hạn sử dụng.
+- Chưa chọn danh mục, đơn vị tính hoặc xuất xứ.
+- Giá hoặc số lượng nhập không hợp lệ.
+- Backend chưa chạy hoặc mất kết nối SQL Server.
 
-Tai trang Nha Cung Cap, nguoi dung co the them, sua, xoa, tim kiem va xuat Excel danh sach nha cung cap.
+## Tạo hóa đơn
 
-## Tao phieu nhap
+Quy trình tạo hóa đơn bán hàng:
 
-Quy trinh tao phieu nhap:
+1. Vào `Hóa đơn`.
+2. Chọn `Tạo hóa đơn`.
+3. Tìm thuốc theo mã hoặc tên thuốc.
+4. Bấm `Chọn` tại thuốc cần bán.
+5. Nhập số lượng.
+6. Bấm `Thêm vào giỏ hàng`.
+7. Nhập thông tin khách hàng: họ tên, số điện thoại, giới tính và địa chỉ.
+8. Chọn phương thức thanh toán và trạng thái.
+9. Bấm `TẠO HÓA ĐƠN`.
+10. Nếu thành công, hệ thống hiển thị hóa đơn và có thể in hóa đơn.
 
-1. Vao `Phieu Nhap` > `Tao Phieu Nhap`.
-2. Chon thuoc can nhap.
-3. Nhap so luong va don gia nhap.
-4. Chon nhan vien va nha cung cap.
-5. Luu phieu nhap.
-6. Khi phieu nhap thanh cong, ton kho thuoc tang len.
+Lưu ý nghiệp vụ:
 
-## Bao cao
+- Không thể tạo hóa đơn khi giỏ hàng rỗng.
+- Số lượng bán không được vượt quá số lượng tồn kho.
+- Khi hóa đơn tạo thành công, tồn kho tự động giảm.
+- Nếu số điện thoại khách hàng chưa tồn tại, hệ thống tạo khách hàng mới.
+- Nếu số điện thoại đã tồn tại, hóa đơn được gắn với khách hàng cũ.
 
-Trang Bao Cao dung de xem cac thong tin tong hop phuc vu quan ly, nhu doanh thu, hoa don, san pham va tinh hinh kho.
+## Danh sách hóa đơn
 
-## Loi thuong gap
+Tại trang danh sách hóa đơn, người dùng có thể:
 
-- Khong vao duoc backend: kiem tra Docker Desktop dang chay va container backend co trang thai running.
-- Trang frontend khong tai du lieu: kiem tra backend o `http://127.0.0.1:8000`.
-- Dang nhap dung mat khau nhung sai dashboard: kiem tra dang dung cong nhap Admin hay Nhan vien.
-- Tao hoa don khong duoc: kiem tra gio hang, thong tin khach hang, so luong ton kho va backend.
-- Them thuoc khong duoc: kiem tra danh muc, don vi, xuat xu, gia va so luong da nhap hop le.
+- Xem các hóa đơn đã tạo.
+- Tìm kiếm hóa đơn.
+- Xem chi tiết hóa đơn.
+- Kiểm tra tổng tiền, ngày tạo, khách hàng và trạng thái.
+- Xóa hóa đơn nếu chức năng và quyền hiện tại cho phép.
+
+Nếu danh sách hóa đơn không tải, hãy kiểm tra backend, token đăng nhập và kết nối từ frontend tới `http://127.0.0.1:8000`.
+
+## Quản lý khách hàng
+
+Tại trang Khách hàng, người dùng có thể:
+
+- Thêm khách hàng mới.
+- Sửa thông tin khách hàng.
+- Xóa khách hàng nếu không bị ràng buộc dữ liệu.
+- Tìm kiếm theo tên, số điện thoại hoặc mã khách hàng.
+
+Thông tin khách hàng thường gồm họ tên, số điện thoại, giới tính và địa chỉ. Khi tạo hóa đơn, hệ thống có thể tự tạo khách hàng mới dựa trên số điện thoại.
+
+## Quản lý nhân viên
+
+Tại trang Nhân viên, Admin có thể:
+
+1. Bấm `Thêm nhân viên`.
+2. Nhập họ tên, số điện thoại, giới tính, năm sinh và ngày vào làm.
+3. Bấm `Thêm nhân viên` để lưu.
+4. Bấm `Sửa` để cập nhật thông tin.
+5. Bấm `Xóa` để xóa nếu nhân viên không bị ràng buộc với tài khoản, hóa đơn hoặc chứng từ.
+
+Nếu thêm nhân viên lỗi, hãy kiểm tra:
+
+- Số điện thoại có bị trùng không.
+- Các trường bắt buộc đã nhập đủ chưa.
+- Năm sinh có hợp lệ không.
+- Backend và SQL Server có đang chạy không.
+
+## Quản lý tài khoản
+
+Tại trang Tài khoản, Admin có thể:
+
+- Tạo tài khoản đăng nhập.
+- Gắn tài khoản với nhân viên.
+- Chọn vai trò phù hợp.
+- Kích hoạt hoặc vô hiệu hóa tài khoản.
+- Kiểm tra trạng thái tài khoản.
+
+Vai trò backend gồm:
+
+- `Admin`: quản trị hệ thống.
+- `Sales`: bán hàng, hóa đơn, khách hàng.
+- `Product_manager`: thuốc, kho, nhà cung cấp, phiếu nhập.
+
+Nếu tài khoản đăng nhập được nhưng thấy sai menu, hãy kiểm tra vai trò của tài khoản và cổng đăng nhập đang dùng.
+
+## Quản lý nhà cung cấp
+
+Tại trang Nhà cung cấp, người dùng có thể:
+
+- Thêm nhà cung cấp.
+- Sửa thông tin nhà cung cấp.
+- Xóa nhà cung cấp nếu không bị ràng buộc với phiếu nhập.
+- Tìm kiếm nhà cung cấp.
+- Xuất danh sách ra Excel nếu giao diện có nút tải xuống.
+
+Thông tin nhà cung cấp thường gồm tên, số điện thoại, email và địa chỉ.
+
+## Tạo phiếu nhập
+
+Quy trình tạo phiếu nhập:
+
+1. Vào `Phiếu nhập`.
+2. Chọn `Tạo phiếu nhập`.
+3. Chọn thuốc cần nhập.
+4. Nhập số lượng và đơn giá nhập.
+5. Chọn nhân viên và nhà cung cấp.
+6. Kiểm tra tổng tiền.
+7. Lưu phiếu nhập.
+8. Khi phiếu nhập thành công, tồn kho thuốc tăng lên.
+
+Nếu tạo phiếu nhập lỗi, hãy kiểm tra thuốc, nhà cung cấp, nhân viên, số lượng, đơn giá và backend.
+
+## Báo cáo
+
+Trang Báo cáo dùng để xem thông tin tổng hợp phục vụ quản lý. Tùy quyền tài khoản, người dùng có thể xem:
+
+- Doanh thu.
+- Tình hình hóa đơn.
+- Tình hình kho.
+- Sản phẩm bán hoặc nhập.
+- Dữ liệu hỗ trợ quản lý nhà thuốc.
+
+Nếu báo cáo trống, hãy kiểm tra dữ liệu hóa đơn, phiếu nhập và khoảng thời gian lọc.
+
+## Chatbot trên giao diện
+
+Chatbot hiển thị ở góc dưới bên phải giao diện. Trên trang chính, chatbot nằm gần nút gọi điện và Zalo. Sau khi đăng nhập, chatbot vẫn hiển thị trong dashboard để hỗ trợ người dùng thao tác.
+
+Người dùng có thể hỏi:
+
+- "Cách đăng nhập Admin?"
+- "Làm sao tạo hóa đơn?"
+- "Tại sao không thêm thuốc được?"
+- "Vai trò Sales dùng được chức năng nào?"
+- "Docker chạy rồi nhưng backend tắt thì làm sao?"
+- "Bạn là ai?"
+
+Chatbot nên trả lời trực tiếp theo tài liệu, không mở rộng sang chủ đề không liên quan như thời tiết, học tập, giải trí hoặc tư vấn y khoa.
+
+## Lỗi thường gặp
+
+Backend bật lên rồi tắt:
+
+1. Kiểm tra container SQL Server đã chạy chưa.
+2. Kiểm tra mật khẩu SQL Server trong `docker-compose.yml`.
+3. Chạy lại `docker compose up -d --build`.
+4. Xem log bằng `docker compose logs backend`.
+
+Frontend vào `localhost:3000` nhưng báo không có dữ liệu:
+
+1. Kiểm tra container frontend có đang chạy không.
+2. Kiểm tra backend tại `http://127.0.0.1:8000`.
+3. Kiểm tra trình duyệt có đang gọi đúng API không.
+
+Đăng nhập đúng mật khẩu nhưng vào sai dashboard:
+
+1. Kiểm tra đang dùng `/login` hay `/admin-login`.
+2. Kiểm tra vai trò tài khoản.
+3. Đăng xuất rồi đăng nhập lại.
+
+Tạo hóa đơn không được:
+
+1. Kiểm tra giỏ hàng có thuốc chưa.
+2. Kiểm tra số lượng bán có vượt tồn kho không.
+3. Kiểm tra thông tin khách hàng đã nhập đủ chưa.
+4. Kiểm tra backend có trả lỗi cụ thể không.
+
+Chatbot không trả lời bằng Gemini:
+
+1. Kiểm tra file `.env` có dòng `GEMINI_API_KEY=...` chưa.
+2. Kiểm tra đã chạy lại `docker compose up -d --build` sau khi thêm key chưa.
+3. Kiểm tra backend có đọc được biến môi trường không.
+4. Nếu không có key, chatbot vẫn trả lời theo chế độ dự phòng.
