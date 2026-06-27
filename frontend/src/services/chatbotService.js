@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/chatbot/';
+const API_URL = 'http://127.0.0.1:8000/chatbot/';
 
 export const sendMessageToChatbot = async (message) => {
   try {
@@ -9,9 +9,7 @@ export const sendMessageToChatbot = async (message) => {
       API_URL,
       { message },
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: token ? { Authorization: `Token ${token}` } : {},
       }
     );
     return response.data.reply;

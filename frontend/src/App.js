@@ -21,7 +21,8 @@ import Chatbot from './components/Chatbot';
 
 function AppRoutes() {
   const location = useLocation();
-  const hideChatbot = ['/', '/login', '/admin-login'].includes(location.pathname);
+  const hideChatbot = ['/login', '/admin-login'].includes(location.pathname);
+  const isLandingPage = location.pathname === '/';
 
   return (
     <>
@@ -45,7 +46,7 @@ function AppRoutes() {
         <Route path="/invoices/create" element={<CreateInvoice />} />
         <Route path="/invoices/list" element={<ListInvoices />} />
       </Routes>
-      {!hideChatbot && <Chatbot />}
+      {!hideChatbot && <Chatbot withContactDock={isLandingPage} />}
     </>
   );
 }

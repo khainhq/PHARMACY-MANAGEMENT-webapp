@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { StyleSheetManager } from 'styled-components';
+import React, { useEffect, useRef, useState } from 'react';
+import styled, { StyleSheetManager } from 'styled-components';
 import isPropValid from '@emotion/is-prop-valid';
 import { FiMessageSquare, FiSend, FiX } from 'react-icons/fi';
 import { sendMessageToChatbot } from '../services/chatbotService';
 
-// Theme Colors
-const primaryGreen = '#0369a1';
-const lightGreenBackground = '#e0f2fe';
+const primaryBlue = '#0369a1';
+const lightBlue = '#e0f2fe';
 const chatBodyBg = '#f3f8fb';
 const textColor = '#333333';
-const borderColor = '#D0D0D0';
+const borderColor = '#d0d7de';
 
 const ChatbotToggle = styled.button`
   position: fixed;
-  bottom: 25px;
-  right: 25px;
-  background-color: ${primaryGreen};
+  bottom: ${({ $withContactDock }) => ($withContactDock ? '8.9rem' : '1.55rem')};
+  right: 1.55rem;
+  background-color: ${primaryBlue};
   color: white;
   border: none;
   border-radius: 50%;
@@ -24,7 +22,7 @@ const ChatbotToggle = styled.button`
   height: 60px;
   font-size: 28px;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(3, 105, 161, 0.3);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -39,10 +37,10 @@ const ChatbotToggle = styled.button`
 
 const ChatbotContainer = styled.div`
   position: fixed;
-  bottom: 100px;
-  right: 25px;
-  width: 370px;
-  height: 550px;
+  bottom: ${({ $withContactDock }) => ($withContactDock ? '13.8rem' : '6.25rem')};
+  right: 1.55rem;
+  width: min(370px, calc(100vw - 2rem));
+  height: min(550px, calc(100vh - 8rem));
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -50,23 +48,21 @@ const ChatbotContainer = styled.div`
   flex-direction: column;
   z-index: 1000;
   overflow: hidden;
-  transition: opacity 0.3s ease, transform 0.3s ease;
   opacity: ${props => props.$isOpen ? 1 : 0};
   transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(20px)'};
   pointer-events: ${props => props.$isOpen ? 'auto' : 'none'};
+  transition: opacity 0.3s ease, transform 0.3s ease;
 `;
 
 const ChatHeader = styled.div`
-  background-color: ${primaryGreen};
+  background-color: ${primaryBlue};
   color: white;
   padding: 15px 20px;
-  font-size: 1.1em;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
 `;
 
 const CloseButton = styled.button`
@@ -77,12 +73,6 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: 5px;
   line-height: 1;
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
-
-  &:hover {
-    opacity: 1;
-  }
 `;
 
 const ChatBody = styled.div`
@@ -93,26 +83,11 @@ const ChatBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  &::-webkit-scrollbar-track {
-    background: ${chatBodyBg};
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #B0BEC5;
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: #90A4AE;
-  }
 `;
 
 const MessageTimestamp = styled.span`
-  font-size: 0.75em;
-  color: #757575;
+  font-size: 0.75rem;
+  color: #64748b;
   margin-top: 4px;
   display: block;
 `;
@@ -121,9 +96,10 @@ const MessageBubble = styled.div`
   padding: 10px 15px;
   border-radius: 18px;
   max-width: 85%;
-  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   line-height: 1.45;
-  font-size: 0.95em;
+  font-size: 0.95rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 `;
 
@@ -133,11 +109,13 @@ const Message = styled.div`
 
   &.user {
     align-self: flex-end;
+
     ${MessageBubble} {
-      background-color: ${lightGreenBackground};
+      background-color: ${lightBlue};
       color: ${textColor};
       border-bottom-right-radius: 6px;
     }
+
     ${MessageTimestamp} {
       align-self: flex-end;
     }
@@ -145,14 +123,12 @@ const Message = styled.div`
 
   &.bot {
     align-self: flex-start;
+
     ${MessageBubble} {
-      background-color: #FFFFFF;
+      background-color: #ffffff;
       color: ${textColor};
-      border: 1px solid #ECEFF1;
+      border: 1px solid #e5e7eb;
       border-bottom-left-radius: 6px;
-    }
-    ${MessageTimestamp} {
-      align-self: flex-start;
     }
   }
 `;
@@ -167,27 +143,24 @@ const UserInput = styled.form`
 
 const Input = styled.input`
   flex-grow: 1;
+  min-width: 0;
   padding: 12px 18px;
   border: 1px solid ${borderColor};
   border-radius: 25px;
   margin-right: 12px;
-  font-size: 0.95em;
+  font-size: 0.95rem;
   color: ${textColor};
-  background-color: #FDFDFD;
+  background-color: #fdfdfd;
 
   &:focus {
     outline: none;
-    border-color: ${primaryGreen};
+    border-color: ${primaryBlue};
     box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.18);
-  }
-
-  &::placeholder {
-    color: #999;
   }
 `;
 
 const SendButton = styled.button`
-  background-color: ${primaryGreen};
+  background-color: ${primaryBlue};
   color: white;
   border: none;
   width: 48px;
@@ -198,11 +171,6 @@ const SendButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #075985;
-  }
 
   &:disabled {
     background-color: #93c5fd;
@@ -210,12 +178,17 @@ const SendButton = styled.button`
   }
 `;
 
-const Chatbot = () => {
+const Chatbot = ({ withContactDock = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { text: 'Xin chào! PharmaCare có thể hỗ trợ gì cho bạn hôm nay?', isUser: false, timestamp: new Date() }
+    {
+      text: 'Xin chào! Tôi là Trợ lý PharmaCare. Bạn có thể hỏi tôi cách đăng nhập, tạo hóa đơn, thêm thuốc, quản lý nhân viên hoặc dùng từng phân hệ.',
+      isUser: false,
+      timestamp: new Date(),
+    },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const chatBodyRef = useRef(null);
 
   useEffect(() => {
@@ -224,59 +197,69 @@ const Chatbot = () => {
     }
   }, [messages]);
 
-  const toggleChat = () => setIsOpen(!isOpen);
-
-  const handleInputChange = (e) => setInputValue(e.target.value);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedInput = inputValue.trim();
-    if (!trimmedInput) return;
+    if (!trimmedInput || isSending) return;
 
-    const userMessage = { text: trimmedInput, isUser: true, timestamp: new Date() };
-    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setMessages((current) => [...current, { text: trimmedInput, isUser: true, timestamp: new Date() }]);
     setInputValue('');
+    setIsSending(true);
 
     try {
       const reply = await sendMessageToChatbot(trimmedInput);
-      const botMessage = { text: reply, isUser: false, timestamp: new Date() };
-      setMessages(prevMessages => [...prevMessages, botMessage]);
+      setMessages((current) => [...current, { text: reply, isUser: false, timestamp: new Date() }]);
     } catch (error) {
-      const errorMessage = { text: 'Lỗi: Không thể kết nối với chatbot.', isUser: false, timestamp: new Date() };
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      setMessages((current) => [...current, {
+        text: 'Lỗi: Không thể kết nối với Trợ lý PharmaCare. Bạn vui lòng kiểm tra backend hoặc API key Gemini.',
+        isUser: false,
+        timestamp: new Date(),
+      }]);
+    } finally {
+      setIsSending(false);
     }
   };
 
   return (
     <StyleSheetManager shouldForwardProp={(prop) => isPropValid(prop)}>
       <>
-        <ChatbotToggle onClick={toggleChat} aria-label={isOpen ? 'Close chat' : 'Open chat'}>
+        <ChatbotToggle
+          $withContactDock={withContactDock}
+          onClick={() => setIsOpen((open) => !open)}
+          aria-label={isOpen ? 'Đóng chatbot' : 'Mở chatbot'}
+          title="Trợ lý PharmaCare"
+        >
           {isOpen ? <FiX /> : <FiMessageSquare />}
         </ChatbotToggle>
-        <ChatbotContainer $isOpen={isOpen}>
+        <ChatbotContainer $isOpen={isOpen} $withContactDock={withContactDock}>
           <ChatHeader>
             Trợ lý PharmaCare
-            <CloseButton onClick={toggleChat} aria-label="Close chat"><FiX /></CloseButton>
+            <CloseButton onClick={() => setIsOpen(false)} aria-label="Đóng chatbot"><FiX /></CloseButton>
           </ChatHeader>
           <ChatBody ref={chatBodyRef}>
             {messages.map((msg, index) => (
-              <Message key={index} className={msg.isUser ? 'user' : 'bot'}>
+              <Message key={`${msg.timestamp.getTime()}-${index}`} className={msg.isUser ? 'user' : 'bot'}>
                 <MessageBubble>{msg.text}</MessageBubble>
                 <MessageTimestamp>
                   {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </MessageTimestamp>
               </Message>
             ))}
+            {isSending && (
+              <Message className="bot">
+                <MessageBubble>Đang tìm hướng dẫn phù hợp...</MessageBubble>
+              </Message>
+            )}
           </ChatBody>
           <UserInput onSubmit={handleSubmit}>
             <Input
               type="text"
               value={inputValue}
-              onChange={handleInputChange}
-              placeholder="Nhập câu hỏi của bạn..."
-              aria-label="Chat input"
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Nhập câu hỏi hướng dẫn sử dụng..."
+              aria-label="Nhập câu hỏi chatbot"
             />
-            <SendButton type="submit" disabled={!inputValue.trim()} aria-label="Send message">
+            <SendButton type="submit" disabled={!inputValue.trim() || isSending} aria-label="Gửi câu hỏi">
               <FiSend />
             </SendButton>
           </UserInput>

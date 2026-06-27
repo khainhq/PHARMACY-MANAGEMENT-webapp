@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,6 +25,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<PharmacyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<TokenStore>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -193,11 +195,33 @@ app.MapGet("/api/medicines/payment-statistics/", async (PharmacyDbContext db) =>
         total_payment = await db.PaymentDetails.SumAsync(x => (decimal?)x.UnitPrice * x.Quantity) ?? 0
     })).RequireToken();
 
-app.MapPost("/chatbot/", async (JsonElement body) =>
+app.MapPost("/chatbot/", async (JsonElement body, IConfiguration configuration, IWebHostEnvironment environment, IHttpClientFactory httpClientFactory) =>
 {
-    await Task.CompletedTask;
-    var message = body.TryGetProperty("message", out var value) ? value.GetString() : "";
-    return Results.Ok(new { response = $"Toi da nhan cau hoi: {message}" });
+    var message = body.TryGetProperty("message", out var messageProperty) ? messageProperty.GetString()?.Trim() ?? "" : "";
+    if (string.IsNullOrWhiteSpace(message))
+    {
+        return Results.BadRequest(new { reply = "Bạn vui lòng nhập câu hỏi cần hỗ trợ." });
+    }
+
+    var guidePath = Path.Combine(environment.ContentRootPath, "Docs", "ChatbotGuide.md");
+    var guide = await File.ReadAllTextAsync(guidePath);
+    var prompt = BuildChatbotPrompt(guide, message);
+    var apiKey = configuration["Gemini:ApiKey"];
+
+    if (string.IsNullOrWhiteSpace(apiKey))
+    {
+        return Results.Ok(new { reply = BuildOfflineChatbotReply(message) });
+    }
+
+    try
+    {
+        var reply = await AskGeminiAsync(httpClientFactory.CreateClient(), apiKey, prompt);
+        return Results.Ok(new { reply });
+    }
+    catch
+    {
+        return Results.Ok(new { reply = BuildOfflineChatbotReply(message) });
+    }
 });
 
 using (var scope = app.Services.CreateScope())
@@ -320,6 +344,75 @@ static async Task<string> GenerateCustomerIdAsync(PharmacyDbContext db)
     while (await db.Customers.AnyAsync(x => x.CustomerID == id));
 
     return id;
+}
+
+static string BuildChatbotPrompt(string guide, string message) =>
+    $"""
+    Bạn là Trợ lý PharmaCare, chatbot hướng dẫn sử dụng hệ thống quản lý nhà thuốc PharmaCare.
+    Không được nói bạn là Gemini, Google, OpenAI hay mô hình AI.
+    Chỉ trả lời dựa trên tài liệu hướng dẫn bên dưới. Nếu câu hỏi nằm ngoài phạm vi sử dụng hệ thống, hãy trả lời ngắn gọn:
+    "Chức năng của tôi là hướng dẫn sử dụng PharmaCare. Bạn có thể hỏi tôi về đăng nhập, dashboard, thuốc, hóa đơn, khách hàng, nhân viên, nhà cung cấp, phiếu nhập, báo cáo hoặc tài khoản."
+
+    Khi người dùng hỏi bạn là ai, hãy trả lời:
+    "Tôi là Trợ lý PharmaCare, nhiệm vụ của tôi là hướng dẫn bạn sử dụng hệ thống quản lý nhà thuốc PharmaCare."
+
+    Trả lời bằng tiếng Việt rõ ràng, thân thiện, ưu tiên các bước thao tác ngắn gọn.
+
+    Tài liệu hướng dẫn:
+    {guide}
+
+    Câu hỏi của người dùng:
+    {message}
+    """;
+
+static async Task<string> AskGeminiAsync(HttpClient httpClient, string apiKey, string prompt)
+{
+    var endpoint = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={Uri.EscapeDataString(apiKey)}";
+    var request = new
+    {
+        contents = new[]
+        {
+            new
+            {
+                role = "user",
+                parts = new[] { new { text = prompt } }
+            }
+        },
+        generationConfig = new
+        {
+            temperature = 0.2,
+            maxOutputTokens = 700
+        }
+    };
+
+    using var response = await httpClient.PostAsJsonAsync(endpoint, request);
+    response.EnsureSuccessStatusCode();
+
+    using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+    var candidates = document.RootElement.GetProperty("candidates");
+    if (candidates.GetArrayLength() == 0)
+    {
+        return BuildOfflineChatbotReply("");
+    }
+
+    var parts = candidates[0].GetProperty("content").GetProperty("parts");
+    var texts = parts.EnumerateArray()
+        .Where(part => part.TryGetProperty("text", out _))
+        .Select(part => part.GetProperty("text").GetString())
+        .Where(text => !string.IsNullOrWhiteSpace(text));
+
+    return string.Join("\n", texts) is { Length: > 0 } reply ? reply : BuildOfflineChatbotReply("");
+}
+
+static string BuildOfflineChatbotReply(string message)
+{
+    var normalized = message.ToLowerInvariant();
+    if (normalized.Contains("ban la ai") || normalized.Contains("bạn là ai") || normalized.Contains("chatbot"))
+    {
+        return "Tôi là Trợ lý PharmaCare, nhiệm vụ của tôi là hướng dẫn bạn sử dụng hệ thống quản lý nhà thuốc PharmaCare.";
+    }
+
+    return "Chức năng của tôi là hướng dẫn sử dụng PharmaCare. Bạn có thể hỏi tôi về đăng nhập, dashboard, thuốc, hóa đơn, khách hàng, nhân viên, nhà cung cấp, phiếu nhập, báo cáo hoặc tài khoản.";
 }
 
 static void NormalizeAccount(Account account)
