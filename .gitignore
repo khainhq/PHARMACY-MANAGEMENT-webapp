@@ -6,9 +6,8 @@ TestResults/
 test-results.json
 .vs/
 .vscode/
-.env
-.env.*
-!.env.example
+.env.local
+.env.*.local
 *.user
 *.suo
 legacy_backend_not_pushed/
