@@ -62,7 +62,7 @@ const receiptStyles = {
     border: '1px solid #d1d5db',
     borderRadius: '4px',
     boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
-    fontFamily: "'Roboto', 'Arial', sans-serif",
+    fontFamily: "'Times New Roman', Times, serif",
     lineHeight: 1.45,
   },
   center: {

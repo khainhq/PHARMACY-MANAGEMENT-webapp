@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
 import {
   Container,
@@ -27,6 +28,43 @@ const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+
+const padDatePart = (value) => String(value).padStart(2, '0');
+
+export const sanitizeFilePart = (value, fallback = 'khong-ro') => {
+  const normalized = String(value || fallback)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+
+  return normalized || fallback;
+};
+
+export const buildInvoiceImageFileName = (invoice, now = new Date()) => {
+  const datePart = [
+    now.getFullYear(),
+    padDatePart(now.getMonth() + 1),
+    padDatePart(now.getDate()),
+  ].join('-');
+  const timePart = [
+    padDatePart(now.getHours()),
+    padDatePart(now.getMinutes()),
+    padDatePart(now.getSeconds()),
+  ].join('-');
+
+  return [
+    'hoa-don',
+    sanitizeFilePart(invoice?.invoiceID, 'chua-luu'),
+    sanitizeFilePart(invoice?.customerName, 'khach-hang'),
+    sanitizeFilePart(invoice?.customerPhone, 'khong-co-sdt'),
+    datePart,
+    timePart,
+  ].join('_') + '.png';
+};
 
 const formatDateTime = (value) => {
   if (!value) return '';
@@ -64,7 +102,7 @@ const receiptStyles = {
     border: '1px solid #d1d5db',
     borderRadius: '4px',
     boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
-    fontFamily: "'Roboto', 'Arial', sans-serif",
+    fontFamily: "'Times New Roman', Times, serif",
     lineHeight: 1.45,
   },
   center: {
@@ -166,41 +204,6 @@ const receiptStyles = {
   },
 };
 
-const receiptPrintStyle = `
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-
-    #invoice-print-area,
-    #invoice-print-area * {
-      visibility: visible;
-    }
-
-    #invoice-print-area {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      padding: 0;
-      margin: 0;
-      background: #ffffff;
-    }
-
-    #invoice-print-area .receipt-paper {
-      width: 76mm;
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-      margin: 0 auto;
-    }
-
-    .receipt-actions {
-      display: none !important;
-    }
-  }
-`;
-
 const CreateInvoice = () => {
   const [medicines, setMedicines] = useState([]);
   const [filteredMedicines, setFilteredMedicines] = useState([]);
@@ -220,6 +223,7 @@ const CreateInvoice = () => {
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [isSavingInvoice, setIsSavingInvoice] = useState(false);
+  const [isExportingInvoiceImage, setIsExportingInvoiceImage] = useState(false);
   const [error, setError] = useState('');
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
@@ -362,12 +366,46 @@ const CreateInvoice = () => {
     }
   };
 
+  const handleDownloadInvoiceImage = async () => {
+    if (!invoiceData) return;
+
+    const receiptElement = document.querySelector('#invoice-print-area .receipt-paper');
+    if (!receiptElement) {
+      setError('Không tìm thấy nội dung hóa đơn để xuất ảnh. Vui lòng thử lại.');
+      return;
+    }
+
+    setIsExportingInvoiceImage(true);
+    setError('');
+
+    try {
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
+      const canvas = await html2canvas(receiptElement, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+      });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = canvas.toDataURL('image/png');
+      downloadLink.download = buildInvoiceImageFileName(invoiceData);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (downloadError) {
+      setError('Không xuất được ảnh hóa đơn. Vui lòng thử lại.');
+    } finally {
+      setIsExportingInvoiceImage(false);
+    }
+  };
+
   const renderInvoiceReceipt = (data, { isReview = false } = {}) => (
     <div
       id={isReview ? undefined : 'invoice-print-area'}
       style={isReview ? undefined : { padding: '1rem', backgroundColor: '#f8fafc' }}
     >
-      {!isReview && <style>{receiptPrintStyle}</style>}
       <div className="receipt-paper" style={receiptStyles.paper}>
         <div style={receiptStyles.center}>
           <h2 style={receiptStyles.brand}>PharmaCare Việt Nam</h2>
@@ -586,7 +624,9 @@ const CreateInvoice = () => {
             <ModalBody>{renderInvoiceReceipt(invoiceData)}</ModalBody>
             <ModalFooter className="receipt-actions">
               <Button type="button" onClick={() => setShowInvoiceModal(false)}>Đóng</Button>
-              <Button type="button" onClick={() => window.print()}>In hóa đơn</Button>
+              <Button type="button" onClick={handleDownloadInvoiceImage} disabled={isExportingInvoiceImage}>
+                {isExportingInvoiceImage ? 'Đang tạo ảnh...' : 'Tải ảnh hóa đơn'}
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
