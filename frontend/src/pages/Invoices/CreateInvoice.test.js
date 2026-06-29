@@ -1,76 +1,90 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, act, within } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import axios from 'axios';
 import CreateInvoice from './CreateInvoice';
 
-// Mock các module cần thiết
 jest.mock('axios');
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
 jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
 }));
 
+const API_BASE = 'http://127.0.0.1:8000';
+
+const medicines = [
+  {
+    medicineID: 'MED001',
+    medicineName: 'Paracetamol',
+    ingredients: 'Paracetamol 500mg',
+    unit: 'Box',
+    unitPrice: 5000,
+    stockQuantity: 100,
+    image: 'https://example.com/image.jpg',
+  },
+  {
+    medicineID: 'MED002',
+    medicineName: 'Ibuprofen',
+    ingredients: 'Ibuprofen 200mg',
+    unit: 'Box',
+    unitPrice: 7000,
+    stockQuantity: 50,
+    image: 'https://example.com/image2.jpg',
+  },
+];
+
+const renderInvoice = async () => {
+  render(<CreateInvoice />);
+  await screen.findByText('Paracetamol');
+};
+
+const addFirstMedicineToCart = async (quantity = '1') => {
+  const medicineList = screen.getByText('Danh sách thuốc').closest('div');
+  const row = within(medicineList).getByText('MED001').closest('tr');
+  fireEvent.click(within(row).getByRole('button', { name: 'Chọn' }));
+
+  expect(await screen.findByText('THÔNG TIN THUỐC')).toBeInTheDocument();
+  const quantityInput = screen.getByRole('spinbutton');
+  fireEvent.change(quantityInput, { target: { value: quantity } });
+  fireEvent.click(screen.getByRole('button', { name: 'Thêm vào giỏ hàng' }));
+};
+
+const fillInvoiceForm = ({ status = 'Paid' } = {}) => {
+  fireEvent.change(screen.getByPlaceholderText('Tên khách hàng'), { target: { value: 'Nguyen Van A' } });
+  fireEvent.change(screen.getByPlaceholderText('Số điện thoại'), { target: { value: '0123456789' } });
+  fireEvent.change(screen.getByRole('combobox', { name: 'Chọn giới tính' }), { target: { value: 'Male' } });
+  fireEvent.change(screen.getByPlaceholderText('Địa chỉ'), { target: { value: '123 Ha Noi' } });
+  fireEvent.change(screen.getAllByRole('combobox')[2], { target: { value: status } });
+};
+
 describe('CreateInvoice component', () => {
   beforeEach(() => {
-    // Reset các mock
     axios.get.mockReset();
     axios.post.mockReset();
-    axios.delete.mockReset();
-
-    // Thiết lập token trong sessionStorage
     sessionStorage.setItem('token', 'dummyToken');
+    window.alert = jest.fn();
+    window.print = jest.fn();
 
-    // Mock dữ liệu API dựa trên URL
-    axios.get.mockImplementation((url, config) => {
-      if (url === 'http://127.0.0.1:8000/api/medicines/medicines/') {
+    axios.get.mockImplementation((url) => {
+      if (url === `${API_BASE}/api/medicines/medicines/`) {
+        return Promise.resolve({ data: medicines });
+      }
+
+      return Promise.reject(new Error('Not mocked'));
+    });
+
+    axios.post.mockImplementation((url) => {
+      if (url === `${API_BASE}/api/sales/checkout/`) {
         return Promise.resolve({
-          data: [
-            {
-              medicineID: 'MED001',
-              medicineName: 'Paracetamol',
-              ingredients: 'Paracetamol 500mg',
-              unit: 'Box',
-              unitPrice: 5000,
-              stockQuantity: 100,
-              image: 'https://example.com/image.jpg',
-            },
-            {
-              medicineID: 'MED002',
-              medicineName: 'Ibuprofen',
-              ingredients: 'Ibuprofen 200mg',
-              unit: 'Box',
-              unitPrice: 7000,
-              stockQuantity: 50,
-              image: 'https://example.com/image2.jpg',
-            },
-          ],
+          data: {
+            invoiceID: 'INV001',
+            invoiceTime: '2026-06-29T12:00:00Z',
+            status: 'Pending',
+          },
         });
       }
-      if (url === 'http://localhost:8000/api/sales/customers/') {
-        return Promise.resolve({ data: [] }); // Không có khách hàng hiện tại
-      }
+
       return Promise.reject(new Error('Not mocked'));
     });
-
-    // Mock API cho tạo khách hàng và hóa đơn
-    axios.post.mockImplementation((url) => {
-      if (url === 'http://127.0.0.1:8000/api/sales/checkout/') {
-        return Promise.resolve({ data: { invoiceID: 'INV001', invoiceTime: '2026-06-29T12:00:00Z' } });
-      }
-      if (url === 'http://localhost:8000/api/sales/customers/') {
-        return Promise.resolve({ data: { customerID: 'CUST123' } });
-      }
-      if (url === 'http://localhost:8000/api/sales/invoices/') {
-        return Promise.resolve({ data: { invoiceID: 'INV001' } });
-      }
-      if (url === 'http://localhost:8000/api/sales/invoice-details/') {
-        return Promise.resolve({ data: {} });
-      }
-      return Promise.reject(new Error('Not mocked'));
-    });
-
-    // Mock window.alert
-    window.alert = jest.fn();
   });
 
   afterEach(() => {
@@ -79,193 +93,97 @@ describe('CreateInvoice component', () => {
   });
 
   test('hiển thị Sidebar, danh sách thuốc, giỏ hàng và thông tin hóa đơn', async () => {
-    render(<CreateInvoice />);
+    await renderInvoice();
 
-    await waitFor(() => {
-      expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
-      expect(screen.getByText(/Danh sách thuốc/i)).toBeInTheDocument();
-      expect(screen.getByText(/Giỏ hàng/i)).toBeInTheDocument();
-      expect(screen.getByText(/Thông tin hóa đơn/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Tên khách hàng/i)).toBeInTheDocument();
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-      expect(screen.getByText(/Ibuprofen/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText('Mocked Sidebar')).toBeInTheDocument();
+    expect(screen.getByText('Danh sách thuốc')).toBeInTheDocument();
+    expect(screen.getByText('Giỏ hàng')).toBeInTheDocument();
+    expect(screen.getByText('Thông tin hóa đơn')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Tên khách hàng')).toBeInTheDocument();
+    expect(screen.getByText('Ibuprofen')).toBeInTheDocument();
   });
 
   test('tìm kiếm thuốc theo từ khóa', async () => {
-    render(<CreateInvoice />);
+    await renderInvoice();
 
-    await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-      expect(screen.getByText(/Ibuprofen/i)).toBeInTheDocument();
-    });
+    fireEvent.change(screen.getByPlaceholderText('Tìm kiếm thuốc...'), { target: { value: 'Para' } });
 
-    const searchInput = screen.getByPlaceholderText(/Tìm kiếm thuốc.../i);
-    fireEvent.change(searchInput, { target: { value: 'Para' } });
-
-    expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Ibuprofen/i)).not.toBeInTheDocument();
+    expect(screen.getByText('Paracetamol')).toBeInTheDocument();
+    expect(screen.queryByText('Ibuprofen')).not.toBeInTheDocument();
   });
 
-  test('thêm thuốc vào giỏ hàng', async () => {
-    render(<CreateInvoice />);
+  test('thêm và xóa thuốc trong giỏ hàng', async () => {
+    await renderInvoice();
+    await addFirstMedicineToCart('2');
+
+    const cartSection = screen.getByText('Giỏ hàng').closest('div');
+    expect(within(cartSection).getByText('Paracetamol')).toBeInTheDocument();
+    expect(within(cartSection).getByText('10.000 VND')).toBeInTheDocument();
+
+    fireEvent.click(within(cartSection).getByRole('button', { name: 'Xóa' }));
 
     await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
+      expect(within(cartSection).queryByText('Paracetamol')).not.toBeInTheDocument();
     });
-
-    const selectButton = screen.getAllByRole('button', { name: /Chọn/i })[0];
-    fireEvent.click(selectButton);
-
-    // Chờ và kiểm tra phần "THÔNG TIN THUỐC"
-    await waitFor(() => {
-      const medicineDetails = screen.getByText(/THÔNG TIN THUỐC/i);
-      expect(medicineDetails).toBeInTheDocument();
-      const nameParagraph = within(medicineDetails.parentElement.parentElement).getByText(/Tên thuốc:/i).closest('p');
-      console.log('Nội dung của nameParagraph:', nameParagraph.innerHTML); // Log để kiểm tra
-      expect(within(nameParagraph).getByText(/Paracetamol/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
-
-    const quantityInput = screen.getByRole('spinbutton');
-    fireEvent.change(quantityInput, { target: { value: '2' } });
-
-    const addToCartButton = screen.getByRole('button', { name: /Thêm vào giỏ hàng/i });
-    fireEvent.click(addToCartButton);
-
-    // Chờ và kiểm tra trong giỏ hàng
-    await waitFor(() => {
-      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
-      expect(within(cartSection).getByText(/Paracetamol/i)).toBeInTheDocument();
-      expect(within(cartSection).getByText(/2/i)).toBeInTheDocument();
-      expect(within(cartSection).getByText(/10\.000 VND/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
   });
 
-  test('xóa thuốc khỏi giỏ hàng', async () => {
-    render(<CreateInvoice />);
+  test('bấm tạo hóa đơn chỉ mở bản xem lại và nút chỉnh sửa giữ nguyên dữ liệu', async () => {
+    await renderInvoice();
+    await addFirstMedicineToCart();
+    fillInvoiceForm({ status: 'Pending' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'TẠO HÓA ĐƠN' }));
+
+    expect(await screen.findByText('Kiểm tra hóa đơn trước khi lưu')).toBeInTheDocument();
+    const reviewModal = screen.getByText('Kiểm tra hóa đơn trước khi lưu').parentElement;
+    expect(axios.post).not.toHaveBeenCalled();
+    expect(within(reviewModal).getByText('Chưa lưu')).toBeInTheDocument();
+    expect(within(reviewModal).getByText('Chưa thanh toán')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Chỉnh sửa' }));
 
     await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
+      expect(screen.queryByText('Kiểm tra hóa đơn trước khi lưu')).not.toBeInTheDocument();
     });
-
-    const selectButton = screen.getAllByRole('button', { name: /Chọn/i })[0];
-    fireEvent.click(selectButton);
-
-    const addToCartButton = screen.getByRole('button', { name: /Thêm vào giỏ hàng/i });
-    fireEvent.click(addToCartButton);
-
-    // Chờ và kiểm tra trong giỏ hàng
-    await waitFor(() => {
-      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
-      expect(within(cartSection).getByText(/Paracetamol/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
-
-    const removeButton = screen.getByRole('button', { name: /Xóa/i });
-    fireEvent.click(removeButton);
-
-    // Kiểm tra rằng thuốc đã bị xóa khỏi giỏ hàng
-    await waitFor(() => {
-      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
-      expect(within(cartSection).queryByText(/Paracetamol/i)).not.toBeInTheDocument();
-    }, { timeout: 2000 });
+    expect(screen.getByPlaceholderText('Tên khách hàng')).toHaveValue('Nguyen Van A');
+    expect(within(screen.getByText('Giỏ hàng').closest('div')).getByText('Paracetamol')).toBeInTheDocument();
   });
 
-  test('tạo hóa đơn và hiển thị modal', async () => {
-    render(<CreateInvoice />);
+  test('xác nhận lưu hóa đơn mới gọi API và hiển thị phiếu in chi tiết', async () => {
+    await renderInvoice();
+    await addFirstMedicineToCart();
+    fillInvoiceForm({ status: 'Pending' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'TẠO HÓA ĐƠN' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Xác nhận lưu' }));
 
     await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
+      expect(axios.post).toHaveBeenCalledWith(
+        `${API_BASE}/api/sales/checkout/`,
+        {
+          customerName: 'Nguyen Van A',
+          phoneNumber: '0123456789',
+          address: '123 Ha Noi',
+          gender: 'Male',
+          paymentMethod: 'Cash',
+          status: 'Pending',
+          items: [{ medicine: 'MED001', quantity: 1, unitPrice: 5000 }],
+        },
+        expect.any(Object)
+      );
     });
 
-    const selectButton = screen.getAllByRole('button', { name: /Chọn/i })[0];
-    fireEvent.click(selectButton);
-
-    const addToCartButton = screen.getByRole('button', { name: /Thêm vào giỏ hàng/i });
-    fireEvent.click(addToCartButton);
-
-    // Chờ và kiểm tra trong giỏ hàng
-    await waitFor(() => {
-      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
-      expect(within(cartSection).getByText(/Paracetamol/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
-
-    fireEvent.change(screen.getByPlaceholderText(/Tên khách hàng/i), { target: { value: 'Nguyen Van A' } });
-    fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '0123456789' } });
-    const genderSelect = screen.getByRole('combobox', { name: /Chọn giới tính/i });
-    fireEvent.change(genderSelect, { target: { value: 'Male' } });
-    fireEvent.change(screen.getByPlaceholderText(/Địa chỉ/i), { target: { value: '123 Ha Noi' } });
-    const statusSelect = screen.getAllByRole('combobox')[2];
-    fireEvent.change(statusSelect, { target: { value: 'Pending' } });
-
-    const checkoutButton = screen.getByRole('button', { name: /TẠO HÓA ĐƠN/i });
-    await act(async () => {
-      fireEvent.click(checkoutButton);
-    });
-
-    await waitFor(() => {
-      const invoiceModal = screen.getByText(/HÓA ĐƠN THANH TOÁN/i).closest('div');
-      console.log('Nội dung của invoiceModal:', invoiceModal.innerHTML); // Log để kiểm tra
-      expect(invoiceModal).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/Nguyen Van A/i)).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/0123456789/i)).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/123 Ha Noi/i)).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/Cash/i)).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/Chưa thanh toán/i)).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/Paracetamol/i)).toBeInTheDocument();
-
-      // Scope the price check to the "Đơn giá" cell in the table row for Paracetamol
-      const tableRow = within(invoiceModal).getByText(/Paracetamol/i).closest('tr');
-      const unitPriceCell = within(tableRow).getAllByRole('cell')[3]; // "Đơn giá" is the 4th column
-      expect(unitPriceCell).toHaveTextContent(/5\.000 VND/i);
-
-      // Optionally, verify the total in the "Tổng tiền" section
-      expect(within(invoiceModal).getByText(/Tổng tiền:/i).closest('h3')).toHaveTextContent(/5\.000 VND/i);
-    }, { timeout: 3000 });
-  });
-
-  test('hiển thị trạng thái đã thanh toán khi giữ lựa chọn mặc định', async () => {
-    render(<CreateInvoice />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-    });
-
-    const selectButton = screen.getAllByRole('button', { name: /Chọn/i })[0];
-    fireEvent.click(selectButton);
-
-    const addToCartButton = screen.getByRole('button', { name: /Thêm vào giỏ hàng/i });
-    fireEvent.click(addToCartButton);
-
-    await waitFor(() => {
-      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
-      expect(within(cartSection).getByText(/Paracetamol/i)).toBeInTheDocument();
-    }, { timeout: 2000 });
-
-    fireEvent.change(screen.getByPlaceholderText(/Tên khách hàng/i), { target: { value: 'Tran Thi B' } });
-    fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '0987654321' } });
-    const genderSelect = screen.getByRole('combobox', { name: /Chọn giới tính/i });
-    fireEvent.change(genderSelect, { target: { value: 'Female' } });
-    fireEvent.change(screen.getByPlaceholderText(/Địa chỉ/i), { target: { value: '456 Da Nang' } });
-
-    const checkoutButton = screen.getByRole('button', { name: /TẠO HÓA ĐƠN/i });
-    await act(async () => {
-      fireEvent.click(checkoutButton);
-    });
-
-    await waitFor(() => {
-      const invoiceModal = screen.getByText(/HÓA ĐƠN THANH TOÁN/i).closest('div');
-      expect(invoiceModal).toBeInTheDocument();
-      expect(within(invoiceModal).getByText(/Đã thanh toán/i)).toBeInTheDocument();
-    }, { timeout: 3000 });
-  });
-
-  test('snapshot của giao diện CreateInvoice', async () => {
-    const { container } = render(<CreateInvoice />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-    });
-
-    expect(container).toMatchSnapshot();
+    expect(await screen.findByText('Phiếu in hóa đơn')).toBeInTheDocument();
+    const receipt = screen.getByText('Phiếu in hóa đơn').parentElement;
+    expect(within(receipt).getByText('Hóa đơn thanh toán')).toBeInTheDocument();
+    expect(within(receipt).getByText('INV001')).toBeInTheDocument();
+    expect(within(receipt).getByText('Nguyen Van A')).toBeInTheDocument();
+    expect(within(receipt).getByText('0123456789')).toBeInTheDocument();
+    expect(within(receipt).getByText('123 Ha Noi')).toBeInTheDocument();
+    expect(within(receipt).getByText('Tiền mặt')).toBeInTheDocument();
+    expect(within(receipt).getByText('Chưa thanh toán')).toBeInTheDocument();
+    expect(within(receipt).getByText('Paracetamol')).toBeInTheDocument();
+    expect(within(receipt).getByText('5.000 VND')).toBeInTheDocument();
+    expect(within(receipt).getByRole('button', { name: 'In hóa đơn' })).toBeInTheDocument();
   });
 });

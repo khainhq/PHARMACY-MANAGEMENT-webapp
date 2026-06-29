@@ -164,3 +164,43 @@ export const CenteredButton = styled(Button)`
   padding: 1rem 2rem; /* Tăng kích thước nút */
   font-size: 1rem; /* Tăng kích thước chữ */
 `;
+
+export const Modal = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+`;
+
+export const ModalContent = styled.div`
+  width: 440px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+`;
+
+export const ModalHeader = styled.div`
+  margin-bottom: 1rem;
+  color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+`;
+
+export const ModalBody = styled.div`
+  margin-bottom: 1rem;
+`;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+`;

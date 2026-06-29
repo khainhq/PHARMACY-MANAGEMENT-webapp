@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -15,12 +15,191 @@ import {
   Button,
   Input,
   Select,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   unitMap,
 } from './InvoicesStyles';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
+
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+
+const formatDateTime = (value) => {
+  if (!value) return '';
+
+  return new Intl.DateTimeFormat('vi-VN', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(new Date(value));
+};
+
+const paymentMethodLabels = {
+  Cash: 'Tiền mặt',
+  Card: 'Thẻ',
+};
+
+const invoiceStatusLabels = {
+  Paid: 'Đã thanh toán',
+  Pending: 'Chưa thanh toán',
+};
+
+const genderLabels = {
+  Male: 'Nam',
+  Female: 'Nữ',
+  Other: 'Khác',
+};
+
+const receiptStyles = {
+  paper: {
+    width: '360px',
+    maxWidth: '100%',
+    margin: '0 auto',
+    padding: '18px 16px',
+    color: '#111827',
+    background: '#ffffff',
+    border: '1px solid #d1d5db',
+    borderRadius: '4px',
+    boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
+    fontFamily: "'Roboto', 'Arial', sans-serif",
+    lineHeight: 1.45,
+  },
+  center: {
+    textAlign: 'center',
+  },
+  brand: {
+    margin: 0,
+    fontSize: '1.25rem',
+    fontWeight: 800,
+    letterSpacing: '0',
+    color: '#0369a1',
+  },
+  title: {
+    margin: '0.75rem 0 0.25rem',
+    fontSize: '1rem',
+    fontWeight: 800,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  muted: {
+    margin: '0.15rem 0',
+    color: '#4b5563',
+    fontSize: '0.82rem',
+  },
+  divider: {
+    border: 0,
+    borderTop: '1px dashed #9ca3af',
+    margin: '0.85rem 0',
+  },
+  row: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '0.75rem',
+    margin: '0.35rem 0',
+    fontSize: '0.86rem',
+  },
+  label: {
+    color: '#4b5563',
+    whiteSpace: 'nowrap',
+  },
+  value: {
+    textAlign: 'right',
+    fontWeight: 700,
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: '0.78rem',
+  },
+  th: {
+    borderBottom: '1px dashed #9ca3af',
+    padding: '0.35rem 0.2rem',
+    textAlign: 'right',
+    fontWeight: 800,
+  },
+  firstTh: {
+    borderBottom: '1px dashed #9ca3af',
+    padding: '0.35rem 0.2rem',
+    textAlign: 'left',
+    fontWeight: 800,
+  },
+  td: {
+    borderBottom: '1px dotted #d1d5db',
+    padding: '0.45rem 0.2rem',
+    textAlign: 'right',
+    verticalAlign: 'top',
+  },
+  firstTd: {
+    borderBottom: '1px dotted #d1d5db',
+    padding: '0.45rem 0.2rem',
+    textAlign: 'left',
+    verticalAlign: 'top',
+  },
+  itemName: {
+    fontWeight: 700,
+  },
+  itemUnit: {
+    display: 'block',
+    marginTop: '0.15rem',
+    color: '#6b7280',
+    fontSize: '0.72rem',
+  },
+  totalRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '1rem',
+    marginTop: '0.7rem',
+    paddingTop: '0.7rem',
+    borderTop: '2px solid #111827',
+    fontSize: '1rem',
+    fontWeight: 900,
+  },
+  note: {
+    margin: '0.75rem 0 0',
+    color: '#4b5563',
+    fontSize: '0.78rem',
+    textAlign: 'center',
+  },
+};
+
+const receiptPrintStyle = `
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    #invoice-print-area,
+    #invoice-print-area * {
+      visibility: visible;
+    }
+
+    #invoice-print-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      background: #ffffff;
+    }
+
+    #invoice-print-area .receipt-paper {
+      width: 76mm;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      margin: 0 auto;
+    }
+
+    .receipt-actions {
+      display: none !important;
+    }
+  }
+`;
 
 const CreateInvoice = () => {
   const [medicines, setMedicines] = useState([]);
@@ -37,13 +216,15 @@ const CreateInvoice = () => {
     status: 'Paid',
     gender: '',
   });
+  const [reviewInvoiceData, setReviewInvoiceData] = useState(null);
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [isSavingInvoice, setIsSavingInvoice] = useState(false);
   const [error, setError] = useState('');
 
-  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+  const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
-  const fetchMedicines = async () => {
+  const fetchMedicines = useCallback(async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/medicines/medicines/`, { headers: authHeaders() });
       setMedicines(response.data);
@@ -51,11 +232,11 @@ const CreateInvoice = () => {
     } catch (fetchError) {
       setError('Không tải được danh sách thuốc. Vui lòng thử lại.');
     }
-  };
+  }, [authHeaders]);
 
   useEffect(() => {
     fetchMedicines();
-  }, []);
+  }, [fetchMedicines]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
@@ -104,7 +285,33 @@ const CreateInvoice = () => {
     return '';
   };
 
-  const handleCheckout = async () => {
+  const createInvoiceSnapshot = () => ({
+    customerName: form.customerName.trim(),
+    customerPhone: form.phoneNumber.trim(),
+    address: form.address.trim(),
+    gender: form.gender,
+    paymentMethod: form.paymentMethod,
+    status: form.status,
+    medicines: cart.map((item) => ({ ...item })),
+    totalAmount: calculateTotal(),
+    invoiceTime: new Date().toISOString(),
+  });
+
+  const createCheckoutPayload = (source) => ({
+    customerName: source.customerName,
+    phoneNumber: source.customerPhone,
+    address: source.address,
+    gender: source.gender,
+    paymentMethod: source.paymentMethod,
+    status: source.status,
+    items: source.medicines.map((item) => ({
+      medicine: item.medicineID,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+    })),
+  });
+
+  const handleCheckout = () => {
     const validationError = validateCheckout();
     if (validationError) {
       setError(validationError);
@@ -112,30 +319,36 @@ const CreateInvoice = () => {
     }
 
     setError('');
-    try {
-      const payload = {
-        ...form,
-        customerName: form.customerName.trim(),
-        phoneNumber: form.phoneNumber.trim(),
-        address: form.address.trim(),
-        items: cart.map((item) => ({
-          medicine: item.medicineID,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-        })),
-      };
+    setInvoiceData(null);
+    setShowInvoiceModal(false);
+    setReviewInvoiceData(createInvoiceSnapshot());
+  };
 
-      const response = await axios.post(`${API_BASE}/api/sales/checkout/`, payload, { headers: authHeaders() });
+  const handleEditInvoice = () => {
+    setReviewInvoiceData(null);
+    setIsSavingInvoice(false);
+  };
+
+  const handleConfirmSaveInvoice = async () => {
+    if (!reviewInvoiceData) return;
+
+    setIsSavingInvoice(true);
+    setError('');
+
+    try {
+      const response = await axios.post(
+        `${API_BASE}/api/sales/checkout/`,
+        createCheckoutPayload(reviewInvoiceData),
+        { headers: authHeaders() }
+      );
+
       setInvoiceData({
-        customerName: form.customerName,
-        customerPhone: form.phoneNumber,
-        address: form.address,
-        paymentMethod: form.paymentMethod,
-        status: form.status,
-        medicines: cart,
-        totalAmount: calculateTotal(),
-        invoiceTime: response.data.invoiceTime,
+        ...reviewInvoiceData,
+        invoiceID: response.data.invoiceID,
+        invoiceTime: response.data.invoiceTime || reviewInvoiceData.invoiceTime,
+        status: response.data.status || reviewInvoiceData.status,
       });
+      setReviewInvoiceData(null);
       setShowInvoiceModal(true);
       window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
@@ -144,8 +357,97 @@ const CreateInvoice = () => {
       await fetchMedicines();
     } catch (checkoutError) {
       setError(checkoutError.response?.data?.error || 'Không tạo được hóa đơn. Vui lòng thử lại.');
+    } finally {
+      setIsSavingInvoice(false);
     }
   };
+
+  const renderInvoiceReceipt = (data, { isReview = false } = {}) => (
+    <div
+      id={isReview ? undefined : 'invoice-print-area'}
+      style={isReview ? undefined : { padding: '1rem', backgroundColor: '#f8fafc' }}
+    >
+      {!isReview && <style>{receiptPrintStyle}</style>}
+      <div className="receipt-paper" style={receiptStyles.paper}>
+        <div style={receiptStyles.center}>
+          <h2 style={receiptStyles.brand}>PharmaCare Việt Nam</h2>
+          <p style={receiptStyles.muted}>Nhà thuốc minh họa PharmaCare</p>
+          <p style={receiptStyles.muted}>Điện thoại: +84 816151762</p>
+          <p style={receiptStyles.muted}>Email: khainhq0310@ut.edu.vn</p>
+        </div>
+
+        <hr style={receiptStyles.divider} />
+        <h3 style={receiptStyles.title}>Hóa đơn thanh toán</h3>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Mã hóa đơn</span>
+          <span style={receiptStyles.value}>{data.invoiceID || 'Chưa lưu'}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Thời gian</span>
+          <span style={receiptStyles.value}>{formatDateTime(data.invoiceTime)}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Trạng thái</span>
+          <span style={receiptStyles.value}>{invoiceStatusLabels[data.status] || data.status}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Thanh toán</span>
+          <span style={receiptStyles.value}>{paymentMethodLabels[data.paymentMethod] || data.paymentMethod}</span>
+        </div>
+
+        <hr style={receiptStyles.divider} />
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Khách hàng</span>
+          <span style={receiptStyles.value}>{data.customerName}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Số điện thoại</span>
+          <span style={receiptStyles.value}>{data.customerPhone}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Giới tính</span>
+          <span style={receiptStyles.value}>{genderLabels[data.gender] || data.gender}</span>
+        </div>
+        <div style={receiptStyles.row}>
+          <span style={receiptStyles.label}>Địa chỉ</span>
+          <span style={receiptStyles.value}>{data.address}</span>
+        </div>
+
+        <hr style={receiptStyles.divider} />
+        <table style={receiptStyles.table}>
+          <thead>
+            <tr>
+              <th style={receiptStyles.firstTh}>Thuốc</th>
+              <th style={receiptStyles.th}>SL</th>
+              <th style={receiptStyles.th}>Đơn giá</th>
+              <th style={receiptStyles.th}>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.medicines.map((item) => (
+              <tr key={item.medicineID}>
+                <td style={receiptStyles.firstTd}>
+                  <span style={receiptStyles.itemName}>{item.medicineName}</span>
+                  <span style={receiptStyles.itemUnit}>
+                    Mã: {item.medicineID} | ĐVT: {unitMap[item.unit] || item.unit}
+                  </span>
+                </td>
+                <td style={receiptStyles.td}>{item.quantity}</td>
+                <td style={receiptStyles.td}>{formatMoney(item.unitPrice)}</td>
+                <td style={receiptStyles.td}>{formatMoney(item.quantity * item.unitPrice)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div style={receiptStyles.totalRow}>
+          <span>Tổng tiền</span>
+          <span>{formatMoney(data.totalAmount)} VND</span>
+        </div>
+        <p style={receiptStyles.note}>Cảm ơn quý khách. Vui lòng kiểm tra thuốc trước khi rời quầy.</p>
+      </div>
+    </div>
+  );
 
   return (
     <Container>
@@ -262,45 +564,32 @@ const CreateInvoice = () => {
         </InvoiceInfo>
       </RightSection>
 
+      {reviewInvoiceData && (
+        <Modal>
+          <ModalContent style={{ width: '440px', maxHeight: '90%' }}>
+            <ModalHeader>Kiểm tra hóa đơn trước khi lưu</ModalHeader>
+            <ModalBody>{renderInvoiceReceipt(reviewInvoiceData, { isReview: true })}</ModalBody>
+            <ModalFooter>
+              <Button type="button" onClick={handleEditInvoice} disabled={isSavingInvoice}>Chỉnh sửa</Button>
+              <Button type="button" onClick={handleConfirmSaveInvoice} disabled={isSavingInvoice}>
+                {isSavingInvoice ? 'Đang lưu...' : 'Xác nhận lưu'}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
       {showInvoiceModal && invoiceData && (
-        <div id="invoice-print-area" style={{ padding: '1rem', backgroundColor: '#fff', borderRadius: '8px' }}>
-          <h2>HÓA ĐƠN THANH TOÁN</h2>
-          <p><strong>Thời gian tạo:</strong> {invoiceData.invoiceTime ? new Date(invoiceData.invoiceTime).toLocaleString() : ''}</p>
-          <p><strong>Tên khách hàng:</strong> {invoiceData.customerName}</p>
-          <p><strong>Số điện thoại:</strong> {invoiceData.customerPhone}</p>
-          <p><strong>Địa chỉ:</strong> {invoiceData.address}</p>
-          <p><strong>Phương thức thanh toán:</strong> {invoiceData.paymentMethod}</p>
-          <p><strong>Trạng thái:</strong> {invoiceData.status === 'Paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-          <hr />
-          <h3>Danh sách thuốc:</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Tên thuốc</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Đơn vị tính</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Số lượng</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Đơn giá</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoiceData.medicines.map((item) => (
-                <tr key={item.medicineID}>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.medicineName}</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{unitMap[item.unit] || item.unit}</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{item.quantity}</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatMoney(item.unitPrice)} VND</td>
-                  <td style={{ border: '1px solid #ddd', padding: '8px' }}>{formatMoney(item.quantity * item.unitPrice)} VND</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3>Tổng tiền: {formatMoney(invoiceData.totalAmount)} VND</h3>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
-            <button onClick={() => setShowInvoiceModal(false)}>Đóng</button>
-            <button onClick={() => window.print()}>In hóa đơn</button>
-          </div>
-        </div>
+        <Modal>
+          <ModalContent style={{ width: '440px', maxHeight: '90%' }}>
+            <ModalHeader>Phiếu in hóa đơn</ModalHeader>
+            <ModalBody>{renderInvoiceReceipt(invoiceData)}</ModalBody>
+            <ModalFooter className="receipt-actions">
+              <Button type="button" onClick={() => setShowInvoiceModal(false)}>Đóng</Button>
+              <Button type="button" onClick={() => window.print()}>In hóa đơn</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
     </Container>
   );
