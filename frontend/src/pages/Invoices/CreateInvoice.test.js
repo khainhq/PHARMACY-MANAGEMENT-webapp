@@ -174,7 +174,7 @@ describe('CreateInvoice component', () => {
     expect(within(screen.getByText('Giỏ hàng').closest('div')).getByText('Paracetamol')).toBeInTheDocument();
   });
 
-  test('xác nhận lưu hóa đơn mới gọi API và hiển thị phiếu in chi tiết bằng font Times New Roman', async () => {
+  test('xác nhận lưu hóa đơn mới gọi API và hiển thị phiếu in chi tiết bằng font tiếng Việt đồng đều', async () => {
     await renderInvoice();
     await addFirstMedicineToCart();
     fillInvoiceForm({ status: 'Pending' });
@@ -209,11 +209,11 @@ describe('CreateInvoice component', () => {
     expect(within(receipt).getByText('Chưa thanh toán')).toBeInTheDocument();
     expect(within(receipt).getByText('Paracetamol')).toBeInTheDocument();
     expect(within(receipt).getByText('5.000 VND')).toBeInTheDocument();
-    expect(receipt.querySelector('.receipt-paper').style.fontFamily).toContain('Times New Roman');
-    expect(within(receipt).getByRole('button', { name: 'Tải ảnh hóa đơn' })).toBeInTheDocument();
+    expect(receipt.querySelector('.receipt-paper').style.fontFamily).toContain('Tahoma');
+    expect(within(receipt).getByRole('button', { name: 'In hóa đơn' })).toBeInTheDocument();
   });
 
-  test('tải phiếu in hóa đơn thành ảnh PNG với tên file realtime', async () => {
+  test('nút in hóa đơn mở ảnh PNG xem trước rồi mới tải về với tên file realtime', async () => {
     await renderInvoice();
     await addFirstMedicineToCart();
     fillInvoiceForm({ status: 'Pending' });
@@ -222,7 +222,7 @@ describe('CreateInvoice component', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Xác nhận lưu' }));
     const receipt = (await screen.findByText('Phiếu in hóa đơn')).parentElement;
 
-    fireEvent.click(within(receipt).getByRole('button', { name: 'Tải ảnh hóa đơn' }));
+    fireEvent.click(within(receipt).getByRole('button', { name: 'In hóa đơn' }));
 
     await waitFor(() => {
       expect(html2canvas).toHaveBeenCalledWith(
@@ -234,6 +234,16 @@ describe('CreateInvoice component', () => {
         }
       );
     });
+    expect(anchorClickSpy).not.toHaveBeenCalled();
+    expect(await screen.findByText('Xem trước ảnh hóa đơn PNG')).toBeInTheDocument();
+    const imagePreview = screen.getByAltText('Ảnh hóa đơn INV001');
+    expect(imagePreview).toHaveAttribute('src', 'data:image/png;base64,invoice-image');
+    expect(screen.getByText(/^Tên file:/)).toHaveTextContent(
+      /^Tên file: hoa-don_INV001_Nguyen-Van-A_0123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tải về' }));
+
     expect(downloadedHref).toBe('data:image/png;base64,invoice-image');
     expect(downloadedFileName).toMatch(
       /^hoa-don_INV001_Nguyen-Van-A_0123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/

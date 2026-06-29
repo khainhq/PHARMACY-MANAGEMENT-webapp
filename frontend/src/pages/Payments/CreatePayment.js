@@ -62,7 +62,7 @@ const receiptStyles = {
     border: '1px solid #d1d5db',
     borderRadius: '4px',
     boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
-    fontFamily: "'Times New Roman', Times, serif",
+    fontFamily: "'Tahoma', 'Arial', 'Segoe UI', sans-serif",
     lineHeight: 1.45,
   },
   center: {
@@ -71,14 +71,14 @@ const receiptStyles = {
   brand: {
     margin: 0,
     fontSize: '1.25rem',
-    fontWeight: 800,
+    fontWeight: 700,
     letterSpacing: '0',
     color: '#0369a1',
   },
   title: {
     margin: '0.75rem 0 0.25rem',
     fontSize: '1rem',
-    fontWeight: 800,
+    fontWeight: 700,
     textAlign: 'center',
     textTransform: 'uppercase',
   },
@@ -116,13 +116,13 @@ const receiptStyles = {
     borderBottom: '1px dashed #9ca3af',
     padding: '0.35rem 0.2rem',
     textAlign: 'right',
-    fontWeight: 800,
+    fontWeight: 700,
   },
   firstTh: {
     borderBottom: '1px dashed #9ca3af',
     padding: '0.35rem 0.2rem',
     textAlign: 'left',
-    fontWeight: 800,
+    fontWeight: 700,
   },
   td: {
     borderBottom: '1px dotted #d1d5db',
@@ -154,7 +154,7 @@ const receiptStyles = {
     paddingTop: '0.7rem',
     borderTop: '2px solid #111827',
     fontSize: '1rem',
-    fontWeight: 900,
+    fontWeight: 700,
   },
   note: {
     margin: '0.75rem 0 0',

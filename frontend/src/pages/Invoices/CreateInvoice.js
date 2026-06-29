@@ -102,7 +102,7 @@ const receiptStyles = {
     border: '1px solid #d1d5db',
     borderRadius: '4px',
     boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
-    fontFamily: "'Times New Roman', Times, serif",
+    fontFamily: "'Tahoma', 'Arial', 'Segoe UI', sans-serif",
     lineHeight: 1.45,
   },
   center: {
@@ -111,14 +111,14 @@ const receiptStyles = {
   brand: {
     margin: 0,
     fontSize: '1.25rem',
-    fontWeight: 800,
+    fontWeight: 700,
     letterSpacing: '0',
     color: '#0369a1',
   },
   title: {
     margin: '0.75rem 0 0.25rem',
     fontSize: '1rem',
-    fontWeight: 800,
+    fontWeight: 700,
     textAlign: 'center',
     textTransform: 'uppercase',
   },
@@ -156,13 +156,13 @@ const receiptStyles = {
     borderBottom: '1px dashed #9ca3af',
     padding: '0.35rem 0.2rem',
     textAlign: 'right',
-    fontWeight: 800,
+    fontWeight: 700,
   },
   firstTh: {
     borderBottom: '1px dashed #9ca3af',
     padding: '0.35rem 0.2rem',
     textAlign: 'left',
-    fontWeight: 800,
+    fontWeight: 700,
   },
   td: {
     borderBottom: '1px dotted #d1d5db',
@@ -194,12 +194,35 @@ const receiptStyles = {
     paddingTop: '0.7rem',
     borderTop: '2px solid #111827',
     fontSize: '1rem',
-    fontWeight: 900,
+    fontWeight: 700,
   },
   note: {
     margin: '0.75rem 0 0',
     color: '#4b5563',
     fontSize: '0.78rem',
+    textAlign: 'center',
+  },
+  imagePreviewWrap: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.85rem',
+  },
+  imagePreview: {
+    width: '360px',
+    maxWidth: '100%',
+    border: '1px solid #d1d5db',
+    borderRadius: '4px',
+    backgroundColor: '#ffffff',
+    boxShadow: '0 14px 35px rgba(15, 23, 42, 0.14)',
+  },
+  fileName: {
+    width: '100%',
+    wordBreak: 'break-word',
+    margin: 0,
+    color: '#334155',
+    fontFamily: "'Tahoma', 'Arial', 'Segoe UI', sans-serif",
+    fontSize: '0.82rem',
     textAlign: 'center',
   },
 };
@@ -223,7 +246,8 @@ const CreateInvoice = () => {
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [isSavingInvoice, setIsSavingInvoice] = useState(false);
-  const [isExportingInvoiceImage, setIsExportingInvoiceImage] = useState(false);
+  const [isGeneratingInvoiceImage, setIsGeneratingInvoiceImage] = useState(false);
+  const [invoiceImagePreview, setInvoiceImagePreview] = useState(null);
   const [error, setError] = useState('');
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
@@ -353,6 +377,7 @@ const CreateInvoice = () => {
         status: response.data.status || reviewInvoiceData.status,
       });
       setReviewInvoiceData(null);
+      setInvoiceImagePreview(null);
       setShowInvoiceModal(true);
       window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
@@ -366,7 +391,7 @@ const CreateInvoice = () => {
     }
   };
 
-  const handleDownloadInvoiceImage = async () => {
+  const createInvoiceImagePreview = async () => {
     if (!invoiceData) return;
 
     const receiptElement = document.querySelector('#invoice-print-area .receipt-paper');
@@ -375,7 +400,7 @@ const CreateInvoice = () => {
       return;
     }
 
-    setIsExportingInvoiceImage(true);
+    setIsGeneratingInvoiceImage(true);
     setError('');
 
     try {
@@ -388,16 +413,31 @@ const CreateInvoice = () => {
         backgroundColor: '#ffffff',
         useCORS: true,
       });
+      setInvoiceImagePreview({
+        src: canvas.toDataURL('image/png'),
+        fileName: buildInvoiceImageFileName(invoiceData),
+      });
+    } catch (downloadError) {
+      setError('Không tạo được ảnh hóa đơn. Vui lòng thử lại.');
+    } finally {
+      setIsGeneratingInvoiceImage(false);
+    }
+  };
+
+  const handleDownloadInvoiceImage = () => {
+    if (!invoiceImagePreview) return;
+
+    try {
+      const fileName = buildInvoiceImageFileName(invoiceData);
       const downloadLink = document.createElement('a');
-      downloadLink.href = canvas.toDataURL('image/png');
-      downloadLink.download = buildInvoiceImageFileName(invoiceData);
+      downloadLink.href = invoiceImagePreview.src;
+      downloadLink.download = fileName;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
+      setInvoiceImagePreview((current) => current ? { ...current, fileName } : current);
     } catch (downloadError) {
-      setError('Không xuất được ảnh hóa đơn. Vui lòng thử lại.');
-    } finally {
-      setIsExportingInvoiceImage(false);
+      setError('Không tải được ảnh hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -620,13 +660,40 @@ const CreateInvoice = () => {
       {showInvoiceModal && invoiceData && (
         <Modal>
           <ModalContent style={{ width: '440px', maxHeight: '90%' }}>
-            <ModalHeader>Phiếu in hóa đơn</ModalHeader>
-            <ModalBody>{renderInvoiceReceipt(invoiceData)}</ModalBody>
+            <ModalHeader>{invoiceImagePreview ? 'Xem trước ảnh hóa đơn PNG' : 'Phiếu in hóa đơn'}</ModalHeader>
+            <ModalBody>
+              {invoiceImagePreview ? (
+                <div style={receiptStyles.imagePreviewWrap}>
+                  <img
+                    src={invoiceImagePreview.src}
+                    alt={`Ảnh hóa đơn ${invoiceData.invoiceID || ''}`.trim()}
+                    style={receiptStyles.imagePreview}
+                  />
+                  <p style={receiptStyles.fileName}>
+                    Tên file: {invoiceImagePreview.fileName}
+                  </p>
+                </div>
+              ) : (
+                renderInvoiceReceipt(invoiceData)
+              )}
+            </ModalBody>
             <ModalFooter className="receipt-actions">
-              <Button type="button" onClick={() => setShowInvoiceModal(false)}>Đóng</Button>
-              <Button type="button" onClick={handleDownloadInvoiceImage} disabled={isExportingInvoiceImage}>
-                {isExportingInvoiceImage ? 'Đang tạo ảnh...' : 'Tải ảnh hóa đơn'}
-              </Button>
+              {invoiceImagePreview ? (
+                <>
+                  <Button type="button" onClick={() => setInvoiceImagePreview(null)}>Quay lại phiếu</Button>
+                  <Button type="button" onClick={handleDownloadInvoiceImage}>Tải về</Button>
+                </>
+              ) : (
+                <>
+                  <Button type="button" onClick={() => {
+                    setShowInvoiceModal(false);
+                    setInvoiceImagePreview(null);
+                  }}>Đóng</Button>
+                  <Button type="button" onClick={createInvoiceImagePreview} disabled={isGeneratingInvoiceImage}>
+                    {isGeneratingInvoiceImage ? 'Đang tạo ảnh...' : 'In hóa đơn'}
+                  </Button>
+                </>
+              )}
             </ModalFooter>
           </ModalContent>
         </Modal>
