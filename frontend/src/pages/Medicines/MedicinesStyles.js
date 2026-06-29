@@ -77,6 +77,9 @@ export const originMap = {
   ORG002: 'Pháp',
   ORG003: 'Mỹ',
   ORG004: 'Nhật Bản',
+  ORG005: 'Ấn Độ',
+  ORG006: 'Đức',
+  ORG007: 'Hàn Quốc',
 };
 
 export const unitMap = {
@@ -85,6 +88,9 @@ export const unitMap = {
   UNT003: 'Vỉ',
   UNT004: 'Viên',
   UNT005: 'Gói',
+  UNT006: 'Tuýp',
+  UNT007: 'Lọ',
+  UNT008: 'Ống',
 };
 
 export const Form = styled.form`

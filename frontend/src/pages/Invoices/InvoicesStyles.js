@@ -147,6 +147,9 @@ export const unitMap = {
   UNT003: 'Vỉ',
   UNT004: 'Viên',
   UNT005: 'Gói',
+  UNT006: 'Tuýp',
+  UNT007: 'Lọ',
+  UNT008: 'Ống',
 };
 
 export const Modal = styled.div`

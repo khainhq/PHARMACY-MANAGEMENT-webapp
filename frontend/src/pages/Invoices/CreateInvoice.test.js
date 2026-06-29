@@ -22,7 +22,7 @@ describe('CreateInvoice component', () => {
 
     // Mock dữ liệu API dựa trên URL
     axios.get.mockImplementation((url, config) => {
-      if (url === 'http://localhost:8000/api/medicines/medicines/') {
+      if (url === 'http://127.0.0.1:8000/api/medicines/medicines/') {
         return Promise.resolve({
           data: [
             {
@@ -54,6 +54,9 @@ describe('CreateInvoice component', () => {
 
     // Mock API cho tạo khách hàng và hóa đơn
     axios.post.mockImplementation((url) => {
+      if (url === 'http://127.0.0.1:8000/api/sales/checkout/') {
+        return Promise.resolve({ data: { invoiceID: 'INV001', invoiceTime: '2026-06-29T12:00:00Z' } });
+      }
       if (url === 'http://localhost:8000/api/sales/customers/') {
         return Promise.resolve({ data: { customerID: 'CUST123' } });
       }
@@ -191,6 +194,8 @@ describe('CreateInvoice component', () => {
     const genderSelect = screen.getByRole('combobox', { name: /Chọn giới tính/i });
     fireEvent.change(genderSelect, { target: { value: 'Male' } });
     fireEvent.change(screen.getByPlaceholderText(/Địa chỉ/i), { target: { value: '123 Ha Noi' } });
+    const statusSelect = screen.getAllByRole('combobox')[2];
+    fireEvent.change(statusSelect, { target: { value: 'Pending' } });
 
     const checkoutButton = screen.getByRole('button', { name: /TẠO HÓA ĐƠN/i });
     await act(async () => {
@@ -215,6 +220,42 @@ describe('CreateInvoice component', () => {
 
       // Optionally, verify the total in the "Tổng tiền" section
       expect(within(invoiceModal).getByText(/Tổng tiền:/i).closest('h3')).toHaveTextContent(/5\.000 VND/i);
+    }, { timeout: 3000 });
+  });
+
+  test('hiển thị trạng thái đã thanh toán khi giữ lựa chọn mặc định', async () => {
+    render(<CreateInvoice />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
+    });
+
+    const selectButton = screen.getAllByRole('button', { name: /Chọn/i })[0];
+    fireEvent.click(selectButton);
+
+    const addToCartButton = screen.getByRole('button', { name: /Thêm vào giỏ hàng/i });
+    fireEvent.click(addToCartButton);
+
+    await waitFor(() => {
+      const cartSection = screen.getByText(/Giỏ hàng/i).parentElement;
+      expect(within(cartSection).getByText(/Paracetamol/i)).toBeInTheDocument();
+    }, { timeout: 2000 });
+
+    fireEvent.change(screen.getByPlaceholderText(/Tên khách hàng/i), { target: { value: 'Tran Thi B' } });
+    fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '0987654321' } });
+    const genderSelect = screen.getByRole('combobox', { name: /Chọn giới tính/i });
+    fireEvent.change(genderSelect, { target: { value: 'Female' } });
+    fireEvent.change(screen.getByPlaceholderText(/Địa chỉ/i), { target: { value: '456 Da Nang' } });
+
+    const checkoutButton = screen.getByRole('button', { name: /TẠO HÓA ĐƠN/i });
+    await act(async () => {
+      fireEvent.click(checkoutButton);
+    });
+
+    await waitFor(() => {
+      const invoiceModal = screen.getByText(/HÓA ĐƠN THANH TOÁN/i).closest('div');
+      expect(invoiceModal).toBeInTheDocument();
+      expect(within(invoiceModal).getByText(/Đã thanh toán/i)).toBeInTheDocument();
     }, { timeout: 3000 });
   });
 

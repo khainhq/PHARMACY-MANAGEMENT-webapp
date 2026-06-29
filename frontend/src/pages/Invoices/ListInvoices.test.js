@@ -32,14 +32,14 @@ describe('ListInvoices component', () => {
         customer: 'Nguyen Van A',
         address: '123 Ha Noi',
         paymentMethod: 'Cash',
-        status: 'Chưa thanh toán',
+        status: 'Pending',
       },
       {
         invoiceID: 'INV002',
         customer: 'Tran Thi B',
         address: '456 Da Nang',
         paymentMethod: 'Cash',
-        status: 'Đã thanh toán',
+        status: 'Paid',
       },
     ];
     console.log('beforeEach: mockInvoices:', mockInvoices);
