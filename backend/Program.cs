@@ -183,6 +183,93 @@ app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbCo
     });
 }).RequireToken();
 
+app.MapPost("/api/medicines/payment-checkout/", async (PaymentCheckoutRequest request, PharmacyDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(request.employee) || string.IsNullOrWhiteSpace(request.supplier))
+    {
+        return Results.BadRequest(new { error = "Vui lòng chọn nhân viên và nhà cung cấp" });
+    }
+
+    if (request.items is null || request.items.Count == 0)
+    {
+        return Results.BadRequest(new { error = "Vui lòng thêm ít nhất một sản phẩm" });
+    }
+
+    if (!await db.Employees.AnyAsync(x => x.EmployeeID == request.employee))
+    {
+        return Results.BadRequest(new { error = "Nhân viên không tồn tại" });
+    }
+
+    if (!await db.Suppliers.AnyAsync(x => x.SupplierID == request.supplier))
+    {
+        return Results.BadRequest(new { error = "Nhà cung cấp không tồn tại" });
+    }
+
+    await using var transaction = await db.Database.BeginTransactionAsync();
+    var paymentID = await GeneratePaymentIdAsync(db);
+    var payment = new Payment
+    {
+        PaymentID = paymentID,
+        PaymentTime = DateTime.UtcNow,
+        EmployeeID = request.employee,
+        SupplierID = request.supplier,
+        TotalAmount = 0
+    };
+
+    db.Payments.Add(payment);
+
+    var details = new List<PaymentDetail>();
+    decimal totalAmount = 0;
+
+    foreach (var item in request.items)
+    {
+        if (string.IsNullOrWhiteSpace(item.medicine))
+        {
+            return Results.BadRequest(new { error = "Sản phẩm trong phiếu nhập không hợp lệ" });
+        }
+
+        if (item.quantity <= 0)
+        {
+            return Results.BadRequest(new { error = "Số lượng nhập phải lớn hơn 0" });
+        }
+
+        if (item.unitPrice <= 0)
+        {
+            return Results.BadRequest(new { error = "Đơn giá nhập phải lớn hơn 0" });
+        }
+
+        var medicine = await db.Medicines.FirstOrDefaultAsync(x => x.MedicineID == item.medicine);
+        if (medicine is null)
+        {
+            return Results.BadRequest(new { error = $"Không tìm thấy thuốc {item.medicine}" });
+        }
+
+        medicine.StockQuantity += item.quantity;
+        var detail = new PaymentDetail
+        {
+            PaymentID = paymentID,
+            MedicineID = item.medicine,
+            Quantity = item.quantity,
+            UnitPrice = item.unitPrice
+        };
+
+        details.Add(detail);
+        db.PaymentDetails.Add(detail);
+        totalAmount += item.quantity * item.unitPrice;
+    }
+
+    payment.TotalAmount = totalAmount;
+    await db.SaveChangesAsync();
+    await transaction.CommitAsync();
+
+    return Results.Created($"/api/medicines/payments/{paymentID}/", new
+    {
+        message = "Tạo phiếu nhập thành công",
+        payment,
+        paymentDetails = details
+    });
+}).RequireToken();
+
 app.MapGet("/api/sales/invoice-statistics/", async (PharmacyDbContext db) =>
     Results.Ok(new
     {
@@ -303,7 +390,9 @@ static void MapCrud<TEntity, TKey>(
         if (existing is null) return Results.NotFound();
         foreach (var jsonProp in patch.EnumerateObject())
         {
-            var prop = typeof(TEntity).GetProperties().FirstOrDefault(p => string.Equals(p.Name, jsonProp.Name, StringComparison.OrdinalIgnoreCase));
+            var prop = typeof(TEntity).GetProperties().FirstOrDefault(p =>
+                string.Equals(p.Name, jsonProp.Name, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(p.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false).Cast<JsonPropertyNameAttribute>().FirstOrDefault()?.Name, jsonProp.Name, StringComparison.OrdinalIgnoreCase));
             if (prop is null || !prop.CanWrite) continue;
             prop.SetValue(existing, ConvertJson(jsonProp.Value, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType));
         }
@@ -344,6 +433,20 @@ static async Task<string> GenerateCustomerIdAsync(PharmacyDbContext db)
         next++;
     }
     while (await db.Customers.AnyAsync(x => x.CustomerID == id));
+
+    return id;
+}
+
+static async Task<string> GeneratePaymentIdAsync(PharmacyDbContext db)
+{
+    var next = await db.Payments.CountAsync() + 1;
+    string id;
+    do
+    {
+        id = $"PAY{next:000}";
+        next++;
+    }
+    while (await db.Payments.AnyAsync(x => x.PaymentID == id));
 
     return id;
 }
@@ -579,3 +682,5 @@ record CheckoutRequest(
     string paymentMethod,
     string status,
     List<CheckoutItem> items);
+record PaymentCheckoutItem(string medicine, int quantity, decimal unitPrice);
+record PaymentCheckoutRequest(string employee, string supplier, List<PaymentCheckoutItem> items);
