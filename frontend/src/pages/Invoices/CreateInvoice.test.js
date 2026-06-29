@@ -1,9 +1,11 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import axios from 'axios';
-import CreateInvoice from './CreateInvoice';
+import html2canvas from 'html2canvas';
+import CreateInvoice, { buildInvoiceImageFileName } from './CreateInvoice';
 
 jest.mock('axios');
+jest.mock('html2canvas', () => jest.fn());
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
 jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
@@ -57,12 +59,26 @@ const fillInvoiceForm = ({ status = 'Paid' } = {}) => {
 };
 
 describe('CreateInvoice component', () => {
+  let anchorClickSpy;
+  let downloadedFileName;
+  let downloadedHref;
+
   beforeEach(() => {
     axios.get.mockReset();
     axios.post.mockReset();
+    html2canvas.mockReset();
     sessionStorage.setItem('token', 'dummyToken');
     window.alert = jest.fn();
-    window.print = jest.fn();
+    downloadedFileName = '';
+    downloadedHref = '';
+
+    html2canvas.mockResolvedValue({
+      toDataURL: jest.fn(() => 'data:image/png;base64,invoice-image'),
+    });
+    anchorClickSpy = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function click() {
+      downloadedFileName = this.download;
+      downloadedHref = this.href;
+    });
 
     axios.get.mockImplementation((url) => {
       if (url === `${API_BASE}/api/medicines/medicines/`) {
@@ -90,6 +106,15 @@ describe('CreateInvoice component', () => {
   afterEach(() => {
     sessionStorage.clear();
     jest.clearAllMocks();
+    anchorClickSpy.mockRestore();
+  });
+
+  test('tạo tên file ảnh hóa đơn có mã, tên khách, số điện thoại và ngày giờ', () => {
+    expect(buildInvoiceImageFileName({
+      invoiceID: 'INV001',
+      customerName: 'Trần Thị B',
+      customerPhone: '0987 654 321',
+    }, new Date(2026, 5, 30, 9, 8, 7))).toBe('hoa-don_INV001_Tran-Thi-B_0987-654-321_2026-06-30_09-08-07.png');
   });
 
   test('hiển thị Sidebar, danh sách thuốc, giỏ hàng và thông tin hóa đơn', async () => {
@@ -149,7 +174,7 @@ describe('CreateInvoice component', () => {
     expect(within(screen.getByText('Giỏ hàng').closest('div')).getByText('Paracetamol')).toBeInTheDocument();
   });
 
-  test('xác nhận lưu hóa đơn mới gọi API và hiển thị phiếu in chi tiết', async () => {
+  test('xác nhận lưu hóa đơn mới gọi API và hiển thị phiếu in chi tiết bằng font Times New Roman', async () => {
     await renderInvoice();
     await addFirstMedicineToCart();
     fillInvoiceForm({ status: 'Pending' });
@@ -184,6 +209,34 @@ describe('CreateInvoice component', () => {
     expect(within(receipt).getByText('Chưa thanh toán')).toBeInTheDocument();
     expect(within(receipt).getByText('Paracetamol')).toBeInTheDocument();
     expect(within(receipt).getByText('5.000 VND')).toBeInTheDocument();
-    expect(within(receipt).getByRole('button', { name: 'In hóa đơn' })).toBeInTheDocument();
+    expect(receipt.querySelector('.receipt-paper').style.fontFamily).toContain('Times New Roman');
+    expect(within(receipt).getByRole('button', { name: 'Tải ảnh hóa đơn' })).toBeInTheDocument();
+  });
+
+  test('tải phiếu in hóa đơn thành ảnh PNG với tên file realtime', async () => {
+    await renderInvoice();
+    await addFirstMedicineToCart();
+    fillInvoiceForm({ status: 'Pending' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'TẠO HÓA ĐƠN' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Xác nhận lưu' }));
+    const receipt = (await screen.findByText('Phiếu in hóa đơn')).parentElement;
+
+    fireEvent.click(within(receipt).getByRole('button', { name: 'Tải ảnh hóa đơn' }));
+
+    await waitFor(() => {
+      expect(html2canvas).toHaveBeenCalledWith(
+        expect.any(HTMLElement),
+        {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+        }
+      );
+    });
+    expect(downloadedHref).toBe('data:image/png;base64,invoice-image');
+    expect(downloadedFileName).toMatch(
+      /^hoa-don_INV001_Nguyen-Van-A_0123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
+    );
   });
 });
