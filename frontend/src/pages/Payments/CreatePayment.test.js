@@ -118,6 +118,7 @@ describe('CreatePayment component', () => {
     const selects = screen.getAllByRole('combobox');
     fireEvent.change(selects[0], { target: { value: 'EMP001' } });
     fireEvent.change(selects[1], { target: { value: 'SUP001' } });
+    fireEvent.change(selects[2], { target: { value: 'Pending' } });
     fireEvent.click(screen.getByRole('button', { name: 'Tạo Phiếu Nhập' }));
 
     await waitFor(() => {
@@ -126,6 +127,7 @@ describe('CreatePayment component', () => {
         {
           employee: 'EMP001',
           supplier: 'SUP001',
+          status: 'Pending',
           items: [{ medicine: 'MED001', quantity: 1, unitPrice: 5000 }],
         },
         expect.any(Object)
@@ -135,5 +137,6 @@ describe('CreatePayment component', () => {
 
     expect(selects[0]).toHaveValue('');
     expect(selects[1]).toHaveValue('');
+    expect(selects[2]).toHaveValue('Paid');
   });
 });

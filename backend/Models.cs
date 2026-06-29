@@ -136,6 +136,7 @@ public sealed class Payment
     [JsonPropertyName("employee")] public string EmployeeID { get; set; } = "";
     [JsonPropertyName("supplier")] public string SupplierID { get; set; } = "";
     [Column(TypeName = "decimal(10,2)")] public decimal TotalAmount { get; set; }
+    [MaxLength(50)] public string Status { get; set; } = "Pending";
 }
 
 public sealed class PaymentDetail

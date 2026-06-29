@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -12,75 +12,122 @@ import {
   Input,
 } from './PaymentsStyles';
 
+const API_BASE_URL = 'http://127.0.0.1:8000';
+const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
+
+const paymentStatusLabels = {
+  Paid: 'Đã thanh toán',
+  Pending: 'Chưa thanh toán',
+  'Đã thanh toán': 'Đã thanh toán',
+  'Chưa thanh toán': 'Chưa thanh toán',
+};
+
+const formatPaymentStatus = (status) => paymentStatusLabels[status] || status || '';
+const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa thanh toán';
+const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+
+const filterPayments = (items, keyword) => {
+  const normalizedKeyword = keyword.trim().toLowerCase();
+  if (!normalizedKeyword) return items;
+
+  return items.filter((payment) => {
+    const searchable = [
+      payment.paymentID,
+      payment.supplierName,
+      payment.employeeName,
+      payment.medicineSummary,
+      formatPaymentStatus(payment.status),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return searchable.includes(normalizedKeyword);
+  });
+};
+
 const ListPayments = () => {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [error, setError] = useState('');
 
-  const fetchPayments = async () => {
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-  
+  const fetchPayments = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/medicines/payment-details/', { headers });
-      const paymentDetails = await Promise.all(
-        response.data.map(async (detail) => {
-          const paymentRes = await axios.get(`http://localhost:8000/api/medicines/payments/${detail.payment}/`, { headers });
-          const medicineRes = await axios.get(`http://localhost:8000/api/medicines/medicines/${detail.medicine}/`, { headers });
-          const supplierRes = await axios.get(`http://localhost:8000/api/medicines/suppliers/${paymentRes.data.supplier}/`, { headers });
-          const employeeRes = await axios.get(`http://localhost:8000/api/auth/employees/${paymentRes.data.employee}/`, { headers });
-
-          return {
-            id: detail.id,
-            paymentID: detail.payment,
-            paymentTime: paymentRes.data.paymentTime, // Lấy thời gian tạo phiếu thu
-            medicineName: medicineRes.data.medicineName,
-            supplierName: supplierRes.data.supplierName,
-            employeeName: employeeRes.data.fullName,
-            quantity: detail.quantity,
-            unitPrice: detail.unitPrice,
-          };
-        })
-      );
-      setPayments(paymentDetails);
-      setFilteredPayments(paymentDetails);
-    } catch (error) {
-      console.error('Error fetching payments:', error.response?.data || error.message);
+      const response = await axios.get(`${API_BASE_URL}/api/medicines/payments/`, {
+        headers: authHeaders(),
+      });
+      setPayments(response.data);
+      setFilteredPayments(filterPayments(response.data, searchKeyword));
+      setError('');
+    } catch (fetchError) {
+      setError('Không tải được danh sách phiếu nhập. Vui lòng thử lại.');
     }
-  };
+  }, [searchKeyword]);
 
   const handleDeletePayment = async (paymentID) => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa phiếu nhập này?');
     if (!confirmDelete) return;
 
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
     try {
-      // Use the correct endpoint for deleting payments
-      await axios.delete(`http://localhost:8000/api/medicines/payments/${paymentID}/`, { headers });
-      fetchPayments(); // Refresh the list after deletion
-    } catch (error) {
-      console.error('Error deleting payment:', error.response?.data || error.message);
+      await axios.delete(`${API_BASE_URL}/api/medicines/payments/${paymentID}/`, {
+        headers: authHeaders(),
+      });
+      window.localStorage.setItem(PAYMENTS_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
+      await fetchPayments();
+    } catch (deleteError) {
+      setError('Không xóa được phiếu nhập. Vui lòng thử lại.');
+    }
+  };
+
+  const handleMarkAsPaid = async (paymentID) => {
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/api/medicines/payments/${paymentID}/`,
+        { status: 'Paid' },
+        { headers: authHeaders() }
+      );
+      window.localStorage.setItem(PAYMENTS_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
+      await fetchPayments();
+    } catch (updateError) {
+      setError('Không cập nhật được trạng thái phiếu nhập. Vui lòng thử lại.');
     }
   };
 
   const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase().trim();
+    const keyword = e.target.value;
     setSearchKeyword(keyword);
-  
-    // Lọc dữ liệu chỉ dựa trên `paymentID`
-    const filtered = payments.filter((payment) => {
-      const paymentID = payment.paymentID?.toString().toLowerCase() || '';
-      return paymentID.includes(keyword);
-    });
-  
-    setFilteredPayments(filtered);
+    setFilteredPayments(filterPayments(payments, keyword));
   };
-  
+
   useEffect(() => {
     fetchPayments();
-  }, []);
+
+    const refreshPayments = () => fetchPayments();
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') fetchPayments();
+    };
+    const refreshFromStorage = (event) => {
+      if (event.key === PAYMENTS_UPDATED_EVENT) fetchPayments();
+    };
+
+    window.addEventListener('focus', refreshPayments);
+    window.addEventListener(PAYMENTS_UPDATED_EVENT, refreshPayments);
+    window.addEventListener('storage', refreshFromStorage);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    const timer = window.setInterval(refreshPayments, 10000);
+
+    return () => {
+      window.removeEventListener('focus', refreshPayments);
+      window.removeEventListener(PAYMENTS_UPDATED_EVENT, refreshPayments);
+      window.removeEventListener('storage', refreshFromStorage);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      window.clearInterval(timer);
+    };
+  }, [fetchPayments]);
 
   return (
     <Container>
@@ -90,31 +137,32 @@ const ListPayments = () => {
           <div>
             <Input
               type="text"
-              placeholder="Tìm kiếm phiếu thu..."
+              placeholder="Tìm kiếm phiếu nhập theo mã, nhà cung cấp..."
               value={searchKeyword}
               onChange={handleSearch}
             />
           </div>
         </Toolbar>
 
-        <h2>DANH SÁCH PHIẾU THU</h2>
+        <h2>DANH SÁCH PHIẾU NHẬP</h2>
+        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
         <Table>
           <thead>
             <tr>
               <TableHeader>STT</TableHeader>
-              <TableHeader>Mã phiếu thu</TableHeader>
-              <TableHeader>Thời gian</TableHeader> {/* Thêm cột thời gian */}
-              <TableHeader>Tên thuốc</TableHeader>
+              <TableHeader>Mã phiếu nhập</TableHeader>
+              <TableHeader>Thời gian</TableHeader>
               <TableHeader>Nhà cung cấp</TableHeader>
               <TableHeader>Nhân viên</TableHeader>
-              <TableHeader>Số lượng</TableHeader>
-              <TableHeader>Đơn giá</TableHeader>
+              <TableHeader>Thuốc nhập</TableHeader>
+              <TableHeader>Tổng tiền</TableHeader>
+              <TableHeader>Trạng thái</TableHeader>
               <TableHeader>Hành động</TableHeader>
             </tr>
           </thead>
           <tbody>
             {filteredPayments.map((payment, index) => (
-              <tr key={payment.id}>
+              <tr key={payment.paymentID}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{payment.paymentID}</TableCell>
                 <TableCell>
@@ -122,13 +170,23 @@ const ListPayments = () => {
                     ? new Date(payment.paymentTime).toLocaleString()
                     : ''}
                 </TableCell>
-                <TableCell>{payment.medicineName}</TableCell>
-                <TableCell>{payment.supplierName}</TableCell>
-                <TableCell>{payment.employeeName}</TableCell>
-                <TableCell>{payment.quantity}</TableCell>
-                <TableCell>{parseFloat(payment.unitPrice).toLocaleString()} VND</TableCell>
+                <TableCell>{payment.supplierName || payment.supplier}</TableCell>
+                <TableCell>{payment.employeeName || payment.employee}</TableCell>
+                <TableCell>{payment.medicineSummary}</TableCell>
+                <TableCell>{formatMoney(payment.totalAmount)} VND</TableCell>
+                <TableCell>{formatPaymentStatus(payment.status)}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleDeletePayment(payment.paymentID)}>Xóa</Button>
+                  {isPendingStatus(payment.status) && (
+                    <Button
+                      data-testid={`mark-paid-${payment.paymentID}`}
+                      onClick={() => handleMarkAsPaid(payment.paymentID)}
+                    >
+                      Chuyển đã thanh toán
+                    </Button>
+                  )}
+                  <Button onClick={() => handleDeletePayment(payment.paymentID)} style={{ marginLeft: '0.5rem' }}>
+                    Xóa
+                  </Button>
                 </TableCell>
               </tr>
             ))}
