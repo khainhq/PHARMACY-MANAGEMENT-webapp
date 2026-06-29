@@ -19,6 +19,7 @@ import {
 } from './PaymentsStyles';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
+const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
 
 const formatMoney = (value) =>
   Number(value || 0).toLocaleString('vi-VN', {
@@ -42,6 +43,7 @@ const CreatePayment = () => {
   const [form, setForm] = useState({
     employee: '',
     supplier: '',
+    status: 'Paid',
   });
 
   const getHeaders = () => {
@@ -141,6 +143,7 @@ const CreatePayment = () => {
       const payload = {
         employee: form.employee,
         supplier: form.supplier,
+        status: form.status,
         items: paymentDetails.map(({ medicine, quantity, unitPrice }) => ({
           medicine,
           quantity,
@@ -153,9 +156,11 @@ const CreatePayment = () => {
       });
 
       await fetchMedicines();
+      window.localStorage.setItem(PAYMENTS_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
       alert('Tạo phiếu nhập thành công');
       setPaymentDetails([]);
-      setForm({ employee: '', supplier: '' });
+      setForm({ employee: '', supplier: '', status: 'Paid' });
     } catch (error) {
       alert(getErrorMessage(error, 'Không thể tạo phiếu nhập.'));
     }
@@ -302,6 +307,14 @@ const CreatePayment = () => {
                 {supplier.supplierName}
               </option>
             ))}
+          </Select>
+          <Select
+            value={form.status}
+            onChange={(e) => setForm({ ...form, status: e.target.value })}
+            required
+          >
+            <option value="Paid">Đã thanh toán</option>
+            <option value="Pending">Chưa thanh toán</option>
           </Select>
           <h3>Tổng tiền: {formatMoney(totalAmount)} VND</h3>
           <CenteredButton onClick={handleSubmit}>Tạo Phiếu Nhập</CenteredButton>

@@ -38,7 +38,7 @@ public static class DataSeeder
             new Account { Username = "product", PasswordHash = BCrypt.Net.BCrypt.HashPassword("product123"), EmployeeID = "EMP003", RoleID = productRole.RoleID, IsStaff = false, IsActive = true });
 
         db.Orders.Add(new Order { OrderID = "ORD001", EmployeeID = "EMP002", CustomerID = "CUS001", TotalAmount = 70000 });
-        db.Payments.Add(new Payment { PaymentID = "PAY001", EmployeeID = "EMP003", SupplierID = "SUP001", TotalAmount = 50000 });
+        db.Payments.Add(new Payment { PaymentID = "PAY001", EmployeeID = "EMP003", SupplierID = "SUP001", TotalAmount = 50000, Status = "Paid" });
 
         await db.SaveChangesAsync();
 

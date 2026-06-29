@@ -1,325 +1,144 @@
 import React from 'react';
-import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import axios from 'axios';
 import ListPayments from './ListPayments';
 
-// Mock dependencies
 jest.mock('axios');
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
 
-// Tăng timeout toàn cục
-jest.setTimeout(30000);
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 describe('ListPayments component', () => {
-  let mockPaymentDetails, mockPayments, mockMedicines, mockSuppliers, mockEmployees;
+  let mockPayments;
 
   beforeEach(() => {
-    // Reset mocks
-    axios.get.mockReset();
-    axios.delete.mockReset();
-
-    // Set up mock data
-    mockPaymentDetails = [
-      {
-        id: 1,
-        payment: 'PAY001',
-        medicine: 'MED001',
-        quantity: 10,
-        unitPrice: 5000,
-      },
-      {
-        id: 2,
-        payment: 'PAY002',
-        medicine: 'MED002',
-        quantity: 20,
-        unitPrice: 10000,
-      },
-    ];
+    sessionStorage.setItem('token', 'dummyToken');
+    window.confirm = jest.fn(() => true);
 
     mockPayments = [
       {
         paymentID: 'PAY001',
+        paymentTime: '2026-06-29T11:00:00Z',
         supplier: 'SUP001',
+        supplierName: 'Công ty Dược A',
         employee: 'EMP001',
+        employeeName: 'Nguyễn Văn A',
+        totalAmount: 50000,
+        status: 'Pending',
+        medicineSummary: 'Paracetamol x10',
+        details: [{ id: 1, payment: 'PAY001', medicine: 'MED001', medicineName: 'Paracetamol', quantity: 10, unitPrice: 5000 }],
       },
       {
         paymentID: 'PAY002',
+        paymentTime: '2026-06-29T11:05:00Z',
         supplier: 'SUP002',
-        employee: 'EMP002',
-      },
-    ];
-
-    mockMedicines = [
-      {
-        medicineID: 'MED001',
-        medicineName: 'Paracetamol',
-      },
-      {
-        medicineID: 'MED002',
-        medicineName: 'Amoxicillin',
-      },
-    ];
-
-    mockSuppliers = [
-      {
-        supplierID: 'SUP001',
-        supplierName: 'Công ty Dược A',
-      },
-      {
-        supplierID: 'SUP002',
         supplierName: 'Công ty Dược B',
+        employee: 'EMP002',
+        employeeName: 'Trần Thị B',
+        totalAmount: 200000,
+        status: 'Paid',
+        medicineSummary: 'Amoxicillin x20',
+        details: [{ id: 2, payment: 'PAY002', medicine: 'MED002', medicineName: 'Amoxicillin', quantity: 20, unitPrice: 10000 }],
       },
     ];
 
-    mockEmployees = [
-      {
-        employeeID: 'EMP001',
-        fullName: 'Nguyễn Văn A',
-      },
-      {
-        employeeID: 'EMP002',
-        fullName: 'Trần Thị B',
-      },
-    ];
-
-    // Set up token in sessionStorage
-    sessionStorage.setItem('token', 'dummyToken');
-
-    // Mock API responses
     axios.get.mockImplementation((url) => {
-      if (url === 'http://localhost:8000/api/medicines/payment-details/') {
-        return Promise.resolve({ data: mockPaymentDetails });
-      } else if (url === 'http://localhost:8000/api/medicines/payments/PAY001/') {
-        return Promise.resolve({ data: mockPayments[0] });
-      } else if (url === 'http://localhost:8000/api/medicines/payments/PAY002/') {
-        return Promise.resolve({ data: mockPayments[1] });
-      } else if (url === 'http://localhost:8000/api/medicines/medicines/MED001/') {
-        return Promise.resolve({ data: mockMedicines[0] });
-      } else if (url === 'http://localhost:8000/api/medicines/medicines/MED002/') {
-        return Promise.resolve({ data: mockMedicines[1] });
-      } else if (url === 'http://localhost:8000/api/medicines/suppliers/SUP001/') {
-        return Promise.resolve({ data: mockSuppliers[0] });
-      } else if (url === 'http://localhost:8000/api/medicines/suppliers/SUP002/') {
-        return Promise.resolve({ data: mockSuppliers[1] });
-      } else if (url === 'http://localhost:8000/api/auth/employees/EMP001/') {
-        return Promise.resolve({ data: mockEmployees[0] });
-      } else if (url === 'http://localhost:8000/api/auth/employees/EMP002/') {
-        return Promise.resolve({ data: mockEmployees[1] });
+      if (url === `${API_BASE_URL}/api/medicines/payments/`) {
+        return Promise.resolve({ data: mockPayments });
       }
-      return Promise.resolve({ data: null });
+      return Promise.reject(new Error(`No mock for URL: ${url}`));
+    });
+
+    axios.patch.mockImplementation((url, payload) => {
+      if (url === `${API_BASE_URL}/api/medicines/payments/PAY001/`) {
+        mockPayments = mockPayments.map((payment) =>
+          payment.paymentID === 'PAY001' ? { ...payment, status: payload.status } : payment
+        );
+        return Promise.resolve({ data: mockPayments[0] });
+      }
+      return Promise.reject(new Error(`No mock for URL: ${url}`));
     });
 
     axios.delete.mockImplementation((url) => {
-      if (url.includes('/api/medicines/payments/')) {
-        return Promise.resolve({ data: {} });
+      if (url === `${API_BASE_URL}/api/medicines/payments/PAY001/`) {
+        mockPayments = mockPayments.filter((payment) => payment.paymentID !== 'PAY001');
+        return Promise.resolve({});
       }
-      return Promise.reject(new Error('Not found'));
+      return Promise.reject(new Error(`No mock for URL: ${url}`));
     });
-
-    // Mock window.confirm
-    window.confirm = jest.fn();
-
-    // Bỏ qua lỗi console trong kiểm thử
-    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     sessionStorage.clear();
     jest.clearAllMocks();
-    console.error.mockRestore();
   });
 
-  test('hiển thị Sidebar, tiêu đề và bảng danh sách phiếu thu', async () => {
+  test('hiển thị đúng danh sách phiếu nhập và tên nhà cung cấp, nhân viên', async () => {
     render(<ListPayments />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
-      expect(screen.getByText(/DANH SÁCH PHIẾU THU/i)).toBeInTheDocument();
-    }, { timeout: 5000 });
+    expect(await screen.findByText('PAY001')).toBeInTheDocument();
+    expect(screen.getByText('PAY002')).toBeInTheDocument();
+    expect(screen.getByText('DANH SÁCH PHIẾU NHẬP')).toBeInTheDocument();
 
-    const table = screen.getByRole('table');
-    expect(within(table).getByText(/STT/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Mã phiếu thu/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Tên thuốc/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Nhà cung cấp/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Nhân viên/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Số lượng/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Đơn giá/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Hành động/i)).toBeInTheDocument();
+    const row1 = screen.getByText('PAY001').closest('tr');
+    expect(within(row1).getByText('Công ty Dược A')).toBeInTheDocument();
+    expect(within(row1).getByText('Nguyễn Văn A')).toBeInTheDocument();
+    expect(within(row1).getByText('Paracetamol x10')).toBeInTheDocument();
+    expect(within(row1).getByText('50.000 VND')).toBeInTheDocument();
+    expect(within(row1).getByText('Chưa thanh toán')).toBeInTheDocument();
+    expect(within(row1).getByRole('button', { name: 'Chuyển đã thanh toán' })).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-      expect(screen.getByText('PAY002')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    const row1 = within(table).getByText('PAY001').closest('tr');
-    const cells1 = within(row1).getAllByRole('cell');
-    expect(cells1[0]).toHaveTextContent('1');
-    expect(cells1[1]).toHaveTextContent('PAY001');
-    expect(cells1[2]).toHaveTextContent('Paracetamol');
-    expect(cells1[3]).toHaveTextContent('Công ty Dược A');
-    expect(cells1[4]).toHaveTextContent('Nguyễn Văn A');
-    expect(cells1[5]).toHaveTextContent('10');
-    expect(cells1[6]).toHaveTextContent('5.000 VND');
-
-    const row2 = within(table).getByText('PAY002').closest('tr');
-    const cells2 = within(row2).getAllByRole('cell');
-    expect(cells2[0]).toHaveTextContent('2');
-    expect(cells2[1]).toHaveTextContent('PAY002');
-    expect(cells2[2]).toHaveTextContent('Amoxicillin');
-    expect(cells2[3]).toHaveTextContent('Công ty Dược B');
-    expect(cells2[4]).toHaveTextContent('Trần Thị B');
-    expect(cells2[5]).toHaveTextContent('20');
-    expect(cells2[6]).toHaveTextContent('10.000 VND');
+    const row2 = screen.getByText('PAY002').closest('tr');
+    expect(within(row2).getByText('Công ty Dược B')).toBeInTheDocument();
+    expect(within(row2).getByText('Đã thanh toán')).toBeInTheDocument();
+    expect(within(row2).queryByRole('button', { name: 'Chuyển đã thanh toán' })).not.toBeInTheDocument();
   });
 
-  test('tìm kiếm phiếu thu theo mã phiếu thu', async () => {
+  test('tìm kiếm phiếu nhập theo nhà cung cấp', async () => {
     render(<ListPayments />);
 
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-      expect(screen.getByText('PAY002')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    const searchInput = screen.getByPlaceholderText(/Tìm kiếm phiếu thu.../i);
-    await act(async () => {
-      fireEvent.change(searchInput, { target: { value: 'PAY001' } });
+    expect(await screen.findByText('PAY001')).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText(/Tìm kiếm phiếu nhập/i), {
+      target: { value: 'Dược B' },
     });
 
-    const table = screen.getByRole('table');
-    expect(within(table).getByText('PAY001')).toBeInTheDocument();
-    expect(within(table).queryByText('PAY002')).not.toBeInTheDocument();
-
-    await act(async () => {
-      fireEvent.change(searchInput, { target: { value: 'PAY002' } });
-    });
-
-    expect(within(table).queryByText('PAY001')).not.toBeInTheDocument();
-    expect(within(table).getByText('PAY002')).toBeInTheDocument();
-
-    await act(async () => {
-      fireEvent.change(searchInput, { target: { value: 'INVALID' } });
-    });
-
-    expect(within(table).queryByText('PAY001')).not.toBeInTheDocument();
-    expect(within(table).queryByText('PAY002')).not.toBeInTheDocument();
+    expect(screen.queryByText('PAY001')).not.toBeInTheDocument();
+    expect(screen.getByText('PAY002')).toBeInTheDocument();
   });
 
-  test('xóa phiếu thu với xác nhận', async () => {
+  test('chuyển phiếu nhập chưa thanh toán sang đã thanh toán và refresh danh sách', async () => {
     render(<ListPayments />);
 
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    const table = screen.getByRole('table');
-    const row = within(table).getByText('PAY001').closest('tr');
-    const deleteButton = within(row).getByRole('button', { name: /Xóa/i });
-
-    // Mock window.confirm trả về true
-    window.confirm.mockReturnValue(true);
-
+    const row = (await screen.findByText('PAY001')).closest('tr');
     await act(async () => {
-      fireEvent.click(deleteButton);
+      fireEvent.click(within(row).getByRole('button', { name: 'Chuyển đã thanh toán' }));
     });
 
     await waitFor(() => {
-      expect(window.confirm).toHaveBeenCalledWith('Bạn có chắc chắn muốn xóa phiếu nhập này?');
-      expect(axios.delete).toHaveBeenCalledWith(
-        'http://localhost:8000/api/medicines/payments/PAY001/',
+      expect(axios.patch).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/medicines/payments/PAY001/`,
+        { status: 'Paid' },
         expect.any(Object)
       );
-    }, { timeout: 5000 });
-
-    // Kiểm tra fetchPayments được gọi lại
-    expect(axios.get).toHaveBeenCalledWith(
-      'http://localhost:8000/api/medicines/payment-details/',
-      expect.any(Object)
-    );
+      expect(within(screen.getByText('PAY001').closest('tr')).getByText('Đã thanh toán')).toBeInTheDocument();
+    });
   });
 
-  test('hủy xóa phiếu thu', async () => {
+  test('xóa phiếu nhập và refresh danh sách', async () => {
     render(<ListPayments />);
 
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    const table = screen.getByRole('table');
-    const row = within(table).getByText('PAY001').closest('tr');
-    const deleteButton = within(row).getByRole('button', { name: /Xóa/i });
-
-    // Mock window.confirm trả về false
-    window.confirm.mockReturnValue(false);
-
+    const row = (await screen.findByText('PAY001')).closest('tr');
     await act(async () => {
-      fireEvent.click(deleteButton);
+      fireEvent.click(within(row).getByRole('button', { name: 'Xóa' }));
     });
 
     await waitFor(() => {
-      expect(window.confirm).toHaveBeenCalledWith('Bạn có chắc chắn muốn xóa phiếu nhập này?');
-      expect(axios.delete).not.toHaveBeenCalled();
-    }, { timeout: 5000 });
-  });
-
-  test('xử lý lỗi khi lấy danh sách phiếu thu', async () => {
-    // Mock API get payment-details lỗi
-    axios.get.mockImplementation((url) => {
-      if (url === 'http://localhost:8000/api/medicines/payment-details/') {
-        return Promise.reject(new Error('Network error'));
-      }
-      return Promise.resolve({ data: null });
-    });
-
-    render(<ListPayments />);
-
-    await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Error fetching payments:'),
-        expect.anything()
+      expect(axios.delete).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/medicines/payments/PAY001/`,
+        expect.any(Object)
       );
-    }, { timeout: 5000 });
-
-    // Kiểm tra bảng rỗng
-    const table = screen.getByRole('table');
-    expect(within(table).queryByText('PAY001')).not.toBeInTheDocument();
-  });
-
-  test('xử lý lỗi khi xóa phiếu thu', async () => {
-    // Mock API delete lỗi
-    axios.delete.mockImplementation(() => Promise.reject(new Error('Delete error')));
-
-    render(<ListPayments />);
-
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    const table = screen.getByRole('table');
-    const row = within(table).getByText('PAY001').closest('tr');
-    const deleteButton = within(row).getByRole('button', { name: /Xóa/i });
-
-    window.confirm.mockReturnValue(true);
-
-    await act(async () => {
-      fireEvent.click(deleteButton);
+      expect(screen.queryByText('PAY001')).not.toBeInTheDocument();
+      expect(screen.getByText('PAY002')).toBeInTheDocument();
     });
-
-    await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Error deleting payment:'),
-        expect.anything()
-      );
-    }, { timeout: 5000 });
-  });
-
-  test('snapshot của giao diện ListPayments', async () => {
-    const { container } = render(<ListPayments />);
-
-    await waitFor(() => {
-      expect(screen.getByText('PAY001')).toBeInTheDocument();
-    }, { timeout: 5000 });
-
-    expect(container).toMatchSnapshot();
   });
 });

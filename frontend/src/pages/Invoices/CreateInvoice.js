@@ -19,6 +19,7 @@ import {
 } from './InvoicesStyles';
 
 const API_BASE = 'http://127.0.0.1:8000';
+const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 
 const CreateInvoice = () => {
@@ -136,6 +137,8 @@ const CreateInvoice = () => {
         invoiceTime: response.data.invoiceTime,
       });
       setShowInvoiceModal(true);
+      window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
       setCart([]);
       setForm({ customerName: '', phoneNumber: '', address: '', paymentMethod: 'Cash', status: 'Paid', gender: '' });
       await fetchMedicines();

@@ -91,9 +91,9 @@ MapCrud<Medicine, string>(app, "/api/medicines/medicines/", db => db.Medicines, 
 MapCrud<Supplier, string>(app, "/api/medicines/suppliers/", db => db.Suppliers, x => x.SupplierID);
 MapCrud<Order, string>(app, "/api/sales/orders/", db => db.Orders, x => x.OrderID);
 MapCrud<OrderDetail, int>(app, "/api/sales/order-details/", db => db.OrderDetails, x => x.Id);
-MapCrud<Invoice, int>(app, "/api/sales/invoices/", db => db.Invoices, x => x.InvoiceID);
+MapInvoiceEndpoints(app);
 MapCrud<InvoiceDetail, int>(app, "/api/sales/invoice-details/", db => db.InvoiceDetails, x => x.Id);
-MapCrud<Payment, string>(app, "/api/medicines/payments/", db => db.Payments, x => x.PaymentID);
+MapPaymentEndpoints(app);
 MapCrud<PaymentDetail, int>(app, "/api/medicines/payment-details/", db => db.PaymentDetails, x => x.Id);
 
 app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbContext db) =>
@@ -126,6 +126,15 @@ app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbCo
         db.Customers.Add(customer);
         await db.SaveChangesAsync();
     }
+    else
+    {
+        customer.FullName = customerName;
+        if (!string.IsNullOrWhiteSpace(request.gender))
+        {
+            customer.Gender = request.gender;
+        }
+        await db.SaveChangesAsync();
+    }
 
     var medicineIds = request.items.Select(x => x.medicine).Distinct().ToList();
     var medicines = await db.Medicines.Where(x => medicineIds.Contains(x.MedicineID)).ToDictionaryAsync(x => x.MedicineID);
@@ -153,7 +162,7 @@ app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbCo
         CustomerID = customer.CustomerID,
         Address = request.address.Trim(),
         PaymentMethod = request.paymentMethod,
-        Status = request.status
+        Status = NormalizeStatus(request.status)
     };
     db.Invoices.Add(invoice);
     await db.SaveChangesAsync();
@@ -179,6 +188,8 @@ app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbCo
         invoiceID = invoice.InvoiceID,
         invoiceTime = invoice.InvoiceTime,
         customerID = customer.CustomerID,
+        customerName = customer.FullName,
+        status = invoice.Status,
         totalAmount = request.items.Sum(x => x.quantity * x.unitPrice)
     });
 }).RequireToken();
@@ -213,7 +224,8 @@ app.MapPost("/api/medicines/payment-checkout/", async (PaymentCheckoutRequest re
         PaymentTime = DateTime.UtcNow,
         EmployeeID = request.employee,
         SupplierID = request.supplier,
-        TotalAmount = 0
+        TotalAmount = 0,
+        Status = NormalizeStatus(request.status)
     };
 
     db.Payments.Add(payment);
@@ -338,6 +350,272 @@ static async Task InitializeDatabaseAsync(PharmacyDbContext db)
         }
     }
 }
+
+static void MapInvoiceEndpoints(WebApplication app)
+{
+    const string route = "/api/sales/invoices/";
+
+    app.MapGet(route, async (PharmacyDbContext db) =>
+        Results.Ok(await GetInvoiceListAsync(db))).RequireToken();
+
+    app.MapGet($"{route}{{id:int}}/", async (int id, PharmacyDbContext db) =>
+    {
+        var invoice = await GetInvoiceAsync(db, id);
+        return invoice is null ? Results.NotFound() : Results.Ok(invoice);
+    }).RequireToken();
+
+    app.MapPost(route, async (Invoice invoice, PharmacyDbContext db) =>
+    {
+        invoice.Status = NormalizeStatus(invoice.Status);
+        db.Invoices.Add(invoice);
+        await db.SaveChangesAsync();
+        return Results.Created($"{route}{invoice.InvoiceID}/", await GetInvoiceAsync(db, invoice.InvoiceID));
+    }).RequireToken();
+
+    app.MapPut($"{route}{{id:int}}/", async (int id, Invoice input, PharmacyDbContext db) =>
+    {
+        var invoice = await db.Invoices.FindAsync(id);
+        if (invoice is null) return Results.NotFound();
+
+        invoice.CustomerID = input.CustomerID;
+        invoice.Address = input.Address;
+        invoice.PaymentMethod = input.PaymentMethod;
+        invoice.Status = NormalizeStatus(input.Status);
+        await db.SaveChangesAsync();
+        return Results.Ok(await GetInvoiceAsync(db, id));
+    }).RequireToken();
+
+    app.MapPatch($"{route}{{id:int}}/", async (int id, JsonElement patch, PharmacyDbContext db) =>
+    {
+        var invoice = await db.Invoices.FindAsync(id);
+        if (invoice is null) return Results.NotFound();
+
+        foreach (var jsonProp in patch.EnumerateObject())
+        {
+            if (jsonProp.NameEquals("status"))
+            {
+                invoice.Status = NormalizeStatus(jsonProp.Value.GetString());
+            }
+            else if (jsonProp.NameEquals("address"))
+            {
+                invoice.Address = jsonProp.Value.GetString() ?? "";
+            }
+            else if (jsonProp.NameEquals("paymentMethod"))
+            {
+                invoice.PaymentMethod = jsonProp.Value.GetString() ?? invoice.PaymentMethod;
+            }
+        }
+
+        await db.SaveChangesAsync();
+        return Results.Ok(await GetInvoiceAsync(db, id));
+    }).RequireToken();
+
+    app.MapDelete($"{route}{{id:int}}/", async (int id, PharmacyDbContext db) =>
+    {
+        var invoice = await db.Invoices.FindAsync(id);
+        if (invoice is null) return Results.NotFound();
+
+        var details = await db.InvoiceDetails.Where(x => x.InvoiceID == id).ToListAsync();
+        db.InvoiceDetails.RemoveRange(details);
+        db.Invoices.Remove(invoice);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }).RequireToken();
+}
+
+static async Task<List<object>> GetInvoiceListAsync(PharmacyDbContext db)
+{
+    var invoices = await db.Invoices
+        .AsNoTracking()
+        .GroupJoin(db.Customers.AsNoTracking(), invoice => invoice.CustomerID, customer => customer.CustomerID, (invoice, customers) => new { invoice, customers })
+        .SelectMany(x => x.customers.DefaultIfEmpty(), (x, customer) => new
+        {
+            x.invoice.InvoiceID,
+            x.invoice.InvoiceTime,
+            customer = x.invoice.CustomerID,
+            customerName = customer != null ? customer.FullName : x.invoice.CustomerID,
+            customerPhone = customer != null ? customer.PhoneNumber : "",
+            x.invoice.Address,
+            x.invoice.PaymentMethod,
+            x.invoice.Status,
+            totalAmount = db.InvoiceDetails
+                .Where(detail => detail.InvoiceID == x.invoice.InvoiceID)
+                .Sum(detail => (decimal?)detail.UnitPrice * detail.Quantity) ?? 0
+        })
+        .OrderByDescending(x => x.InvoiceTime)
+        .ToListAsync();
+
+    return invoices.Cast<object>().ToList();
+}
+
+static async Task<object?> GetInvoiceAsync(PharmacyDbContext db, int id)
+{
+    return await db.Invoices
+        .AsNoTracking()
+        .Where(invoice => invoice.InvoiceID == id)
+        .GroupJoin(db.Customers.AsNoTracking(), invoice => invoice.CustomerID, customer => customer.CustomerID, (invoice, customers) => new { invoice, customers })
+        .SelectMany(x => x.customers.DefaultIfEmpty(), (x, customer) => new
+        {
+            x.invoice.InvoiceID,
+            x.invoice.InvoiceTime,
+            customer = x.invoice.CustomerID,
+            customerName = customer != null ? customer.FullName : x.invoice.CustomerID,
+            customerPhone = customer != null ? customer.PhoneNumber : "",
+            x.invoice.Address,
+            x.invoice.PaymentMethod,
+            x.invoice.Status,
+            totalAmount = db.InvoiceDetails
+                .Where(detail => detail.InvoiceID == x.invoice.InvoiceID)
+                .Sum(detail => (decimal?)detail.UnitPrice * detail.Quantity) ?? 0
+        })
+        .FirstOrDefaultAsync();
+}
+
+static void MapPaymentEndpoints(WebApplication app)
+{
+    const string route = "/api/medicines/payments/";
+
+    app.MapGet(route, async (PharmacyDbContext db) =>
+        Results.Ok(await GetPaymentListAsync(db))).RequireToken();
+
+    app.MapGet($"{route}{{id}}/", async (string id, PharmacyDbContext db) =>
+    {
+        var payment = await GetPaymentAsync(db, id);
+        return payment is null ? Results.NotFound() : Results.Ok(payment);
+    }).RequireToken();
+
+    app.MapPost(route, async (Payment payment, PharmacyDbContext db) =>
+    {
+        payment.Status = NormalizeStatus(payment.Status);
+        db.Payments.Add(payment);
+        await db.SaveChangesAsync();
+        return Results.Created($"{route}{payment.PaymentID}/", await GetPaymentAsync(db, payment.PaymentID));
+    }).RequireToken();
+
+    app.MapPut($"{route}{{id}}/", async (string id, Payment input, PharmacyDbContext db) =>
+    {
+        var payment = await db.Payments.FindAsync(id);
+        if (payment is null) return Results.NotFound();
+
+        payment.EmployeeID = input.EmployeeID;
+        payment.SupplierID = input.SupplierID;
+        payment.TotalAmount = input.TotalAmount;
+        payment.Status = NormalizeStatus(input.Status);
+        await db.SaveChangesAsync();
+        return Results.Ok(await GetPaymentAsync(db, id));
+    }).RequireToken();
+
+    app.MapPatch($"{route}{{id}}/", async (string id, JsonElement patch, PharmacyDbContext db) =>
+    {
+        var payment = await db.Payments.FindAsync(id);
+        if (payment is null) return Results.NotFound();
+
+        foreach (var jsonProp in patch.EnumerateObject())
+        {
+            if (jsonProp.NameEquals("status"))
+            {
+                payment.Status = NormalizeStatus(jsonProp.Value.GetString());
+            }
+        }
+
+        await db.SaveChangesAsync();
+        return Results.Ok(await GetPaymentAsync(db, id));
+    }).RequireToken();
+
+    app.MapDelete($"{route}{{id}}/", async (string id, PharmacyDbContext db) =>
+    {
+        var payment = await db.Payments.FindAsync(id);
+        if (payment is null) return Results.NotFound();
+
+        var details = await db.PaymentDetails.Where(x => x.PaymentID == id).ToListAsync();
+        db.PaymentDetails.RemoveRange(details);
+        db.Payments.Remove(payment);
+        await db.SaveChangesAsync();
+        return Results.NoContent();
+    }).RequireToken();
+}
+
+static async Task<List<object>> GetPaymentListAsync(PharmacyDbContext db)
+{
+    var payments = await db.Payments
+        .AsNoTracking()
+        .GroupJoin(db.Suppliers.AsNoTracking(), payment => payment.SupplierID, supplier => supplier.SupplierID, (payment, suppliers) => new { payment, suppliers })
+        .SelectMany(x => x.suppliers.DefaultIfEmpty(), (x, supplier) => new { x.payment, supplier })
+        .GroupJoin(db.Employees.AsNoTracking(), x => x.payment.EmployeeID, employee => employee.EmployeeID, (x, employees) => new { x.payment, x.supplier, employees })
+        .SelectMany(x => x.employees.DefaultIfEmpty(), (x, employee) => new
+        {
+            x.payment.PaymentID,
+            x.payment.PaymentTime,
+            employee = x.payment.EmployeeID,
+            employeeName = employee != null ? employee.FullName : x.payment.EmployeeID,
+            supplier = x.payment.SupplierID,
+            supplierName = x.supplier != null ? x.supplier.SupplierName : x.payment.SupplierID,
+            x.payment.TotalAmount,
+            x.payment.Status
+        })
+        .OrderByDescending(x => x.PaymentTime)
+        .ToListAsync();
+
+    var paymentIds = payments.Select(x => x.PaymentID).ToList();
+    var details = await GetPaymentDetailsAsync(db, paymentIds);
+
+    return payments
+        .Select(payment =>
+        {
+            var paymentDetails = details
+                .Where(detail => detail.payment == payment.PaymentID)
+                .ToList();
+
+            return (object)new
+            {
+                payment.PaymentID,
+                payment.PaymentTime,
+                payment.employee,
+                payment.employeeName,
+                payment.supplier,
+                payment.supplierName,
+                payment.TotalAmount,
+                payment.Status,
+                details = paymentDetails,
+                medicineSummary = string.Join(", ", paymentDetails.Select(detail => $"{detail.medicineName} x{detail.quantity}"))
+            };
+        })
+        .ToList();
+}
+
+static async Task<object?> GetPaymentAsync(PharmacyDbContext db, string id)
+{
+    var payment = (await GetPaymentListAsync(db))
+        .FirstOrDefault(item =>
+        {
+            var paymentID = item.GetType().GetProperty("PaymentID")?.GetValue(item)?.ToString();
+            return string.Equals(paymentID, id, StringComparison.OrdinalIgnoreCase);
+        });
+
+    return payment;
+}
+
+static async Task<List<PaymentDetailListItem>> GetPaymentDetailsAsync(PharmacyDbContext db, List<string> paymentIds)
+{
+    return await db.PaymentDetails
+        .AsNoTracking()
+        .Where(detail => paymentIds.Contains(detail.PaymentID))
+        .GroupJoin(db.Medicines.AsNoTracking(), detail => detail.MedicineID, medicine => medicine.MedicineID, (detail, medicines) => new { detail, medicines })
+        .SelectMany(x => x.medicines.DefaultIfEmpty(), (x, medicine) => new PaymentDetailListItem(
+            x.detail.Id,
+            x.detail.PaymentID,
+            x.detail.MedicineID,
+            medicine != null ? medicine.MedicineName : x.detail.MedicineID,
+            x.detail.Quantity,
+            x.detail.UnitPrice))
+        .ToListAsync();
+}
+
+static string NormalizeStatus(string? status) =>
+    string.Equals(status, "Paid", StringComparison.OrdinalIgnoreCase) ||
+    string.Equals(status, "Đã thanh toán", StringComparison.OrdinalIgnoreCase)
+        ? "Paid"
+        : "Pending";
 
 static void MapCrud<TEntity, TKey>(
     WebApplication app,
@@ -683,4 +961,5 @@ record CheckoutRequest(
     string status,
     List<CheckoutItem> items);
 record PaymentCheckoutItem(string medicine, int quantity, decimal unitPrice);
-record PaymentCheckoutRequest(string employee, string supplier, List<PaymentCheckoutItem> items);
+record PaymentCheckoutRequest(string employee, string supplier, string status, List<PaymentCheckoutItem> items);
+record PaymentDetailListItem(int id, string payment, string medicine, string medicineName, int quantity, decimal unitPrice);

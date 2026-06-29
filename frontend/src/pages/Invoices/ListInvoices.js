@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -16,6 +16,9 @@ import {
   unitMap,
 } from './InvoicesStyles';
 
+const API_BASE = 'http://127.0.0.1:8000';
+const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
+
 const invoiceStatusLabels = {
   Paid: 'Đã thanh toán',
   Pending: 'Chưa thanh toán',
@@ -25,6 +28,31 @@ const invoiceStatusLabels = {
 
 const formatInvoiceStatus = (status) => invoiceStatusLabels[status] || status || '';
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa thanh toán';
+
+const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+
+const filterInvoices = (items, keyword) => {
+  const normalizedKeyword = keyword.trim().toLowerCase();
+  if (!normalizedKeyword) return items;
+
+  return items.filter((invoice) => {
+    const searchable = [
+      invoice.invoiceID,
+      invoice.customerName,
+      invoice.customer,
+      invoice.customerPhone,
+      invoice.address,
+      invoice.paymentMethod,
+      formatInvoiceStatus(invoice.status),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+    return searchable.includes(normalizedKeyword);
+  });
+};
 
 const ListInvoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -32,131 +60,129 @@ const ListInvoices = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState('');
 
-  // Fetch all invoices
-  const fetchInvoices = async () => {
-    console.log('fetchInvoices started');
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
+  const fetchInvoices = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/sales/invoices/', { headers });
-      console.log('fetchInvoices response:', response.data);
+      const response = await axios.get(`${API_BASE}/api/sales/invoices/`, {
+        headers: authHeaders(),
+      });
       setInvoices(response.data);
-      setFilteredInvoices(response.data);
-      console.log('fetchInvoices set state:', { invoices: response.data, filteredInvoices: response.data });
-    } catch (error) {
-      console.error('Error fetching invoices:', error.response?.data || error.message);
+      setFilteredInvoices(filterInvoices(response.data, searchKeyword));
+      setError('');
+    } catch (fetchError) {
+      setError('Không tải được danh sách hóa đơn. Vui lòng thử lại.');
     }
-  };
+  }, [searchKeyword]);
 
-  // Fetch invoice details
   const fetchInvoiceDetails = async (invoiceID) => {
-    console.log('fetchInvoiceDetails started for invoiceID:', invoiceID);
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
     try {
-      const invoiceDetailsUrl = `http://localhost:8000/api/sales/invoice-details/?invoice=${invoiceID}`;
-      console.log('Calling API:', invoiceDetailsUrl);
-      const invoiceDetailsRes = await axios.get(invoiceDetailsUrl, { headers });
-      console.log('invoiceDetailsRes:', invoiceDetailsRes.data);
+      const headers = authHeaders();
+      const [invoiceDetailsRes, invoiceRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/sales/invoice-details/?invoice=${invoiceID}`, { headers }),
+        axios.get(`${API_BASE}/api/sales/invoices/${invoiceID}/`, { headers }),
+      ]);
 
       const filteredDetails = invoiceDetailsRes.data.filter(
-        (detail) => detail.invoice === invoiceID
+        (detail) => Number(detail.invoice) === Number(invoiceID)
       );
-      console.log('filteredDetails:', filteredDetails);
-
-      const invoiceUrl = `http://localhost:8000/api/sales/invoices/${invoiceID}/`;
-      console.log('Calling API:', invoiceUrl);
-      const invoiceRes = await axios.get(invoiceUrl, { headers });
-      console.log('invoiceRes:', invoiceRes.data);
-      const customerID = invoiceRes.data.customer;
-      const customerUrl = `http://localhost:8000/api/sales/customers/${customerID}/`;
-      console.log('Calling API:', customerUrl);
-      const customerRes = await axios.get(customerUrl, { headers });
-      console.log('customerRes:', customerRes.data);
 
       const medicines = await Promise.all(
         filteredDetails.map(async (detail) => {
-          const medicineUrl = `http://localhost:8000/api/medicines/medicines/${detail.medicine}/`;
-          console.log('Calling API:', medicineUrl);
-          const medicineRes = await axios.get(medicineUrl, { headers });
-          console.log('medicineRes for', detail.medicine, ':', medicineRes.data);
+          const medicineRes = await axios.get(
+            `${API_BASE}/api/medicines/medicines/${detail.medicine}/`,
+            { headers }
+          );
+
           return {
             medicineName: medicineRes.data.medicineName,
             unit: medicineRes.data.unit,
             quantity: detail.quantity,
-            unitPrice: parseFloat(detail.unitPrice),
+            unitPrice: Number(detail.unitPrice),
           };
         })
       );
-      console.log('medicines:', medicines);
 
       const totalAmount = medicines.reduce(
         (sum, medicine) => sum + medicine.unitPrice * medicine.quantity,
         0
       );
-      console.log('totalAmount:', totalAmount);
 
-      const details = {
-        customerName: customerRes.data.fullName,
+      setSelectedInvoiceDetails({
+        customerName: invoiceRes.data.customerName || invoiceRes.data.customer,
+        status: invoiceRes.data.status,
         details: medicines,
         totalAmount,
-      };
-      console.log('setSelectedInvoiceDetails:', details);
-      setSelectedInvoiceDetails(details);
+      });
       setIsModalOpen(true);
-      console.log('setIsModalOpen: true');
-    } catch (error) {
-      console.error('Error fetching invoice details:', error.response?.data || error.message);
+      setError('');
+    } catch (fetchError) {
+      setError('Không tải được chi tiết hóa đơn. Vui lòng thử lại.');
     }
   };
 
-  // Handle search functionality
   const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase();
-    console.log('handleSearch keyword:', keyword);
+    const keyword = e.target.value;
     setSearchKeyword(keyword);
-
-    const filtered = invoices.filter((invoice) =>
-      invoice.invoiceID.toString().toLowerCase().includes(keyword)
-    );
-    console.log('handleSearch filtered:', filtered);
-    setFilteredInvoices(filtered);
+    setFilteredInvoices(filterInvoices(invoices, keyword));
   };
 
-  // Handle invoice deletion
+  const handleMarkAsPaid = async (invoiceID) => {
+    try {
+      await axios.patch(
+        `${API_BASE}/api/sales/invoices/${invoiceID}/`,
+        { status: 'Paid' },
+        { headers: authHeaders() }
+      );
+      window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
+      await fetchInvoices();
+    } catch (updateError) {
+      setError('Không cập nhật được trạng thái hóa đơn. Vui lòng thử lại.');
+    }
+  };
+
   const handleDeleteInvoice = async (invoiceID) => {
-    console.log('handleDeleteInvoice for invoiceID:', invoiceID);
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa hóa đơn này?');
-    console.log('confirmDelete:', confirmDelete);
     if (!confirmDelete) return;
 
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
-
     try {
-      await axios.delete(`http://localhost:8000/api/sales/invoices/${invoiceID}/`, { headers });
-      console.log('delete successful, refetching invoices');
-      fetchInvoices();
-    } catch (error) {
-      console.error('Error deleting invoice:', error.response?.data || error.message);
+      await axios.delete(`${API_BASE}/api/sales/invoices/${invoiceID}/`, {
+        headers: authHeaders(),
+      });
+      window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
+      window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
+      await fetchInvoices();
+    } catch (deleteError) {
+      setError('Không xóa được hóa đơn. Vui lòng thử lại.');
     }
   };
 
   useEffect(() => {
-    console.log('useEffect triggered for fetchInvoices');
     fetchInvoices();
-  }, []);
 
-  console.log('Rendering ListInvoices with state:', {
-    invoices,
-    filteredInvoices,
-    searchKeyword,
-    selectedInvoiceDetails,
-    isModalOpen,
-  });
+    const refreshInvoices = () => fetchInvoices();
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') fetchInvoices();
+    };
+    const refreshFromStorage = (event) => {
+      if (event.key === INVOICES_UPDATED_EVENT) fetchInvoices();
+    };
+
+    window.addEventListener('focus', refreshInvoices);
+    window.addEventListener(INVOICES_UPDATED_EVENT, refreshInvoices);
+    window.addEventListener('storage', refreshFromStorage);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    const timer = window.setInterval(refreshInvoices, 10000);
+
+    return () => {
+      window.removeEventListener('focus', refreshInvoices);
+      window.removeEventListener(INVOICES_UPDATED_EVENT, refreshInvoices);
+      window.removeEventListener('storage', refreshFromStorage);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      window.clearInterval(timer);
+    };
+  }, [fetchInvoices]);
 
   return (
     <Container data-testid="main-content">
@@ -166,13 +192,15 @@ const ListInvoices = () => {
           <h2>Danh sách hóa đơn</h2>
           <Input
             type="text"
-            placeholder="Tìm kiếm hóa đơn theo mã..."
+            placeholder="Tìm kiếm hóa đơn theo mã, khách hàng..."
             value={searchKeyword}
             onChange={handleSearch}
-            style={{ width: '300px' }}
+            style={{ width: '320px' }}
             data-testid="search-input"
           />
         </div>
+
+        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
 
         <Table data-testid="invoices-table">
           <thead>
@@ -195,21 +223,26 @@ const ListInvoices = () => {
                     ? new Date(invoice.invoiceTime).toLocaleString()
                     : ''}
                 </TableCell>
-                <TableCell>{invoice.customer}</TableCell>
+                <TableCell>{invoice.customerName || invoice.customer}</TableCell>
                 <TableCell>{invoice.address}</TableCell>
                 <TableCell>{invoice.paymentMethod}</TableCell>
                 <TableCell>{formatInvoiceStatus(invoice.status)}</TableCell>
                 <TableCell>
                   <Button
                     data-testid={`view-details-${invoice.invoiceID}`}
-                    onClick={() => {
-                      console.log('View details button clicked for invoiceID:', invoice.invoiceID);
-                      fetchInvoiceDetails(invoice.invoiceID);
-                      console.log('fetchInvoiceDetails called for invoiceID:', invoice.invoiceID);
-                    }}
+                    onClick={() => fetchInvoiceDetails(invoice.invoiceID)}
                   >
                     Xem chi tiết
                   </Button>
+                  {isPendingStatus(invoice.status) && (
+                    <Button
+                      data-testid={`mark-paid-${invoice.invoiceID}`}
+                      onClick={() => handleMarkAsPaid(invoice.invoiceID)}
+                      style={{ marginLeft: '0.5rem' }}
+                    >
+                      Chuyển đã thanh toán
+                    </Button>
+                  )}
                   <Button onClick={() => handleDeleteInvoice(invoice.invoiceID)} style={{ marginLeft: '0.5rem' }}>
                     Xóa
                   </Button>
@@ -230,6 +263,9 @@ const ListInvoices = () => {
               <p data-testid="customer-name">
                 <strong>Khách hàng:</strong> {selectedInvoiceDetails.customerName}
               </p>
+              <p>
+                <strong>Trạng thái:</strong> {formatInvoiceStatus(selectedInvoiceDetails.status)}
+              </p>
               <Table data-testid="details-table">
                 <thead>
                   <tr>
@@ -240,8 +276,8 @@ const ListInvoices = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {selectedInvoiceDetails.details.map((detail, index) => (
-                    <tr key={index}>
+                  {selectedInvoiceDetails.details.map((detail) => (
+                    <tr key={detail.medicineName}>
                       <TableCell>{detail.medicineName}</TableCell>
                       <TableCell>{unitMap[detail.unit] || detail.unit}</TableCell>
                       <TableCell>{detail.quantity}</TableCell>
