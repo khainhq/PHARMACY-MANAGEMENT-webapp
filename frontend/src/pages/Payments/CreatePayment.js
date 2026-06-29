@@ -18,6 +18,19 @@ import {
   CenteredButton,
 } from './PaymentsStyles';
 
+const API_BASE_URL = 'http://127.0.0.1:8000';
+
+const formatMoney = (value) =>
+  Number(value || 0).toLocaleString('vi-VN', {
+    maximumFractionDigits: 0,
+  });
+
+const getErrorMessage = (error, fallback) =>
+  error.response?.data?.error ||
+  error.response?.data?.message ||
+  error.message ||
+  fallback;
+
 const CreatePayment = () => {
   const [employees, setEmployees] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -29,20 +42,29 @@ const CreatePayment = () => {
   const [form, setForm] = useState({
     employee: '',
     supplier: '',
-    totalAmount: 0,
   });
 
-  // Fetch initial data
+  const getHeaders = () => {
+    const token = sessionStorage.getItem('token');
+    return { Authorization: `Token ${token}` };
+  };
+
+  const fetchMedicines = async () => {
+    const response = await axios.get(`${API_BASE_URL}/api/medicines/medicines/`, {
+      headers: getHeaders(),
+    });
+    setMedicines(response.data);
+    setFilteredMedicines(response.data);
+  };
+
   useEffect(() => {
     const fetchInitialData = async () => {
-      const token = sessionStorage.getItem('token');
-      const headers = { Authorization: `Token ${token}` };
-
       try {
+        const headers = getHeaders();
         const [employeesRes, suppliersRes, medicinesRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/auth/employees/', { headers }),
-          axios.get('http://localhost:8000/api/medicines/suppliers/', { headers }),
-          axios.get('http://localhost:8000/api/medicines/medicines/', { headers }),
+          axios.get(`${API_BASE_URL}/api/auth/employees/`, { headers }),
+          axios.get(`${API_BASE_URL}/api/medicines/suppliers/`, { headers }),
+          axios.get(`${API_BASE_URL}/api/medicines/medicines/`, { headers }),
         ]);
 
         setEmployees(employeesRes.data);
@@ -50,14 +72,13 @@ const CreatePayment = () => {
         setMedicines(medicinesRes.data);
         setFilteredMedicines(medicinesRes.data);
       } catch (error) {
-        console.error('Error fetching initial data:', error.response?.data || error.message);
+        alert(getErrorMessage(error, 'Không thể tải dữ liệu tạo phiếu nhập.'));
       }
     };
 
     fetchInitialData();
   }, []);
 
-  // Handle search
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setSearchKeyword(keyword);
@@ -70,110 +91,85 @@ const CreatePayment = () => {
     );
   };
 
-  // Add medicine to payment details
   const handleAddMedicine = () => {
-  if (!selectedMedicine) {
-    console.log('No selected medicine');
-    return;
-  }
+    if (!selectedMedicine) {
+      alert('Vui lòng chọn thuốc cần nhập.');
+      return;
+    }
 
-  console.log('Before adding - selectedMedicine:', selectedMedicine);
-  console.log('Before adding - paymentDetails:', paymentDetails);
-  const existingItem = paymentDetails.find((item) => item.medicine === selectedMedicine.medicineID);
-  console.log('existingItem:', existingItem);
+    const quantity = Number(selectedMedicine.quantity || 1);
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      alert('Số lượng nhập phải lớn hơn 0.');
+      return;
+    }
 
-  if (existingItem) {
-    alert('Thuốc này đã được thêm vào chi tiết phiếu nhập.');
-    return;
-  }
+    if (paymentDetails.some((item) => item.medicine === selectedMedicine.medicineID)) {
+      alert('Thuốc này đã được thêm vào phiếu nhập.');
+      return;
+    }
 
-  const newItem = {
-    id: paymentDetails.length + 1,
-    medicine: selectedMedicine.medicineID,
-    quantity: selectedMedicine.quantity || 1,
-    unitPrice: selectedMedicine.importPrice,
+    const newItem = {
+      id: paymentDetails.length + 1,
+      medicine: selectedMedicine.medicineID,
+      medicineName: selectedMedicine.medicineName,
+      quantity,
+      unitPrice: Number(selectedMedicine.importPrice || 0),
+    };
+
+    setPaymentDetails((prevDetails) => [...prevDetails, newItem]);
+    setSelectedMedicine(null);
   };
 
-  setPaymentDetails((prevDetails) => {
-    const updatedDetails = [...prevDetails, newItem];
-    console.log('After adding - paymentDetails:', updatedDetails);
-    return updatedDetails;
-  });
-  setSelectedMedicine(null);
-};
-
-  // Remove medicine from payment details
   const handleRemoveMedicine = (id) => {
-    setPaymentDetails(paymentDetails.filter((item) => item.id !== id));
+    setPaymentDetails((items) => items.filter((item) => item.id !== id));
   };
 
-  // Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = sessionStorage.getItem('token');
-    const headers = { Authorization: `Token ${token}` };
 
-    const paymentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-    const paymentTime = new Date().toISOString();
+    if (!form.employee || !form.supplier) {
+      alert('Vui lòng chọn nhân viên và nhà cung cấp.');
+      return;
+    }
+
+    if (paymentDetails.length === 0) {
+      alert('Vui lòng thêm ít nhất một sản phẩm');
+      return;
+    }
 
     try {
-      // Tạo phiếu nhập
-      const paymentPayload = {
-        paymentID,
-        paymentTime,
-        totalAmount: paymentDetails.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
+      const payload = {
         employee: form.employee,
         supplier: form.supplier,
+        items: paymentDetails.map(({ medicine, quantity, unitPrice }) => ({
+          medicine,
+          quantity,
+          unitPrice,
+        })),
       };
-      await axios.post('http://localhost:8000/api/medicines/payments/', paymentPayload, { headers });
 
-      // Tạo chi tiết phiếu nhập
-      await Promise.all(
-        paymentDetails.map((detail) =>
-          axios.post(
-            'http://localhost:8000/api/medicines/payment-details/',
-            {
-              ...detail,
-              payment: paymentID,
-            },
-            { headers }
-          )
-        )
-      );
+      await axios.post(`${API_BASE_URL}/api/medicines/payment-checkout/`, payload, {
+        headers: getHeaders(),
+      });
 
-      // Gửi yêu cầu cập nhật số lượng tồn kho
-      await Promise.all(
-        paymentDetails.map((detail) => {
-          const medicine = medicines.find((med) => med.medicineID === detail.medicine);
-          if (medicine) {
-            return axios.patch(
-              `http://localhost:8000/api/medicines/medicines/${medicine.medicineID}/`,
-              { stockQuantity: medicine.stockQuantity + detail.quantity },
-              { headers }
-            );
-          }
-          return null;
-        })
-      );
-
-      // Làm mới danh sách thuốc
-      const medicinesRes = await axios.get('http://localhost:8000/api/medicines/medicines/', { headers });
-      setMedicines(medicinesRes.data);
-      setFilteredMedicines(medicinesRes.data);
-
-      alert('Phiếu nhập đã được tạo thành công!');
+      await fetchMedicines();
+      alert('Tạo phiếu nhập thành công');
       setPaymentDetails([]);
-      setForm({ employee: '', supplier: '', totalAmount: 0 });
+      setForm({ employee: '', supplier: '' });
     } catch (error) {
-      console.error('Error creating payment:', error.response?.data || error.message);
+      alert(getErrorMessage(error, 'Không thể tạo phiếu nhập.'));
     }
   };
+
+  const totalAmount = paymentDetails.reduce(
+    (sum, item) => sum + item.quantity * item.unitPrice,
+    0
+  );
 
   return (
     <Container>
       <Sidebar />
       <LeftSection>
-        {/* Medicine Details */}
         {selectedMedicine && (
           <MedicineDetails>
             <h2>THÔNG TIN THUỐC</h2>
@@ -195,14 +191,16 @@ const CreatePayment = () => {
                 <p><strong>Mã thuốc:</strong> {selectedMedicine.medicineID}</p>
                 <p><strong>Tên thuốc:</strong> {selectedMedicine.medicineName}</p>
                 <p><strong>Thành phần:</strong> {selectedMedicine.ingredients}</p>
-                <p><strong>Đơn giá:</strong> {selectedMedicine.importPrice.toLocaleString()} VND</p>
+                <p><strong>Giá nhập:</strong> {formatMoney(selectedMedicine.importPrice)} VND</p>
                 <Input
                   type="number"
                   value={selectedMedicine.quantity || 1}
                   min="1"
-                  max={selectedMedicine.stockQuantity}
                   onChange={(e) =>
-                    setSelectedMedicine({ ...selectedMedicine, quantity: Number(e.target.value) })
+                    setSelectedMedicine({
+                      ...selectedMedicine,
+                      quantity: Number(e.target.value),
+                    })
                   }
                 />
                 <Button onClick={handleAddMedicine}>Thêm vào phiếu nhập</Button>
@@ -211,7 +209,6 @@ const CreatePayment = () => {
           </MedicineDetails>
         )}
 
-        {/* Medicine List */}
         <MedicineList>
           <h2>Danh sách thuốc</h2>
           <Input
@@ -236,9 +233,11 @@ const CreatePayment = () => {
                   <TableCell>{medicine.medicineID}</TableCell>
                   <TableCell>{medicine.medicineName}</TableCell>
                   <TableCell>{medicine.stockQuantity}</TableCell>
-                  <TableCell>{medicine.importPrice.toLocaleString()} VND</TableCell>
+                  <TableCell>{formatMoney(medicine.importPrice)} VND</TableCell>
                   <TableCell>
-                    <Button onClick={() => setSelectedMedicine(medicine)}>Chọn</Button>
+                    <Button onClick={() => setSelectedMedicine({ ...medicine, quantity: 1 })}>
+                      Chọn
+                    </Button>
                   </TableCell>
                 </tr>
               ))}
@@ -248,7 +247,6 @@ const CreatePayment = () => {
       </LeftSection>
 
       <RightSection>
-        {/* Payment Details */}
         <PaymentDetailsTable>
           <h2>Chi tiết phiếu nhập</h2>
           <Table>
@@ -267,9 +265,9 @@ const CreatePayment = () => {
                 <tr key={detail.id}>
                   <TableCell>{detail.id}</TableCell>
                   <TableCell>{detail.medicine}</TableCell>
-                  <TableCell>{detail.quantity}</TableCell> {/* Hiển thị số lượng mà không cho chỉnh sửa */}
-                  <TableCell>{detail.unitPrice.toLocaleString()} VND</TableCell>
-                  <TableCell>{(detail.quantity * detail.unitPrice).toLocaleString()} VND</TableCell>
+                  <TableCell>{detail.quantity}</TableCell>
+                  <TableCell>{formatMoney(detail.unitPrice)} VND</TableCell>
+                  <TableCell>{formatMoney(detail.quantity * detail.unitPrice)} VND</TableCell>
                   <TableCell>
                     <Button onClick={() => handleRemoveMedicine(detail.id)}>Xóa</Button>
                   </TableCell>
@@ -279,7 +277,6 @@ const CreatePayment = () => {
           </Table>
         </PaymentDetailsTable>
 
-        {/* Payment Info */}
         <PaymentInfo>
           <h2>Thông tin phiếu nhập</h2>
           <Select
@@ -306,10 +303,9 @@ const CreatePayment = () => {
               </option>
             ))}
           </Select>
-          <h3>
-            Tổng tiền: {paymentDetails.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0).toLocaleString()} VND
-          </h3>
-          <CenteredButton onClick={handleSubmit}>Tạo Phiếu Nhập</CenteredButton>        </PaymentInfo>
+          <h3>Tổng tiền: {formatMoney(totalAmount)} VND</h3>
+          <CenteredButton onClick={handleSubmit}>Tạo Phiếu Nhập</CenteredButton>
+        </PaymentInfo>
       </RightSection>
     </Container>
   );
