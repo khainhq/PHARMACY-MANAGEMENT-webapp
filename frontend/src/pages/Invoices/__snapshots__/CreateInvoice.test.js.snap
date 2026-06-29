@@ -3,7 +3,7 @@
 exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = `
 <div>
   <div
-    class="sc-Qotzb iRCYKu"
+    class="sc-Qotzb kHgNuq"
   >
     <div>
       Mocked Sidebar
@@ -29,27 +29,32 @@ exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = 
           <thead>
             <tr>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Mã thuốc
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Tên thuốc
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Đơn vị tính
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
+              >
+                Tồn kho
+              </th>
+              <th
+                class="sc-icnseD dsOihg"
               >
                 Đơn giá
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Hành động
               </th>
@@ -69,11 +74,18 @@ exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = 
               </td>
               <td
                 class="sc-jMsorb excHwE"
-              />
+              >
+                Box
+              </td>
               <td
                 class="sc-jMsorb excHwE"
               >
-                5,000
+                100
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                5.000
                  VND
               </td>
               <td
@@ -99,11 +111,18 @@ exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = 
               </td>
               <td
                 class="sc-jMsorb excHwE"
-              />
+              >
+                Box
+              </td>
               <td
                 class="sc-jMsorb excHwE"
               >
-                7,000
+                50
+              </td>
+              <td
+                class="sc-jMsorb excHwE"
+              >
+                7.000
                  VND
               </td>
               <td
@@ -135,27 +154,27 @@ exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = 
           <thead>
             <tr>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Tên thuốc
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Số lượng
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Đơn giá
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Thành tiền
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Hành động
               </th>
@@ -203,6 +222,11 @@ exports[`CreateInvoice component snapshot của giao diện CreateInvoice 1`] = 
             value="Female"
           >
             Nữ
+          </option>
+          <option
+            value="Other"
+          >
+            Khác
           </option>
         </select>
         <input

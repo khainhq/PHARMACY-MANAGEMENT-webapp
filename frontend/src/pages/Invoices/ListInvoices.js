@@ -16,6 +16,16 @@ import {
   unitMap,
 } from './InvoicesStyles';
 
+const invoiceStatusLabels = {
+  Paid: 'Đã thanh toán',
+  Pending: 'Chưa thanh toán',
+  'Đã thanh toán': 'Đã thanh toán',
+  'Chưa thanh toán': 'Chưa thanh toán',
+};
+
+const formatInvoiceStatus = (status) => invoiceStatusLabels[status] || status || '';
+const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+
 const ListInvoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
@@ -188,7 +198,7 @@ const ListInvoices = () => {
                 <TableCell>{invoice.customer}</TableCell>
                 <TableCell>{invoice.address}</TableCell>
                 <TableCell>{invoice.paymentMethod}</TableCell>
-                <TableCell>{invoice.status}</TableCell>
+                <TableCell>{formatInvoiceStatus(invoice.status)}</TableCell>
                 <TableCell>
                   <Button
                     data-testid={`view-details-${invoice.invoiceID}`}
@@ -235,13 +245,13 @@ const ListInvoices = () => {
                       <TableCell>{detail.medicineName}</TableCell>
                       <TableCell>{unitMap[detail.unit] || detail.unit}</TableCell>
                       <TableCell>{detail.quantity}</TableCell>
-                      <TableCell>{detail.unitPrice.toLocaleString()} VND</TableCell>
+                      <TableCell>{formatMoney(detail.unitPrice)} VND</TableCell>
                     </tr>
                   ))}
                 </tbody>
               </Table>
               <p data-testid="total-amount" style={{ marginTop: '1rem', fontWeight: 'bold' }}>
-                Tổng tiền: {selectedInvoiceDetails.totalAmount.toLocaleString()} VND
+                Tổng tiền: {formatMoney(selectedInvoiceDetails.totalAmount)} VND
               </p>
             </ModalBody>
             <ModalFooter>

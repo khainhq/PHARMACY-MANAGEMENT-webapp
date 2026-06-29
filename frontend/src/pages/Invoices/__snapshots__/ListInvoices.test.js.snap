@@ -4,7 +4,7 @@ exports[`ListInvoices component snapshot của giao diện ListInvoices 1`] = `
 <body>
   <div>
     <div
-      class="sc-Qotzb iRCYKu"
+      class="sc-Qotzb kHgNuq"
       data-testid="main-content"
     >
       <div>
@@ -36,37 +36,37 @@ exports[`ListInvoices component snapshot của giao diện ListInvoices 1`] = `
           <thead>
             <tr>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Mã hóa đơn
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Thời gian
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Khách hàng
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Địa chỉ
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Phương thức thanh toán
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Trạng thái
               </th>
               <th
-                class="sc-icnseD cEmiKW"
+                class="sc-icnseD dsOihg"
               >
                 Hành động
               </th>
