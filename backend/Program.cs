@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 
@@ -81,14 +82,14 @@ app.MapPost("/api/auth/reset-password/", async (ResetPasswordRequest request, Ph
 }).RequireToken();
 
 MapCrud<Role, int>(app, "/api/auth/roles/", db => db.Roles, x => x.RoleID);
-MapCrud<Employee, string>(app, "/api/auth/employees/", db => db.Employees, x => x.EmployeeID);
-MapCrud<Account, int>(app, "/api/auth/accounts/", db => db.Accounts, x => x.AccountID, NormalizeAccount);
+MapCrud<Employee, string>(app, "/api/auth/employees/", db => db.Employees, x => x.EmployeeID, validate: ValidateEmployeeAsync);
+MapCrud<Account, int>(app, "/api/auth/accounts/", db => db.Accounts, x => x.AccountID, NormalizeAccount, ValidateAccountAsync);
 MapCrud<Customer, string>(app, "/api/sales/customers/", db => db.Customers, x => x.CustomerID);
 MapCrud<Catalog, string>(app, "/api/medicines/catalogs/", db => db.Catalogs, x => x.CatalogID);
 MapCrud<Unit, string>(app, "/api/medicines/units/", db => db.Units, x => x.UnitID);
 MapCrud<Origin, string>(app, "/api/medicines/origins/", db => db.Origins, x => x.OriginID);
 MapCrud<Medicine, string>(app, "/api/medicines/medicines/", db => db.Medicines, x => x.MedicineID);
-MapCrud<Supplier, string>(app, "/api/medicines/suppliers/", db => db.Suppliers, x => x.SupplierID);
+MapCrud<Supplier, string>(app, "/api/medicines/suppliers/", db => db.Suppliers, x => x.SupplierID, validate: ValidateSupplierAsync);
 MapCrud<Order, string>(app, "/api/sales/orders/", db => db.Orders, x => x.OrderID);
 MapCrud<OrderDetail, int>(app, "/api/sales/order-details/", db => db.OrderDetails, x => x.Id);
 MapInvoiceEndpoints(app);
@@ -108,6 +109,10 @@ app.MapPost("/api/sales/checkout/", async (CheckoutRequest request, PharmacyDbCo
     if (string.IsNullOrWhiteSpace(customerName) || string.IsNullOrWhiteSpace(phoneNumber))
     {
         return Results.BadRequest(new { error = "Vui long nhap ten khach hang va so dien thoai" });
+    }
+    if (!IsValidPhoneNumber(phoneNumber))
+    {
+        return Results.BadRequest(new { error = "Số điện thoại không đúng định dạng." });
     }
 
     await using var transaction = await db.Database.BeginTransactionAsync();
@@ -634,7 +639,8 @@ static void MapCrud<TEntity, TKey>(
     string route,
     Func<PharmacyDbContext, DbSet<TEntity>> set,
     Func<TEntity, TKey> key,
-    Action<TEntity>? beforeSave = null) where TEntity : class
+    Action<TEntity>? beforeSave = null,
+    Func<TEntity, PharmacyDbContext, Task<IResult?>>? validate = null) where TEntity : class
 {
     app.MapGet(route, async (HttpRequest request, PharmacyDbContext db) =>
     {
@@ -658,9 +664,21 @@ static void MapCrud<TEntity, TKey>(
 
     app.MapPost(route, async (TEntity entity, PharmacyDbContext db) =>
     {
+        if (validate is not null)
+        {
+            var validationResult = await validate(entity, db);
+            if (validationResult is not null) return validationResult;
+        }
         beforeSave?.Invoke(entity);
         set(db).Add(entity);
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            return Results.BadRequest(new { error = "Dữ liệu đã tồn tại hoặc không hợp lệ." });
+        }
         return Results.Created(route, entity);
     }).RequireToken();
 
@@ -668,9 +686,26 @@ static void MapCrud<TEntity, TKey>(
     {
         var existing = await set(db).FindAsync(ConvertKey<TKey>(id));
         if (existing is null) return Results.NotFound();
+        var currentPasswordHash = existing is Account existingAccount ? existingAccount.PasswordHash : null;
         db.Entry(existing).CurrentValues.SetValues(input);
+        if (existing is Account account && string.IsNullOrWhiteSpace(account.PasswordHash) && !string.IsNullOrWhiteSpace(currentPasswordHash))
+        {
+            account.PasswordHash = currentPasswordHash;
+        }
+        if (validate is not null)
+        {
+            var validationResult = await validate(existing, db);
+            if (validationResult is not null) return validationResult;
+        }
         beforeSave?.Invoke(existing);
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            return Results.BadRequest(new { error = "Dữ liệu đã tồn tại hoặc không hợp lệ." });
+        }
         return Results.Ok(existing);
     }).RequireToken();
 
@@ -686,8 +721,20 @@ static void MapCrud<TEntity, TKey>(
             if (prop is null || !prop.CanWrite) continue;
             prop.SetValue(existing, ConvertJson(jsonProp.Value, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType));
         }
+        if (validate is not null)
+        {
+            var validationResult = await validate(existing, db);
+            if (validationResult is not null) return validationResult;
+        }
         beforeSave?.Invoke(existing);
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            return Results.BadRequest(new { error = "Dữ liệu đã tồn tại hoặc không hợp lệ." });
+        }
         return Results.Ok(existing);
     }).RequireToken();
 
@@ -706,12 +753,101 @@ static object ConvertKey<TKey>(string value) => typeof(TKey) == typeof(int) ? in
 static object? ConvertJson(JsonElement value, Type type) => type.Name switch
 {
     nameof(String) => value.GetString(),
-    nameof(Int32) => value.GetInt32(),
+    nameof(Int32) => value.ValueKind == JsonValueKind.String ? int.Parse(value.GetString()!) : value.GetInt32(),
     nameof(Decimal) => value.GetDecimal(),
     nameof(Boolean) => value.GetBoolean(),
     nameof(DateTime) => value.GetDateTime(),
     _ => JsonSerializer.Deserialize(value.GetRawText(), type)
 };
+
+static bool IsValidPhoneNumber(string? phoneNumber) =>
+    !string.IsNullOrWhiteSpace(phoneNumber) &&
+    Regex.IsMatch(phoneNumber.Trim(), @"^(0\d{9}|\+84\d{9})$", RegexOptions.CultureInvariant);
+
+static Task<IResult?> ValidateSupplierAsync(Supplier supplier, PharmacyDbContext db)
+{
+    supplier.SupplierName = supplier.SupplierName.Trim();
+    supplier.PhoneNumber = supplier.PhoneNumber.Trim();
+    supplier.Address = supplier.Address.Trim();
+
+    if (!IsValidPhoneNumber(supplier.PhoneNumber))
+    {
+        return Task.FromResult<IResult?>(Results.BadRequest(new { error = "Số điện thoại không đúng định dạng." }));
+    }
+
+    return Task.FromResult<IResult?>(null);
+}
+
+static Task<IResult?> ValidateEmployeeAsync(Employee employee, PharmacyDbContext db)
+{
+    employee.FullName = employee.FullName.Trim();
+    employee.PhoneNumber = employee.PhoneNumber.Trim();
+    employee.Gender = employee.Gender.Trim();
+
+    if (!IsValidPhoneNumber(employee.PhoneNumber))
+    {
+        return Task.FromResult<IResult?>(Results.BadRequest(new { error = "Số điện thoại không đúng định dạng." }));
+    }
+
+    var currentYear = DateTime.UtcNow.Year;
+    var hireYear = employee.HireDate.Year;
+    if (employee.YearOfBirth < 1900 || employee.YearOfBirth > currentYear || hireYear - employee.YearOfBirth < 16)
+    {
+        return Task.FromResult<IResult?>(Results.BadRequest(new { error = "Năm sinh và ngày vào làm không hợp lệ. Nhân viên phải đủ 16 tuổi vào ngày vào làm." }));
+    }
+
+    return Task.FromResult<IResult?>(null);
+}
+
+static async Task<IResult?> ValidateAccountAsync(Account account, PharmacyDbContext db)
+{
+    account.Username = account.Username.Trim();
+    account.EmployeeID = string.IsNullOrWhiteSpace(account.EmployeeID) ? null : account.EmployeeID.Trim();
+
+    if (string.IsNullOrWhiteSpace(account.Username))
+    {
+        return Results.BadRequest(new { error = "Vui lòng nhập tên tài khoản." });
+    }
+
+    if (account.AccountID == 0 && string.IsNullOrWhiteSpace(account.Password))
+    {
+        return Results.BadRequest(new { error = "Vui lòng nhập mật khẩu." });
+    }
+
+    if (account.AccountID != 0 && string.IsNullOrWhiteSpace(account.PasswordHash) && string.IsNullOrWhiteSpace(account.Password))
+    {
+        return Results.BadRequest(new { error = "Tài khoản chưa có mật khẩu hợp lệ." });
+    }
+
+    var role = await db.Roles.AsNoTracking().FirstOrDefaultAsync(x => x.RoleID == account.RoleID);
+    if (role is null)
+    {
+        return Results.BadRequest(new { error = "Vai trò tài khoản không hợp lệ." });
+    }
+
+    if (await db.Accounts.AsNoTracking().AnyAsync(x => x.Username == account.Username && x.AccountID != account.AccountID))
+    {
+        return Results.BadRequest(new { error = "Tên tài khoản đã tồn tại." });
+    }
+
+    if (!string.IsNullOrWhiteSpace(account.EmployeeID))
+    {
+        var employeeExists = await db.Employees.AsNoTracking().AnyAsync(x => x.EmployeeID == account.EmployeeID);
+        if (!employeeExists)
+        {
+            return Results.BadRequest(new { error = "Mã nhân viên không hợp lệ." });
+        }
+
+        var employeeHasAccount = await db.Accounts.AsNoTracking().AnyAsync(x => x.EmployeeID == account.EmployeeID && x.AccountID != account.AccountID);
+        if (employeeHasAccount)
+        {
+            return Results.BadRequest(new { error = "Nhân viên này đã có tài khoản." });
+        }
+    }
+
+    account.IsStaff = string.Equals(role.RoleName, "Admin", StringComparison.OrdinalIgnoreCase);
+    return null;
+}
 
 static async Task<string> GenerateCustomerIdAsync(PharmacyDbContext db)
 {

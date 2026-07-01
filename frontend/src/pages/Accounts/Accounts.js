@@ -32,6 +32,29 @@ const Accounts = () => {
   // Thêm trạng thái formError để hiển thị thông báo lỗi khi form không hợp lệ (khắc phục lỗi kiểm thử)
   const [formError, setFormError] = useState('');
 
+  const accountRoleID = (account) => {
+    if (typeof account.role === 'object' && account.role !== null) return String(account.role.roleID || '');
+    if (account.roleID) return String(account.roleID);
+    return String(account.role || '');
+  };
+
+  const accountEmployeeID = (account) => {
+    if (typeof account.employee === 'object' && account.employee !== null) return account.employee.employeeID || '';
+    return account.employee || account.employeeID || '';
+  };
+
+  const accountEmployeeName = (account) => {
+    if (typeof account.employee === 'object' && account.employee !== null) return account.employee.fullName || account.employee.employeeID || 'N/A';
+    return account.employee || account.employeeID || 'N/A';
+  };
+
+  const accountRoleName = (account) => {
+    if (typeof account.role === 'object' && account.role !== null) return account.role.roleName || roleMap[account.role.roleID] || 'N/A';
+    return roleMap[account.role] || account.role || 'N/A';
+  };
+
+  const apiErrorMessage = (error) => error.response?.data?.error || 'Có lỗi xảy ra khi lưu tài khoản.';
+
   const fetchAccounts = async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
@@ -50,7 +73,7 @@ const Accounts = () => {
     setSearchKeyword(keyword);
 
     const filtered = accounts.filter((account) => {
-      const roleName = typeof account.role === 'string' ? account.role : account.role?.roleName || '';
+      const roleName = accountRoleName(account);
       return (
         account.username.toLowerCase().includes(keyword) ||
         roleName.toLowerCase().includes(keyword)
@@ -66,22 +89,27 @@ const Accounts = () => {
     const headers = { Authorization: `Token ${token}` };
 
     // Kiểm tra tính hợp lệ của form trước khi gọi API (khắc phục lỗi kiểm thử)
-    if (!editingAccountID && (!form.username || !form.password || !form.role)) {
+    if (!editingAccountID && (!form.username.trim() || !form.password.trim() || !form.role)) {
       setFormError('Vui lòng điền đầy đủ tên tài khoản, mật khẩu và quyền.');
       return; // Thoát nếu thiếu dữ liệu khi thêm tài khoản
     }
-    if (editingAccountID && (!form.username || !form.role)) {
+    if (editingAccountID && (!form.username.trim() || !form.role)) {
       setFormError('Vui lòng điền đầy đủ tên tài khoản và quyền.');
       return; // Thoát nếu thiếu dữ liệu khi sửa tài khoản
     }
 
     try {
-      const payload = { ...form };
-      if (!form.password) {
+      const payload = {
+        username: form.username.trim(),
+        role: Number(form.role),
+        employee: form.employee.trim() || null,
+        password: form.password,
+      };
+      if (!form.password.trim()) {
         delete payload.password;
       }
       if (editingAccountID) {
-        await axios.put(`http://localhost:8000/api/auth/accounts/${editingAccountID}/`, payload, { headers });
+        await axios.patch(`http://localhost:8000/api/auth/accounts/${editingAccountID}/`, payload, { headers });
       } else {
         await axios.post('http://localhost:8000/api/auth/accounts/', payload, { headers });
       }
@@ -94,7 +122,7 @@ const Accounts = () => {
     } catch (error) {
       console.error('Error saving account:', error.response?.data || error.message);
       // Hiển thị lỗi API trong giao diện
-      setFormError('Có lỗi xảy ra khi lưu tài khoản.');
+      setFormError(apiErrorMessage(error));
     }
   };
 
@@ -102,8 +130,8 @@ const Accounts = () => {
     setForm({
       username: account.username,
       password: '',
-      role: account.role,
-      employee: account.employee,
+      role: accountRoleID(account),
+      employee: accountEmployeeID(account),
     });
     setShowForm(true);
     setEditingAccountID(account.accountID);
@@ -170,7 +198,7 @@ const Accounts = () => {
         {showForm && (
           <Form onSubmit={handleAddOrUpdateAccount}>
             {/* Hiển thị thông báo lỗi nếu form không hợp lệ hoặc API thất bại */}
-            {formError && <div style={{ color: 'red', marginBottom: '1rem' }}>{formError}</div>}
+            {formError && <div role="alert" style={{ color: 'red', marginBottom: '1rem' }}>{formError}</div>}
             <Input
               type="text"
               placeholder="Tên tài khoản"
@@ -235,8 +263,8 @@ const Accounts = () => {
               <tr key={account.accountID}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{account.username}</TableCell>
-                <TableCell>{account.employee || 'N/A'}</TableCell>
-                <TableCell>{roleMap[account.role]}</TableCell>
+                <TableCell>{accountEmployeeName(account)}</TableCell>
+                <TableCell>{accountRoleName(account)}</TableCell>
                 <TableCell>{account.is_active ? 'Hoạt động' : 'Vô hiệu'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEditAccount(account)}>Sửa</Button>

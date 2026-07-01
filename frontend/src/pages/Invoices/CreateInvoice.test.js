@@ -50,9 +50,9 @@ const addFirstMedicineToCart = async (quantity = '1') => {
   fireEvent.click(screen.getByRole('button', { name: 'Thêm vào giỏ hàng' }));
 };
 
-const fillInvoiceForm = ({ status = 'Paid' } = {}) => {
+const fillInvoiceForm = ({ status = 'Paid', phoneNumber = '0123456789' } = {}) => {
   fireEvent.change(screen.getByPlaceholderText('Tên khách hàng'), { target: { value: 'Nguyen Van A' } });
-  fireEvent.change(screen.getByPlaceholderText('Số điện thoại'), { target: { value: '0123456789' } });
+  fireEvent.change(screen.getByPlaceholderText('Số điện thoại'), { target: { value: phoneNumber } });
   fireEvent.change(screen.getByRole('combobox', { name: 'Chọn giới tính' }), { target: { value: 'Male' } });
   fireEvent.change(screen.getByPlaceholderText('Địa chỉ'), { target: { value: '123 Ha Noi' } });
   fireEvent.change(screen.getAllByRole('combobox')[2], { target: { value: status } });
@@ -153,6 +153,18 @@ describe('CreateInvoice component', () => {
     await waitFor(() => {
       expect(within(cartSection).queryByText('Paracetamol')).not.toBeInTheDocument();
     });
+  });
+
+  test('không tạo hóa đơn khi số điện thoại khách hàng sai định dạng', async () => {
+    await renderInvoice();
+    await addFirstMedicineToCart();
+    fillInvoiceForm({ status: 'Pending', phoneNumber: 'Thạch Sanh' });
+
+    fireEvent.click(screen.getByRole('button', { name: 'TẠO HÓA ĐƠN' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Số điện thoại không đúng định dạng.');
+    expect(screen.queryByText('Kiểm tra hóa đơn trước khi lưu')).not.toBeInTheDocument();
+    expect(axios.post).not.toHaveBeenCalled();
   });
 
   test('bấm tạo hóa đơn chỉ mở bản xem lại và nút chỉnh sửa giữ nguyên dữ liệu', async () => {
