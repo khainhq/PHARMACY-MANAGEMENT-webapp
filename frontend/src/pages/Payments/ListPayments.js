@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -10,9 +10,14 @@ import {
   TableCell,
   Button,
   Input,
+  Select,
+  FilterBar,
+  FilterField,
   TableViewport,
   ActionGroup,
+  EmptyCell,
 } from './PaymentsStyles';
+import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
@@ -29,30 +34,13 @@ const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa thanh toán';
 const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
 
-const filterPayments = (items, keyword) => {
-  const normalizedKeyword = keyword.trim().toLowerCase();
-  if (!normalizedKeyword) return items;
-
-  return items.filter((payment) => {
-    const searchable = [
-      payment.paymentID,
-      payment.supplierName,
-      payment.employeeName,
-      payment.medicineSummary,
-      formatPaymentStatus(payment.status),
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-
-    return searchable.includes(normalizedKeyword);
-  });
-};
-
 const ListPayments = () => {
   const [payments, setPayments] = useState([]);
-  const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [error, setError] = useState('');
 
   const fetchPayments = useCallback(async () => {
@@ -61,12 +49,35 @@ const ListPayments = () => {
         headers: authHeaders(),
       });
       setPayments(response.data);
-      setFilteredPayments(filterPayments(response.data, searchKeyword));
       setError('');
     } catch (fetchError) {
       setError('Không tải được danh sách phiếu nhập. Vui lòng thử lại.');
     }
-  }, [searchKeyword]);
+  }, []);
+
+  const filteredPayments = useMemo(
+    () =>
+      applyListFilters(payments, {
+        keyword: searchKeyword,
+        sortOrder,
+        selectedDate,
+        fromDate,
+        toDate,
+        getDate: (payment) => payment.paymentTime,
+        getSearchText: (payment) =>
+          [
+            payment.paymentID,
+            payment.supplierName,
+            payment.employeeName,
+            payment.medicineSummary,
+            formatPaymentStatus(payment.status),
+            formatVietnamDateTime(payment.paymentTime),
+          ]
+            .filter(Boolean)
+            .join(' '),
+      }),
+    [payments, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
+  );
 
   const handleDeletePayment = async (paymentID) => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa phiếu nhập này?');
@@ -100,9 +111,15 @@ const ListPayments = () => {
   };
 
   const handleSearch = (e) => {
-    const keyword = e.target.value;
-    setSearchKeyword(keyword);
-    setFilteredPayments(filterPayments(payments, keyword));
+    setSearchKeyword(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setSearchKeyword('');
+    setSortOrder('');
+    setSelectedDate('');
+    setFromDate('');
+    setToDate('');
   };
 
   useEffect(() => {
@@ -146,6 +163,45 @@ const ListPayments = () => {
           </div>
         </Toolbar>
 
+        <FilterBar>
+          <FilterField>
+            Sắp xếp
+            <Select aria-label="Sắp xếp phiếu nhập" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="">Mặc định</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </Select>
+          </FilterField>
+          <FilterField>
+            Ngày cụ thể
+            <Input
+              aria-label="Lọc phiếu nhập theo ngày cụ thể"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Từ ngày
+            <Input
+              aria-label="Lọc phiếu nhập từ ngày"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Đến ngày
+            <Input
+              aria-label="Lọc phiếu nhập đến ngày"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </FilterField>
+          <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
+        </FilterBar>
+
         <h2>DANH SÁCH PHIẾU NHẬP</h2>
         {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
         <TableViewport>
@@ -179,11 +235,7 @@ const ListPayments = () => {
                 <tr key={payment.paymentID}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{payment.paymentID}</TableCell>
-                  <TableCell>
-                    {payment.paymentTime
-                      ? new Date(payment.paymentTime).toLocaleString()
-                      : ''}
-                  </TableCell>
+                  <TableCell>{formatVietnamDateTime(payment.paymentTime)}</TableCell>
                   <TableCell>{payment.supplierName || payment.supplier}</TableCell>
                   <TableCell>{payment.employeeName || payment.employee}</TableCell>
                   <TableCell>{payment.medicineSummary}</TableCell>
@@ -208,6 +260,11 @@ const ListPayments = () => {
                   </TableCell>
                 </tr>
               ))}
+              {filteredPayments.length === 0 && (
+                <tr>
+                  <EmptyCell colSpan={9}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+                </tr>
+              )}
             </tbody>
           </Table>
         </TableViewport>

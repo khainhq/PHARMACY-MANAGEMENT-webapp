@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus, FaDownload } from 'react-icons/fa';
@@ -8,57 +8,87 @@ import {
   Container,
   Content,
   Toolbar,
+  ToolbarSide,
+  FilterBar,
+  FilterField,
   Table,
   TableHeader,
   TableCell,
   Button,
   Form,
   Input,
+  Select,
   SearchInput,
+  ActionGroup,
+  EmptyCell,
 } from './CustomersStyles';
+import {
+  applyListFilters,
+  formatDateInputValue,
+  formatVietnamDateTime,
+} from '../../utils/listFilters';
+
+const API_BASE = 'http://localhost:8000';
+const emptyForm = { fullName: '', phoneNumber: '', gender: '', joinDate: '' };
+
+const genderLabels = {
+  Male: 'Nam',
+  Female: 'Nữ',
+  Other: 'Khác',
+  Nam: 'Nam',
+  Nữ: 'Nữ',
+  Khác: 'Khác',
+};
+
+const formatGender = (gender) => genderLabels[gender] || gender || '';
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    fullName: '',
-    phoneNumber: '',
-    gender: '',
-    joinDate: '',
-  });
+  const [form, setForm] = useState(emptyForm);
   const [editingCustomerID, setEditingCustomerID] = useState(null);
 
-  // Fetch customers from API
+  const filteredCustomers = useMemo(
+    () =>
+      applyListFilters(customers, {
+        keyword: searchKeyword,
+        sortOrder,
+        selectedDate,
+        fromDate,
+        toDate,
+        getDate: (customer) => customer.joinDate,
+        getSearchText: (customer) =>
+          [
+            customer.customerID,
+            customer.fullName,
+            customer.phoneNumber,
+            customer.gender,
+            formatGender(customer.gender),
+            formatVietnamDateTime(customer.joinDate),
+          ]
+            .filter(Boolean)
+            .join(' '),
+      }),
+    [customers, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
+  );
+
   const fetchCustomers = async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/sales/customers/', { headers });
+      const response = await axios.get(`${API_BASE}/api/sales/customers/`, { headers });
       setCustomers(response.data);
-      setFilteredCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
     }
   };
 
-  // Handle search functionality
-  const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase();
-    setSearchKeyword(keyword);
-
-    const filtered = customers.filter((customer) =>
-      customer.fullName.toLowerCase().includes(keyword) ||
-      customer.phoneNumber.includes(keyword) ||
-      customer.gender.toLowerCase().includes(keyword)
-    );
-
-    setFilteredCustomers(filtered);
-  };
-
-  // Handle add or update customer
   const handleAddOrUpdateCustomer = async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem('token');
@@ -74,24 +104,13 @@ const Customers = () => {
 
       if (editingCustomerID) {
         payload.customerID = editingCustomerID;
-        // Update customer
-        await axios.put(
-          `http://localhost:8000/api/sales/customers/${editingCustomerID}/`,
-          payload,
-          { headers }
-        );
+        await axios.put(`${API_BASE}/api/sales/customers/${editingCustomerID}/`, payload, { headers });
       } else {
-        // Add new customer
-        const customerID = generateCustomerID(); // Generate unique customer ID
-        await axios.post(
-          'http://localhost:8000/api/sales/customers/',
-          { ...payload, customerID },
-          { headers }
-        );
+        const customerID = generateCustomerID();
+        await axios.post(`${API_BASE}/api/sales/customers/`, { ...payload, customerID }, { headers });
       }
 
-      // Reset form and state
-      setForm({ fullName: '', phoneNumber: '', gender: '', joinDate: '' });
+      setForm(emptyForm);
       setShowForm(false);
       setEditingCustomerID(null);
       fetchCustomers();
@@ -100,7 +119,6 @@ const Customers = () => {
     }
   };
 
-  // Generate unique customer ID
   const generateCustomerID = () => {
     const letters = Array.from({ length: 6 }, () =>
       String.fromCharCode(65 + Math.floor(Math.random() * 26))
@@ -109,19 +127,17 @@ const Customers = () => {
     return `${letters}${numbers}`;
   };
 
-  // Handle edit customer
   const handleEditCustomer = (customer) => {
     setForm({
       fullName: customer.fullName,
       phoneNumber: customer.phoneNumber,
       gender: customer.gender,
-      joinDate: customer.joinDate,
+      joinDate: formatDateInputValue(customer.joinDate),
     });
     setShowForm(true);
     setEditingCustomerID(customer.customerID);
   };
 
-  // Handle delete customer
   const handleDeleteCustomer = async (customerID) => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa khách hàng này?');
     if (!confirmDelete) return;
@@ -130,14 +146,13 @@ const Customers = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.delete(`http://localhost:8000/api/sales/customers/${customerID}/`, { headers });
+      await axios.delete(`${API_BASE}/api/sales/customers/${customerID}/`, { headers });
       fetchCustomers();
     } catch (error) {
       console.error('Error deleting customer:', error.response?.data || error.message);
     }
   };
 
-  // Handle download Excel
   const handleDownloadExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(filteredCustomers);
     const workbook = XLSX.utils.book_new();
@@ -145,6 +160,14 @@ const Customers = () => {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
     saveAs(data, 'Customers.xlsx');
+  };
+
+  const clearFilters = () => {
+    setSearchKeyword('');
+    setSortOrder('');
+    setSelectedDate('');
+    setFromDate('');
+    setToDate('');
   };
 
   useEffect(() => {
@@ -156,23 +179,60 @@ const Customers = () => {
       <Sidebar />
       <Content>
         <Toolbar>
-        <div>
-            <Button onClick={() => { setShowForm(!showForm); setEditingCustomerID(null); }}>
-              <FaPlus style={{ marginRight: '0.5rem' }} /> THÊM
-            </Button>
-          </div>
-          <div>
+          <Button onClick={() => { setShowForm(!showForm); setEditingCustomerID(null); }}>
+            <FaPlus /> THÊM
+          </Button>
+          <ToolbarSide>
             <SearchInput
               type="text"
               placeholder="Tìm kiếm khách hàng..."
               value={searchKeyword}
-              onChange={handleSearch}
+              onChange={(e) => setSearchKeyword(e.target.value)}
             />
             <Button onClick={handleDownloadExcel}>
-              <FaDownload style={{ marginRight: '0.5rem' }} /> Tải xuống
+              <FaDownload /> Tải xuống
             </Button>
-          </div>
+          </ToolbarSide>
         </Toolbar>
+
+        <FilterBar>
+          <FilterField>
+            Sắp xếp
+            <Select aria-label="Sắp xếp khách hàng" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="">Mặc định</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </Select>
+          </FilterField>
+          <FilterField>
+            Ngày cụ thể
+            <Input
+              aria-label="Lọc khách hàng theo ngày cụ thể"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Từ ngày
+            <Input
+              aria-label="Lọc khách hàng từ ngày"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Đến ngày
+            <Input
+              aria-label="Lọc khách hàng đến ngày"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </FilterField>
+          <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
+        </FilterBar>
 
         {showForm && (
           <Form onSubmit={handleAddOrUpdateCustomer}>
@@ -190,21 +250,16 @@ const Customers = () => {
               onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
               required
             />
-            <select
+            <Select
               value={form.gender}
               onChange={(e) => setForm({ ...form, gender: e.target.value })}
               required
-              style={{
-                padding: '0.5rem',
-                border: '1px solid #ddd',
-                borderRadius: '5px',
-                marginBottom: '1rem',
-              }}
             >
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
-            </select>
+              <option value="Other">Khác</option>
+            </Select>
             <Input
               type="date"
               placeholder="Ngày tham gia"
@@ -217,18 +272,26 @@ const Customers = () => {
                 type="button"
                 onClick={() => {
                   setShowForm(false);
-                  setForm({ fullName: '', phoneNumber: '', gender: '', joinDate: '' });
+                  setForm(emptyForm);
                   setEditingCustomerID(null);
                 }}
               >
                 Hủy
-            </Button>
+              </Button>
             </div>
           </Form>
         )}
 
         <h2>DANH SÁCH KHÁCH HÀNG</h2>
         <Table>
+          <colgroup>
+            <col style={{ width: '6%' }} />
+            <col style={{ width: '24%' }} />
+            <col style={{ width: '14%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '25%' }} />
+            <col style={{ width: '21%' }} />
+          </colgroup>
           <thead>
             <tr>
               <TableHeader>STT</TableHeader>
@@ -245,14 +308,21 @@ const Customers = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{customer.fullName}</TableCell>
                 <TableCell>{customer.phoneNumber}</TableCell>
-                <TableCell>{customer.gender}</TableCell>
-                <TableCell>{customer.joinDate}</TableCell>
+                <TableCell>{formatGender(customer.gender)}</TableCell>
+                <TableCell>{formatVietnamDateTime(customer.joinDate)}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleEditCustomer(customer)} >Sửa</Button>
-                  <Button onClick={() => handleDeleteCustomer(customer.customerID)}style={{ marginLeft: '0.5rem' }}>Xóa</Button>
+                  <ActionGroup>
+                    <Button onClick={() => handleEditCustomer(customer)}>Sửa</Button>
+                    <Button onClick={() => handleDeleteCustomer(customer.customerID)}>Xóa</Button>
+                  </ActionGroup>
                 </TableCell>
               </tr>
             ))}
+            {filteredCustomers.length === 0 && (
+              <tr>
+                <EmptyCell colSpan={6}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+              </tr>
+            )}
           </tbody>
         </Table>
       </Content>

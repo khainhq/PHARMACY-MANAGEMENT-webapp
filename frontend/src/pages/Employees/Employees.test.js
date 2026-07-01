@@ -67,8 +67,8 @@ describe('Employees component', () => {
       expect(screen.getByText(/Nữ/i)).toBeInTheDocument();
       expect(screen.getByText(/1990/i)).toBeInTheDocument();
       expect(screen.getByText(/1995/i)).toBeInTheDocument();
-      expect(screen.getByText(/2023-01-15/i)).toBeInTheDocument();
-      expect(screen.getByText(/2023-06-20/i)).toBeInTheDocument();
+      expect(screen.getByText(/15\/01\/2023 00:00:00/i)).toBeInTheDocument();
+      expect(screen.getByText(/20\/06\/2023 00:00:00/i)).toBeInTheDocument();
     });
   });
 
@@ -116,8 +116,7 @@ describe('Employees component', () => {
 
     fireEvent.change(screen.getByPlaceholderText(/Họ tên/i), { target: { value: 'Le Thi C' } });
     fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '0912345678' } });
-    // Target the <select> element, not the <option>
-    const genderSelect = screen.getByRole('combobox');
+    const genderSelect = screen.getByLabelText('Chọn giới tính');
     fireEvent.change(genderSelect, { target: { value: 'Female' } });
     fireEvent.change(screen.getByPlaceholderText(/Năm sinh/i), { target: { value: '1992' } });
     fireEvent.change(screen.getByPlaceholderText(/Ngày vào làm/i), { target: { value: '2023-12-01' } });

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -8,6 +8,7 @@ import {
   TableCell,
   Button,
   Input,
+  Select,
   Modal,
   ModalContent,
   ModalHeader,
@@ -15,10 +16,14 @@ import {
   ModalFooter,
   ListContent,
   ListToolbar,
+  FilterBar,
+  FilterField,
   TableViewport,
   ActionGroup,
+  EmptyCell,
   unitMap,
 } from './InvoicesStyles';
+import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
@@ -36,32 +41,13 @@ const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa th
 
 const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
 
-const filterInvoices = (items, keyword) => {
-  const normalizedKeyword = keyword.trim().toLowerCase();
-  if (!normalizedKeyword) return items;
-
-  return items.filter((invoice) => {
-    const searchable = [
-      invoice.invoiceID,
-      invoice.customerName,
-      invoice.customer,
-      invoice.customerPhone,
-      invoice.address,
-      invoice.paymentMethod,
-      formatInvoiceStatus(invoice.status),
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-
-    return searchable.includes(normalizedKeyword);
-  });
-};
-
 const ListInvoices = () => {
   const [invoices, setInvoices] = useState([]);
-  const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState('');
@@ -72,12 +58,37 @@ const ListInvoices = () => {
         headers: authHeaders(),
       });
       setInvoices(response.data);
-      setFilteredInvoices(filterInvoices(response.data, searchKeyword));
       setError('');
     } catch (fetchError) {
       setError('Không tải được danh sách hóa đơn. Vui lòng thử lại.');
     }
-  }, [searchKeyword]);
+  }, []);
+
+  const filteredInvoices = useMemo(
+    () =>
+      applyListFilters(invoices, {
+        keyword: searchKeyword,
+        sortOrder,
+        selectedDate,
+        fromDate,
+        toDate,
+        getDate: (invoice) => invoice.invoiceTime,
+        getSearchText: (invoice) =>
+          [
+            invoice.invoiceID,
+            invoice.customerName,
+            invoice.customer,
+            invoice.customerPhone,
+            invoice.address,
+            invoice.paymentMethod,
+            formatInvoiceStatus(invoice.status),
+            formatVietnamDateTime(invoice.invoiceTime),
+          ]
+            .filter(Boolean)
+            .join(' '),
+      }),
+    [invoices, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
+  );
 
   const fetchInvoiceDetails = async (invoiceID) => {
     try {
@@ -126,9 +137,15 @@ const ListInvoices = () => {
   };
 
   const handleSearch = (e) => {
-    const keyword = e.target.value;
-    setSearchKeyword(keyword);
-    setFilteredInvoices(filterInvoices(invoices, keyword));
+    setSearchKeyword(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setSearchKeyword('');
+    setSortOrder('');
+    setSelectedDate('');
+    setFromDate('');
+    setToDate('');
   };
 
   const handleMarkAsPaid = async (invoiceID) => {
@@ -203,6 +220,45 @@ const ListInvoices = () => {
           />
         </ListToolbar>
 
+        <FilterBar>
+          <FilterField>
+            Sắp xếp
+            <Select aria-label="Sắp xếp hóa đơn" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="">Mặc định</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </Select>
+          </FilterField>
+          <FilterField>
+            Ngày cụ thể
+            <Input
+              aria-label="Lọc hóa đơn theo ngày cụ thể"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Từ ngày
+            <Input
+              aria-label="Lọc hóa đơn từ ngày"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Đến ngày
+            <Input
+              aria-label="Lọc hóa đơn đến ngày"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </FilterField>
+          <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
+        </FilterBar>
+
         {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
 
         <TableViewport>
@@ -231,11 +287,7 @@ const ListInvoices = () => {
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.invoiceID}>
                   <TableCell>{invoice.invoiceID}</TableCell>
-                  <TableCell>
-                    {invoice.invoiceTime
-                      ? new Date(invoice.invoiceTime).toLocaleString()
-                      : ''}
-                  </TableCell>
+                  <TableCell>{formatVietnamDateTime(invoice.invoiceTime)}</TableCell>
                   <TableCell>{invoice.customerName || invoice.customer}</TableCell>
                   <TableCell>{invoice.address}</TableCell>
                   <TableCell>{invoice.paymentMethod}</TableCell>
@@ -265,6 +317,11 @@ const ListInvoices = () => {
                   </TableCell>
                 </tr>
               ))}
+              {filteredInvoices.length === 0 && (
+                <tr>
+                  <EmptyCell colSpan={7}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+                </tr>
+              )}
             </tbody>
           </Table>
         </TableViewport>

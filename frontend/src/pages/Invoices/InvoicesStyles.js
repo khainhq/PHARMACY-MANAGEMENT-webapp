@@ -191,6 +191,29 @@ export const ListToolbar = styled.div`
   }
 `;
 
+export const FilterBar = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  input,
+  select {
+    width: min(190px, 100%);
+    margin-bottom: 0;
+  }
+`;
+
+export const FilterField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+`;
+
 export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
@@ -206,6 +229,14 @@ export const ActionGroup = styled.div`
   ${Button} {
     flex: 0 1 auto;
   }
+`;
+
+export const EmptyCell = styled.td`
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
 `;
 
 export const Select = styled.select`
