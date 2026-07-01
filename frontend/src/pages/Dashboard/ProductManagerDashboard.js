@@ -18,6 +18,7 @@ import {
   ViewDetail,
 } from './DashboardStyles';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Legend } from 'recharts';
+import { formatVietnamDate } from '../../utils/listFilters';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
 
@@ -103,7 +104,7 @@ const ProductManagerDashboard = () => {
         const payment = paymentsRes.data.find((p) => p.paymentID === detail.payment);
         if (!payment) return acc;
 
-        const paymentDate = new Date(payment.paymentTime).toLocaleDateString();
+        const paymentDate = formatVietnamDate(payment.paymentTime);
         const cost = detail.quantity * parseFloat(detail.unitPrice);
 
         acc[paymentDate] = (acc[paymentDate] || 0) + cost;

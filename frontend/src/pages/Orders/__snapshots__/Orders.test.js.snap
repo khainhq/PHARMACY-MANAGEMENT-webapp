@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Orders component snapshot của giao diện Orders 1`] = `
+exports[`Orders component snapshot cá»§a giao diá»‡n Orders 1`] = `
 <div>
   <div
     class="sc-Qotzb kLXhXJ"
@@ -90,7 +90,7 @@ exports[`Orders component snapshot của giao diện Orders 1`] = `
             <td
               class="sc-gDpztx hxlBwX"
             >
-              1/1/2025, 5:00:00 PM
+              01/01/2025 17:00:00
             </td>
             <td
               class="sc-gDpztx hxlBwX"
@@ -105,7 +105,7 @@ exports[`Orders component snapshot của giao diện Orders 1`] = `
             <td
               class="sc-gDpztx hxlBwX"
             >
-              500,000
+              500.000
                VND
             </td>
             <td
@@ -137,7 +137,7 @@ exports[`Orders component snapshot của giao diện Orders 1`] = `
             <td
               class="sc-gDpztx hxlBwX"
             >
-              1/2/2025, 7:00:00 PM
+              02/01/2025 19:00:00
             </td>
             <td
               class="sc-gDpztx hxlBwX"
@@ -152,7 +152,7 @@ exports[`Orders component snapshot của giao diện Orders 1`] = `
             <td
               class="sc-gDpztx hxlBwX"
             >
-              750,000
+              750.000
                VND
             </td>
             <td

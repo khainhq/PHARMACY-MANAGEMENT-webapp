@@ -29,6 +29,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
+import { formatVietnamDate } from '../../utils/listFilters';
 
 const SalesDashboard = () => {
   const [stats, setStats] = useState({
@@ -239,7 +240,7 @@ const SalesDashboard = () => {
             {recentInvoices.map((invoice) => (
               <tr key={invoice.invoiceID}>
                 <TableCell data-testid={`invoice-id-${invoice.invoiceID}`}>{invoice.invoiceID}</TableCell>
-                <TableCell data-testid={`invoice-time-${invoice.invoiceID}`}>{new Date(invoice.invoiceTime).toLocaleString()}</TableCell>
+                <TableCell data-testid={`invoice-time-${invoice.invoiceID}`}>{formatVietnamDate(invoice.invoiceTime)}</TableCell>
                 <TableCell data-testid={`invoice-customer-${invoice.invoiceID}`}>{invoice.customer}</TableCell>
                 <TableCell data-testid={`invoice-status-${invoice.invoiceID}`}>{invoice.status}</TableCell>
                 <TableCell data-testid={`invoice-payment-${invoice.invoiceID}`}>{invoice.paymentMethod}</TableCell>

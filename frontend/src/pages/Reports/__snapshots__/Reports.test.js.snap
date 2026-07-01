@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Reports component snapshot của giao diện Reports 1`] = `
+exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
 <div>
   <div
     class="sc-Qotzb kLXhXJ"
@@ -160,7 +160,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                   <td
                     class="sc-gDpztx jQvnLD"
                   >
-                    5/1/2025, 5:00:00 PM
+                    01/05/2025 17:00:00
                   </td>
                 </tr>
                 <tr>
@@ -172,7 +172,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                   <td
                     class="sc-gDpztx jQvnLD"
                   >
-                    5/2/2025, 7:00:00 PM
+                    02/05/2025 19:00:00
                   </td>
                 </tr>
                 <tr>
@@ -184,7 +184,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                   <td
                     class="sc-gDpztx jQvnLD"
                   >
-                    5/2/2025, 9:00:00 PM
+                    02/05/2025 21:00:00
                   </td>
                 </tr>
               </tbody>

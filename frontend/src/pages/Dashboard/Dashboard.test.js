@@ -58,8 +58,8 @@ describe('Dashboard component', () => {
       if (url.includes('/api/medicines/medicines/')) {
         return Promise.resolve({
           data: [
-            { medicineID: 'MED001', medicineName: 'Paracetamol', expiryDate: '2026-06-01', stockQuantity: 50, unit: 'pill' },
-            { medicineID: 'MED002', medicineName: 'Ibuprofen', expiryDate: '2025-06-01', stockQuantity: 30, unit: 'pill' },
+            { medicineID: 'MED001', medicineName: 'Paracetamol', expiryDate: '2099-06-01', stockQuantity: 50, unit: 'pill' },
+            { medicineID: 'MED002', medicineName: 'Ibuprofen', expiryDate: '2099-06-02', stockQuantity: 30, unit: 'pill' },
           ],
         });
       }
@@ -175,11 +175,11 @@ describe('Dashboard component', () => {
       expect(screen.getByText(/Thuốc gần hết hạn/i)).toBeInTheDocument();
       expect(screen.getByText(/MED001/i)).toBeInTheDocument();
       expect(screen.getByText(/Paracetamol/i)).toBeInTheDocument();
-      expect(screen.getByText(/1\/6\/2026/i)).toBeInTheDocument();
+      expect(screen.getByText(/01\/06\/2099/i)).toBeInTheDocument();
       expect(screen.getByText(/50/i)).toBeInTheDocument();
       expect(screen.getByText(/MED002/i)).toBeInTheDocument();
       expect(screen.getByText(/Ibuprofen/i)).toBeInTheDocument();
-      expect(screen.getByText(/1\/6\/2025/i)).toBeInTheDocument();
+      expect(screen.getByText(/02\/06\/2099/i)).toBeInTheDocument();
       expect(screen.queryByText(/30/i, { selector: 'td' })).toBeInTheDocument();
     }, { timeout: 2000 });
   });

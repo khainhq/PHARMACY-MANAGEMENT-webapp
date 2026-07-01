@@ -66,6 +66,7 @@ describe('CreateInvoice component', () => {
   beforeEach(() => {
     axios.get.mockReset();
     axios.post.mockReset();
+    axios.patch.mockReset();
     html2canvas.mockReset();
     sessionStorage.setItem('token', 'dummyToken');
     window.alert = jest.fn();
@@ -101,6 +102,8 @@ describe('CreateInvoice component', () => {
 
       return Promise.reject(new Error('Not mocked'));
     });
+
+    axios.patch.mockResolvedValue({ data: {} });
   });
 
   afterEach(() => {

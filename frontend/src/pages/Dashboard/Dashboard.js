@@ -29,6 +29,7 @@ import {
   ViewDetail,
 } from './DashboardStyles';
 import { unitMap } from '../Medicines/MedicinesStyles';
+import { formatVietnamDate, formatVietnamDateTime } from '../../utils/listFilters';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({});
@@ -131,7 +132,7 @@ const Dashboard = () => {
         const payment = paymentsRes.data.find((p) => p.paymentID === detail.payment);
         if (!payment) return acc;
 
-        const paymentDate = new Date(payment.paymentTime).toLocaleDateString();
+        const paymentDate = formatVietnamDate(payment.paymentTime);
         const cost = detail.quantity * parseFloat(detail.unitPrice);
 
         acc[paymentDate] = (acc[paymentDate] || 0) + cost;
@@ -169,7 +170,7 @@ const Dashboard = () => {
               <FaMoneyBillWave />
             </IconWrapper>
             <StatTitle>Tổng thu nhập</StatTitle>
-            <StatValue>{stats.totalRevenue?.toLocaleString()} VND</StatValue>
+            <StatValue>{stats.totalRevenue?.toLocaleString('vi-VN')} VND</StatValue>
             <ViewDetail>View Detailed Report &raquo;</ViewDetail>
           </StatCard>
           <StatCard className="info" as={Link} to="/employees">
@@ -208,8 +209,8 @@ const Dashboard = () => {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis tickFormatter={(value) => value.toLocaleString()} />
-              <Tooltip formatter={(value) => value.toLocaleString()} />
+              <YAxis tickFormatter={(value) => value.toLocaleString('vi-VN')} />
+              <Tooltip formatter={(value) => value.toLocaleString('vi-VN')} />
               <Line type="monotone" dataKey="totalCost" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
@@ -232,11 +233,11 @@ const Dashboard = () => {
                   {recentInvoices.map((invoice) => (
                     <tr key={invoice.invoiceID}>
                       <TableCell>{invoice.invoiceID}</TableCell>
-                      <TableCell>{new Date(invoice.invoiceTime).toLocaleString()}</TableCell>
+                      <TableCell>{formatVietnamDateTime(invoice.invoiceTime)}</TableCell>
                       <TableCell>{invoice.customer}</TableCell>
                       <TableCell>
                         {invoice.totalAmount
-                          ? parseFloat(invoice.totalAmount).toLocaleString()
+                          ? parseFloat(invoice.totalAmount).toLocaleString('vi-VN')
                           : '0'}{' '}
                         VND
                       </TableCell>
@@ -262,7 +263,7 @@ const Dashboard = () => {
                     <tr key={medicine.medicineID}>
                       <TableCell>{medicine.medicineID}</TableCell>
                       <TableCell>{medicine.medicineName}</TableCell>
-                      <TableCell>{new Date(medicine.expiryDate).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatVietnamDate(medicine.expiryDate)}</TableCell>
                       <TableCell>{medicine.stockQuantity}</TableCell>
                     </tr>
                   ))}
