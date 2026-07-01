@@ -10,6 +10,8 @@ import {
   TableCell,
   Button,
   Input,
+  TableViewport,
+  ActionGroup,
 } from './PaymentsStyles';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -132,7 +134,7 @@ const ListPayments = () => {
   return (
     <Container>
       <Sidebar />
-      <Content style={{ marginLeft: '0', padding: '1rem' }}>
+      <Content>
         <Toolbar>
           <div>
             <Input
@@ -146,52 +148,69 @@ const ListPayments = () => {
 
         <h2>DANH SÁCH PHIẾU NHẬP</h2>
         {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
-        <Table>
-          <thead>
-            <tr>
-              <TableHeader>STT</TableHeader>
-              <TableHeader>Mã phiếu nhập</TableHeader>
-              <TableHeader>Thời gian</TableHeader>
-              <TableHeader>Nhà cung cấp</TableHeader>
-              <TableHeader>Nhân viên</TableHeader>
-              <TableHeader>Thuốc nhập</TableHeader>
-              <TableHeader>Tổng tiền</TableHeader>
-              <TableHeader>Trạng thái</TableHeader>
-              <TableHeader>Hành động</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPayments.map((payment, index) => (
-              <tr key={payment.paymentID}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{payment.paymentID}</TableCell>
-                <TableCell>
-                  {payment.paymentTime
-                    ? new Date(payment.paymentTime).toLocaleString()
-                    : ''}
-                </TableCell>
-                <TableCell>{payment.supplierName || payment.supplier}</TableCell>
-                <TableCell>{payment.employeeName || payment.employee}</TableCell>
-                <TableCell>{payment.medicineSummary}</TableCell>
-                <TableCell>{formatMoney(payment.totalAmount)} VND</TableCell>
-                <TableCell>{formatPaymentStatus(payment.status)}</TableCell>
-                <TableCell>
-                  {isPendingStatus(payment.status) && (
-                    <Button
-                      data-testid={`mark-paid-${payment.paymentID}`}
-                      onClick={() => handleMarkAsPaid(payment.paymentID)}
-                    >
-                      Chuyển đã thanh toán
-                    </Button>
-                  )}
-                  <Button onClick={() => handleDeletePayment(payment.paymentID)} style={{ marginLeft: '0.5rem' }}>
-                    Xóa
-                  </Button>
-                </TableCell>
+        <TableViewport>
+          <Table>
+            <colgroup>
+              <col style={{ width: '5%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '14%' }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <TableHeader>STT</TableHeader>
+                <TableHeader>Mã phiếu nhập</TableHeader>
+                <TableHeader>Thời gian</TableHeader>
+                <TableHeader>Nhà cung cấp</TableHeader>
+                <TableHeader>Nhân viên</TableHeader>
+                <TableHeader>Thuốc nhập</TableHeader>
+                <TableHeader>Tổng tiền</TableHeader>
+                <TableHeader>Trạng thái</TableHeader>
+                <TableHeader>Hành động</TableHeader>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {filteredPayments.map((payment, index) => (
+                <tr key={payment.paymentID}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{payment.paymentID}</TableCell>
+                  <TableCell>
+                    {payment.paymentTime
+                      ? new Date(payment.paymentTime).toLocaleString()
+                      : ''}
+                  </TableCell>
+                  <TableCell>{payment.supplierName || payment.supplier}</TableCell>
+                  <TableCell>{payment.employeeName || payment.employee}</TableCell>
+                  <TableCell>{payment.medicineSummary}</TableCell>
+                  <TableCell>{formatMoney(payment.totalAmount)} VND</TableCell>
+                  <TableCell>{formatPaymentStatus(payment.status)}</TableCell>
+                  <TableCell>
+                    <ActionGroup>
+                      {isPendingStatus(payment.status) && (
+                        <Button
+                          data-testid={`mark-paid-${payment.paymentID}`}
+                          aria-label="Chuyển đã thanh toán"
+                          title="Chuyển đã thanh toán"
+                          onClick={() => handleMarkAsPaid(payment.paymentID)}
+                        >
+                          Đã thanh toán
+                        </Button>
+                      )}
+                      <Button onClick={() => handleDeletePayment(payment.paymentID)}>
+                        Xóa
+                      </Button>
+                    </ActionGroup>
+                  </TableCell>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableViewport>
       </Content>
     </Container>
   );

@@ -13,6 +13,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  ListContent,
+  ListToolbar,
+  TableViewport,
+  ActionGroup,
   unitMap,
 } from './InvoicesStyles';
 
@@ -187,71 +191,84 @@ const ListInvoices = () => {
   return (
     <Container data-testid="main-content">
       <Sidebar />
-      <div style={{ flex: 1, padding: '1rem' }} data-testid="content-wrapper">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+      <ListContent data-testid="content-wrapper">
+        <ListToolbar>
           <h2>Danh sách hóa đơn</h2>
           <Input
             type="text"
             placeholder="Tìm kiếm hóa đơn theo mã, khách hàng..."
             value={searchKeyword}
             onChange={handleSearch}
-            style={{ width: '320px' }}
             data-testid="search-input"
           />
-        </div>
+        </ListToolbar>
 
         {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
 
-        <Table data-testid="invoices-table">
-          <thead>
-            <tr>
-              <TableHeader>Mã hóa đơn</TableHeader>
-              <TableHeader>Thời gian</TableHeader>
-              <TableHeader>Khách hàng</TableHeader>
-              <TableHeader>Địa chỉ</TableHeader>
-              <TableHeader>Phương thức thanh toán</TableHeader>
-              <TableHeader>Trạng thái</TableHeader>
-              <TableHeader>Hành động</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredInvoices.map((invoice) => (
-              <tr key={invoice.invoiceID}>
-                <TableCell>{invoice.invoiceID}</TableCell>
-                <TableCell>
-                  {invoice.invoiceTime
-                    ? new Date(invoice.invoiceTime).toLocaleString()
-                    : ''}
-                </TableCell>
-                <TableCell>{invoice.customerName || invoice.customer}</TableCell>
-                <TableCell>{invoice.address}</TableCell>
-                <TableCell>{invoice.paymentMethod}</TableCell>
-                <TableCell>{formatInvoiceStatus(invoice.status)}</TableCell>
-                <TableCell>
-                  <Button
-                    data-testid={`view-details-${invoice.invoiceID}`}
-                    onClick={() => fetchInvoiceDetails(invoice.invoiceID)}
-                  >
-                    Xem chi tiết
-                  </Button>
-                  {isPendingStatus(invoice.status) && (
-                    <Button
-                      data-testid={`mark-paid-${invoice.invoiceID}`}
-                      onClick={() => handleMarkAsPaid(invoice.invoiceID)}
-                      style={{ marginLeft: '0.5rem' }}
-                    >
-                      Chuyển đã thanh toán
-                    </Button>
-                  )}
-                  <Button onClick={() => handleDeleteInvoice(invoice.invoiceID)} style={{ marginLeft: '0.5rem' }}>
-                    Xóa
-                  </Button>
-                </TableCell>
+        <TableViewport>
+          <Table data-testid="invoices-table">
+            <colgroup>
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '14%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '14%' }} />
+              <col style={{ width: '15%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '24%' }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <TableHeader>Mã hóa đơn</TableHeader>
+                <TableHeader>Thời gian</TableHeader>
+                <TableHeader>Khách hàng</TableHeader>
+                <TableHeader>Địa chỉ</TableHeader>
+                <TableHeader>Phương thức thanh toán</TableHeader>
+                <TableHeader>Trạng thái</TableHeader>
+                <TableHeader>Hành động</TableHeader>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+            </thead>
+            <tbody>
+              {filteredInvoices.map((invoice) => (
+                <tr key={invoice.invoiceID}>
+                  <TableCell>{invoice.invoiceID}</TableCell>
+                  <TableCell>
+                    {invoice.invoiceTime
+                      ? new Date(invoice.invoiceTime).toLocaleString()
+                      : ''}
+                  </TableCell>
+                  <TableCell>{invoice.customerName || invoice.customer}</TableCell>
+                  <TableCell>{invoice.address}</TableCell>
+                  <TableCell>{invoice.paymentMethod}</TableCell>
+                  <TableCell>{formatInvoiceStatus(invoice.status)}</TableCell>
+                  <TableCell>
+                    <ActionGroup>
+                      <Button
+                        data-testid={`view-details-${invoice.invoiceID}`}
+                        onClick={() => fetchInvoiceDetails(invoice.invoiceID)}
+                      >
+                        Xem chi tiết
+                      </Button>
+                      {isPendingStatus(invoice.status) && (
+                        <Button
+                          data-testid={`mark-paid-${invoice.invoiceID}`}
+                          aria-label="Chuyển đã thanh toán"
+                          title="Chuyển đã thanh toán"
+                          onClick={() => handleMarkAsPaid(invoice.invoiceID)}
+                        >
+                          Đã thanh toán
+                        </Button>
+                      )}
+                      <Button onClick={() => handleDeleteInvoice(invoice.invoiceID)}>
+                        Xóa
+                      </Button>
+                    </ActionGroup>
+                  </TableCell>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableViewport>
+      </ListContent>
 
       {isModalOpen && selectedInvoiceDetails && (
         <Modal data-testid="invoice-details-modal">
