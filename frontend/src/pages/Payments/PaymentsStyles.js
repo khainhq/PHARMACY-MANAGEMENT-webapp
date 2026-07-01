@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
+  align-items: flex-start;
   box-sizing: border-box;
   width: auto;
   min-height: 100vh;
@@ -17,22 +18,39 @@ export const Container = styled.div`
   *::after {
     box-sizing: border-box;
   }
+
+  @media (max-width: 1320px) {
+    flex-direction: column;
+  }
 `;
 
 export const LeftSection = styled.div`
-  flex: 3;
+  flex: 1 1 58%;
+  min-width: 0;
   padding: 1.5rem;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 1320px) {
+    width: 100%;
+    flex: 1 1 auto;
+  }
 `;
 
 export const RightSection = styled.div`
-  flex: 1;
+  flex: 0 1 620px;
+  min-width: min(560px, 100%);
   padding: 1.5rem;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 1320px) {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 `;
 
 export const MedicineDetails = styled.div`
@@ -72,6 +90,12 @@ export const MedicineList = styled.div`
 
 export const PaymentDetailsTable = styled.div`
   margin-bottom: 2rem;
+  overflow-x: auto;
+
+  table {
+    min-width: 640px;
+    table-layout: auto;
+  }
 `;
 
 export const PaymentInfo = styled.div`
@@ -113,7 +137,8 @@ export const TableHeader = styled.th`
   font-size: 0.92rem;
   line-height: 1.35;
   vertical-align: top;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 `;
 
 export const TableCell = styled.td`
@@ -123,7 +148,8 @@ export const TableCell = styled.td`
   line-height: 1.4;
   color: #374151;
   vertical-align: top;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 `;
 
 export const Button = styled.button`
@@ -138,7 +164,8 @@ export const Button = styled.button`
   min-height: 34px;
   max-width: 100%;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
@@ -183,7 +210,7 @@ export const Toolbar = styled.div`
   margin-bottom: 1rem;
 
   ${Input} {
-    width: min(360px, 100%);
+    width: min(560px, 100%);
     margin-bottom: 0;
   }
 `;
@@ -198,7 +225,7 @@ export const CenteredButton = styled(Button)`
 export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
 `;
 
 export const ActionGroup = styled.div`
