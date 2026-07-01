@@ -2,11 +2,21 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  margin-left: 250px;
-  padding: 2rem;
-  gap: 2rem;
+  box-sizing: border-box;
+  width: auto;
+  min-height: 100vh;
+  margin-left: 260px;
+  padding: clamp(0.85rem, 1.4vw, 1.5rem);
+  gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6; /* Màu nền tổng thể */
   font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
+  overflow-x: hidden;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 export const LeftSection = styled.div`
@@ -86,8 +96,9 @@ export const PaymentInfo = styled.div`
 
 export const Table = styled.table`
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   background-color: #ffffff;
   border-radius: 8px;
   overflow: hidden;
@@ -97,26 +108,37 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: rgb(6, 150, 102);
   color: #ffffff;
-  padding: 1rem;
+  padding: 0.65rem 0.7rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  vertical-align: top;
+  overflow-wrap: anywhere;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 1rem;
-  font-size: 0.9rem;
+  padding: 0.65rem 0.7rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
   color: #374151;
+  vertical-align: top;
+  overflow-wrap: anywhere;
 `;
 
 export const Button = styled.button`
   background-color: #059669;
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.25;
+  min-height: 34px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
@@ -145,8 +167,9 @@ export const Select = styled.select`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 1rem;
-  margin-left: 250px; /* Adjust for sidebar width */
+  min-width: 0;
+  padding: clamp(0.5rem, 1vw, 1rem);
+  margin-left: 0;
   background-color: #ffffff;
   min-height: 100vh;
 `;
@@ -155,7 +178,14 @@ export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1rem;
+
+  ${Input} {
+    width: min(360px, 100%);
+    margin-bottom: 0;
+  }
 `;
 
 export const CenteredButton = styled(Button)`
@@ -163,6 +193,23 @@ export const CenteredButton = styled(Button)`
   margin: 2rem auto; /* Căn giữa theo chiều ngang */
   padding: 1rem 2rem; /* Tăng kích thước nút */
   font-size: 1rem; /* Tăng kích thước chữ */
+`;
+
+export const TableViewport = styled.div`
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+
+  ${Button} {
+    flex: 0 1 auto;
+  }
 `;
 
 export const Modal = styled.div`

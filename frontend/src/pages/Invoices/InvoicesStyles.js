@@ -2,11 +2,21 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  margin-left: 250px;
-  padding: 1.5rem;
-  gap: 1.5rem;
+  box-sizing: border-box;
+  width: auto;
+  min-height: 100vh;
+  margin-left: 260px;
+  padding: clamp(0.85rem, 1.4vw, 1.5rem);
+  gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6;
   font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 export const LeftSection = styled.div`
@@ -69,6 +79,7 @@ export const InvoiceInfo = styled.div`
 
 export const Table = styled.table`
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1rem;
   background-color: #ffffff;
@@ -79,26 +90,38 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: rgb(6, 150, 102);
   color: #ffffff;
-  padding: 0.8rem;
+  padding: 0.65rem 0.7rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  vertical-align: top;
+  overflow-wrap: anywhere;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 0.8rem;
-  font-size: 0.9rem;
+  padding: 0.65rem 0.7rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
   color: #374151;
+  vertical-align: top;
+  overflow-wrap: anywhere;
 `;
 
 export const Button = styled.button`
   background-color: rgb(6, 150, 102);
   color: #ffffff;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.25;
+  min-height: 34px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -113,6 +136,49 @@ export const Input = styled.input`
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
+`;
+
+export const ListContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  padding: clamp(0.5rem, 1vw, 1rem);
+`;
+
+export const ListToolbar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: clamp(1.25rem, 1.7vw, 1.65rem);
+  }
+
+  ${Input} {
+    width: min(360px, 100%);
+    margin-bottom: 0;
+  }
+`;
+
+export const TableViewport = styled.div`
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+
+  ${Button} {
+    flex: 0 1 auto;
+  }
 `;
 
 export const Select = styled.select`
