@@ -67,8 +67,8 @@ describe('Employees component', () => {
       expect(screen.getByText(/Nữ/i)).toBeInTheDocument();
       expect(screen.getByText(/1990/i)).toBeInTheDocument();
       expect(screen.getByText(/1995/i)).toBeInTheDocument();
-      expect(screen.getByText(/15\/01\/2023 00:00:00/i)).toBeInTheDocument();
-      expect(screen.getByText(/20\/06\/2023 00:00:00/i)).toBeInTheDocument();
+      expect(screen.getByText(/15\/01\/2023/i)).toBeInTheDocument();
+      expect(screen.getByText(/20\/06\/2023/i)).toBeInTheDocument();
     });
   });
 

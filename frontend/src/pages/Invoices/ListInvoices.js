@@ -23,7 +23,7 @@ import {
   EmptyCell,
   unitMap,
 } from './InvoicesStyles';
-import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
+import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
@@ -38,6 +38,7 @@ const invoiceStatusLabels = {
 const formatInvoiceStatus = (status) => invoiceStatusLabels[status] || status || '';
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa thanh toán';
+const buildSavedInvoiceImageFileName = (invoice) => `hoa-don-${invoice?.InvoiceID || invoice?.invoiceID || 'chua-luu'}.png`;
 
 const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
 
@@ -82,7 +83,7 @@ const ListInvoices = () => {
             invoice.address,
             invoice.paymentMethod,
             formatInvoiceStatus(invoice.status),
-            formatVietnamDateTime(invoice.invoiceTime),
+            formatVietnamDate(invoice.invoiceTime),
           ]
             .filter(Boolean)
             .join(' '),
@@ -124,8 +125,14 @@ const ListInvoices = () => {
       );
 
       setSelectedInvoiceDetails({
+        invoiceID,
         customerName: invoiceRes.data.customerName || invoiceRes.data.customer,
+        customerPhone: invoiceRes.data.customerPhone,
+        address: invoiceRes.data.address,
+        paymentMethod: invoiceRes.data.paymentMethod,
         status: invoiceRes.data.status,
+        receiptImage: invoiceRes.data.receiptImage || '',
+        receiptFileName: invoiceRes.data.receiptFileName || buildSavedInvoiceImageFileName(invoiceRes.data),
         details: medicines,
         totalAmount,
       });
@@ -134,6 +141,49 @@ const ListInvoices = () => {
     } catch (fetchError) {
       setError('Không tải được chi tiết hóa đơn. Vui lòng thử lại.');
     }
+  };
+
+  const handlePrintSavedInvoiceImage = () => {
+    if (!selectedInvoiceDetails?.receiptImage) return;
+
+    const printWindow = window.open('', '_blank', 'width=480,height=720');
+    if (!printWindow) {
+      setError('Không mở được cửa sổ in ảnh hóa đơn. Vui lòng cho phép popup và thử lại.');
+      return;
+    }
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${selectedInvoiceDetails.receiptFileName || 'hoa-don.png'}</title>
+          <style>
+            body { margin: 0; padding: 16px; text-align: center; font-family: Arial, sans-serif; }
+            img { max-width: 100%; height: auto; }
+          </style>
+        </head>
+        <body>
+          <img src="${selectedInvoiceDetails.receiptImage}" alt="Ảnh hóa đơn đã lưu" />
+          <script>
+            window.onload = function () {
+              window.focus();
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const handleDownloadSavedInvoiceImage = () => {
+    if (!selectedInvoiceDetails?.receiptImage) return;
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = selectedInvoiceDetails.receiptImage;
+    downloadLink.download = selectedInvoiceDetails.receiptFileName || buildSavedInvoiceImageFileName(selectedInvoiceDetails);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
 
   const handleSearch = (e) => {
@@ -287,7 +337,7 @@ const ListInvoices = () => {
               {filteredInvoices.map((invoice) => (
                 <tr key={invoice.invoiceID}>
                   <TableCell>{invoice.invoiceID}</TableCell>
-                  <TableCell>{formatVietnamDateTime(invoice.invoiceTime)}</TableCell>
+                  <TableCell>{formatVietnamDate(invoice.invoiceTime)}</TableCell>
                   <TableCell>{invoice.customerName || invoice.customer}</TableCell>
                   <TableCell>{invoice.address}</TableCell>
                   <TableCell>{invoice.paymentMethod}</TableCell>
@@ -363,6 +413,48 @@ const ListInvoices = () => {
               <p data-testid="total-amount" style={{ marginTop: '1rem', fontWeight: 'bold' }}>
                 Tổng tiền: {formatMoney(selectedInvoiceDetails.totalAmount)} VND
               </p>
+              <div
+                data-testid="saved-invoice-image-panel"
+                style={{
+                  marginTop: '1rem',
+                  padding: '1rem',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  backgroundColor: '#f8fafc',
+                }}
+              >
+                <h4 style={{ margin: '0 0 0.75rem', color: '#0f172a' }}>Ảnh hóa đơn đã lưu</h4>
+                {selectedInvoiceDetails.receiptImage ? (
+                  <>
+                    <img
+                      src={selectedInvoiceDetails.receiptImage}
+                      alt={`Ảnh hóa đơn đã lưu ${selectedInvoiceDetails.invoiceID || ''}`.trim()}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        maxWidth: '360px',
+                        maxHeight: '420px',
+                        objectFit: 'contain',
+                        margin: '0 auto 0.75rem',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '6px',
+                        backgroundColor: '#ffffff',
+                      }}
+                    />
+                    <p style={{ margin: '0 0 0.75rem', color: '#475569', fontSize: '0.9rem' }}>
+                      File: {selectedInvoiceDetails.receiptFileName || buildSavedInvoiceImageFileName(selectedInvoiceDetails)}
+                    </p>
+                    <ActionGroup>
+                      <Button type="button" onClick={handlePrintSavedInvoiceImage}>In lại ảnh hóa đơn</Button>
+                      <Button type="button" onClick={handleDownloadSavedInvoiceImage}>Tải ảnh hóa đơn</Button>
+                    </ActionGroup>
+                  </>
+                ) : (
+                  <p style={{ margin: 0, color: '#64748b', fontWeight: 700 }}>
+                    Chưa có ảnh hóa đơn được lưu cho hóa đơn này.
+                  </p>
+                )}
+              </div>
             </ModalBody>
             <ModalFooter>
               <Button onClick={() => setIsModalOpen(false)}>Đóng</Button>

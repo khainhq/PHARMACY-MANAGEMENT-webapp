@@ -1,4 +1,4 @@
-import { applyListFilters, formatVietnamDateTime } from './listFilters';
+import { applyListFilters, formatVietnamDate, formatVietnamDateTime } from './listFilters';
 
 const records = [
   { id: 'old', name: 'Cũ', date: '2026-05-29T08:00:00' },
@@ -9,6 +9,10 @@ const records = [
 describe('listFilters utilities', () => {
   test('định dạng ngày giờ Việt Nam theo ngày/tháng/năm giờ/phút/giây', () => {
     expect(formatVietnamDateTime('2026-05-30T09:15:30.1234567')).toBe('30/05/2026 09:15:30');
+  });
+
+  test('định dạng ngày Việt Nam theo dd/mm/yyyy cho danh sách', () => {
+    expect(formatVietnamDate('2026-05-30T09:15:30.1234567')).toBe('30/05/2026');
   });
 
   test('lọc đúng một ngày cụ thể', () => {

@@ -14,6 +14,12 @@ describe('ListInvoices component', () => {
   beforeEach(() => {
     sessionStorage.setItem('token', 'dummyToken');
     window.confirm = jest.fn(() => true);
+    window.open = jest.fn(() => ({
+      document: {
+        write: jest.fn(),
+        close: jest.fn(),
+      },
+    }));
 
     mockInvoices = [
       {
@@ -26,6 +32,8 @@ describe('ListInvoices component', () => {
         paymentMethod: 'Cash',
         status: 'Pending',
         totalAmount: 5000,
+        receiptImage: 'data:image/png;base64,saved-invoice',
+        receiptFileName: 'hoa-don-1001.png',
       },
       {
         invoiceID: 1002,
@@ -37,6 +45,8 @@ describe('ListInvoices component', () => {
         paymentMethod: 'Card',
         status: 'Paid',
         totalAmount: 10000,
+        receiptImage: '',
+        receiptFileName: '',
       },
     ];
 
@@ -141,6 +151,12 @@ describe('ListInvoices component', () => {
     expect(within(modal).getByTestId('customer-name')).toHaveTextContent('Khách hàng: Nguyen Van A');
     expect(within(modal).getByText('Paracetamol')).toBeInTheDocument();
     expect(within(modal).getByText('5.000 VND')).toBeInTheDocument();
+    expect(within(modal).getByAltText('Ảnh hóa đơn đã lưu 1001')).toHaveAttribute(
+      'src',
+      'data:image/png;base64,saved-invoice'
+    );
+    expect(within(modal).getByRole('button', { name: 'In lại ảnh hóa đơn' })).toBeInTheDocument();
+    expect(within(modal).getByRole('button', { name: 'Tải ảnh hóa đơn' })).toBeInTheDocument();
   });
 
   test('xóa hóa đơn và refresh danh sách', async () => {

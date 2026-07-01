@@ -159,6 +159,7 @@ describe('SalesDashboard', () => {
       console.log('Kiểm tra bảng hóa đơn gần đây');
       expect(screen.getByTestId('recent-invoices-title')).toHaveTextContent('5 Hóa đơn gần đây nhất');
       expect(screen.getByTestId('invoice-id-1')).toHaveTextContent('1');
+      expect(screen.getByTestId('invoice-time-1')).toHaveTextContent('01/10/2023');
       expect(screen.getByTestId('invoice-customer-1')).toHaveTextContent('C1');
       expect(screen.getByTestId('invoice-status-1')).toHaveTextContent('Paid');
       expect(screen.getByTestId('invoice-payment-1')).toHaveTextContent('Card');

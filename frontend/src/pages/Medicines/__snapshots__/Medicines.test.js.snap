@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Medicines component snapshot của giao diện Medicines 1`] = `
+exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
 <div>
   <div
-    class="sc-Qotzb gcTVqe"
+    class="sc-Qotzb jvBlGB"
   >
     <div>
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw sAiHR"
+      class="sc-fYsHOw rJhqE"
     >
       <div
         class="sc-dKREkF cbBVLp"
       >
         <div>
           <button
-            class="sc-fWnslK GWNUD"
+            class="sc-fWnslK HqgGZ"
           >
             <svg
               fill="currentColor"
@@ -43,7 +43,7 @@ exports[`Medicines component snapshot của giao diện Medicines 1`] = `
             value=""
           />
           <button
-            class="sc-fWnslK GWNUD"
+            class="sc-fWnslK HqgGZ"
           >
             <svg
               fill="currentColor"
@@ -67,7 +67,7 @@ exports[`Medicines component snapshot của giao diện Medicines 1`] = `
         DANH SÁCH THÔNG TIN THUỐC
       </h2>
       <table
-        class="sc-dIMoHT erCCBU"
+        class="sc-dIMoHT xtTYn"
       >
         <thead>
           <tr>
@@ -173,24 +173,24 @@ exports[`Medicines component snapshot của giao diện Medicines 1`] = `
             <td
               class="sc-gDpztx gcEzrB"
             >
-              5,000
+              5.000
                VND
             </td>
             <td
               class="sc-gDpztx gcEzrB"
             >
-              2025-12-31
+              31/12/2025
             </td>
             <td
               class="sc-gDpztx gcEzrB"
             >
               <button
-                class="sc-fWnslK sc-cUiCeM GWNUD bfcCJP"
+                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK sc-cUiCeM GWNUD bfcCJP"
+                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
               >
                 Xóa
               </button>
@@ -240,24 +240,24 @@ exports[`Medicines component snapshot của giao diện Medicines 1`] = `
             <td
               class="sc-gDpztx gcEzrB"
             >
-              10,000
+              10.000
                VND
             </td>
             <td
               class="sc-gDpztx gcEzrB"
             >
-              2025-06-30
+              30/06/2025
             </td>
             <td
               class="sc-gDpztx gcEzrB"
             >
               <button
-                class="sc-fWnslK sc-cUiCeM GWNUD bfcCJP"
+                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK sc-cUiCeM GWNUD bfcCJP"
+                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
               >
                 Xóa
               </button>

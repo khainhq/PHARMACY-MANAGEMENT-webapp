@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
@@ -247,8 +247,10 @@ const CreateInvoice = () => {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [isSavingInvoice, setIsSavingInvoice] = useState(false);
   const [isGeneratingInvoiceImage, setIsGeneratingInvoiceImage] = useState(false);
+  const [isSavingInvoiceImage, setIsSavingInvoiceImage] = useState(false);
   const [invoiceImagePreview, setInvoiceImagePreview] = useState(null);
   const [error, setError] = useState('');
+  const savedInvoiceImageIds = useRef(new Set());
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
@@ -375,6 +377,8 @@ const CreateInvoice = () => {
         invoiceID: response.data.invoiceID,
         invoiceTime: response.data.invoiceTime || reviewInvoiceData.invoiceTime,
         status: response.data.status || reviewInvoiceData.status,
+        receiptImage: response.data.receiptImage || '',
+        receiptFileName: response.data.receiptFileName || '',
       });
       setReviewInvoiceData(null);
       setInvoiceImagePreview(null);
@@ -391,32 +395,67 @@ const CreateInvoice = () => {
     }
   };
 
-  const createInvoiceImagePreview = async () => {
-    if (!invoiceData) return;
-
+  const buildInvoiceImagePreview = useCallback(async (sourceInvoice) => {
     const receiptElement = document.querySelector('#invoice-print-area .receipt-paper');
     if (!receiptElement) {
-      setError('Không tìm thấy nội dung hóa đơn để xuất ảnh. Vui lòng thử lại.');
-      return;
+      throw new Error('missing-receipt');
     }
+
+    if (document.fonts?.ready) {
+      await document.fonts.ready;
+    }
+
+    const canvas = await html2canvas(receiptElement, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+    });
+
+    return {
+      src: canvas.toDataURL('image/png'),
+      fileName: buildInvoiceImageFileName(sourceInvoice),
+    };
+  }, []);
+
+  const saveInvoiceImage = useCallback(async (preview, sourceInvoice) => {
+    if (!sourceInvoice?.invoiceID || !preview?.src) return;
+
+    await axios.patch(
+      `${API_BASE}/api/sales/invoices/${sourceInvoice.invoiceID}/`,
+      {
+        receiptImage: preview.src,
+        receiptFileName: preview.fileName,
+      },
+      { headers: authHeaders() }
+    );
+
+    savedInvoiceImageIds.current.add(sourceInvoice.invoiceID);
+    setInvoiceData((current) =>
+      current?.invoiceID === sourceInvoice.invoiceID
+        ? { ...current, receiptImage: preview.src, receiptFileName: preview.fileName }
+        : current
+    );
+  }, [authHeaders]);
+
+  const createInvoiceImagePreview = async () => {
+    if (!invoiceData) return;
 
     setIsGeneratingInvoiceImage(true);
     setError('');
 
     try {
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
+      const preview = invoiceData.receiptImage
+        ? {
+            src: invoiceData.receiptImage,
+            fileName: invoiceData.receiptFileName || buildInvoiceImageFileName(invoiceData),
+          }
+        : await buildInvoiceImagePreview(invoiceData);
 
-      const canvas = await html2canvas(receiptElement, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true,
-      });
-      setInvoiceImagePreview({
-        src: canvas.toDataURL('image/png'),
-        fileName: buildInvoiceImageFileName(invoiceData),
-      });
+      setInvoiceImagePreview(preview);
+
+      if (!invoiceData.receiptImage) {
+        await saveInvoiceImage(preview, invoiceData);
+      }
     } catch (downloadError) {
       setError('Không tạo được ảnh hóa đơn. Vui lòng thử lại.');
     } finally {
@@ -428,7 +467,7 @@ const CreateInvoice = () => {
     if (!invoiceImagePreview) return;
 
     try {
-      const fileName = buildInvoiceImageFileName(invoiceData);
+      const fileName = invoiceImagePreview.fileName || buildInvoiceImageFileName(invoiceData);
       const downloadLink = document.createElement('a');
       downloadLink.href = invoiceImagePreview.src;
       downloadLink.download = fileName;
@@ -440,6 +479,33 @@ const CreateInvoice = () => {
       setError('Không tải được ảnh hóa đơn. Vui lòng thử lại.');
     }
   };
+
+  useEffect(() => {
+    if (!showInvoiceModal || !invoiceData?.invoiceID || invoiceData.receiptImage) return;
+    if (savedInvoiceImageIds.current.has(invoiceData.invoiceID)) return;
+
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setIsSavingInvoiceImage(true);
+      try {
+        const preview = await buildInvoiceImagePreview(invoiceData);
+        if (!cancelled) {
+          await saveInvoiceImage(preview, invoiceData);
+        }
+      } catch (imageError) {
+        if (!cancelled) {
+          setError('Hóa đơn đã lưu nhưng chưa lưu được ảnh hóa đơn. Bạn vẫn có thể bấm In hóa đơn để tạo lại.');
+        }
+      } finally {
+        if (!cancelled) setIsSavingInvoiceImage(false);
+      }
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [showInvoiceModal, invoiceData, buildInvoiceImagePreview, saveInvoiceImage]);
 
   const renderInvoiceReceipt = (data, { isReview = false } = {}) => (
     <div
@@ -674,7 +740,14 @@ const CreateInvoice = () => {
                   </p>
                 </div>
               ) : (
-                renderInvoiceReceipt(invoiceData)
+                <>
+                  {isSavingInvoiceImage && (
+                    <p style={{ margin: '0 0 0.75rem', color: '#0369a1', fontWeight: 700, textAlign: 'center' }}>
+                      Đang lưu ảnh hóa đơn để có thể in lại sau.
+                    </p>
+                  )}
+                  {renderInvoiceReceipt(invoiceData)}
+                </>
               )}
             </ModalBody>
             <ModalFooter className="receipt-actions">

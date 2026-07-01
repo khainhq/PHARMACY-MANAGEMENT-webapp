@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -45,7 +45,7 @@ jest.mock('recharts', () => ({
   ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
 }));
 
-// Tăng timeout toàn cục
+// TÄƒng timeout toÃ n cá»¥c
 jest.setTimeout(30000);
 
 describe('Reports component', () => {
@@ -67,7 +67,7 @@ describe('Reports component', () => {
     if (mockJsPDF.prototype.addImage) mockJsPDF.prototype.addImage.mockReset();
     if (mockJsPDF.prototype.save) mockJsPDF.prototype.save.mockReset();
 
-    // Set up mock data (điều chỉnh thời gian để khớp múi giờ UTC+7)
+    // Set up mock data (Ä‘iá»u chá»‰nh thá»i gian Ä‘á»ƒ khá»›p mÃºi giá» UTC+7)
     mockOrders = [
       {
         orderID: 'ORD001',
@@ -128,7 +128,7 @@ describe('Reports component', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  test('hiển thị Sidebar, tiêu đề và các thành phần báo cáo', async () => {
+  test('hiá»ƒn thá»‹ Sidebar, tiÃªu Ä‘á» vÃ  cÃ¡c thÃ nh pháº§n bÃ¡o cÃ¡o', async () => {
     render(<Reports />);
 
     await waitFor(() => {
@@ -155,11 +155,11 @@ describe('Reports component', () => {
       const cells1 = within(row1).getAllByRole('cell');
       console.log('Cells for ORD001:', cells1.map(cell => cell.textContent));
       expect(cells1[0]).toHaveTextContent('ORD001');
-      expect(cells1[1]).toHaveTextContent('17:00:00 1/5/2025');
+      expect(cells1[1]).toHaveTextContent('01/05/2025 17:00:00');
     }, { timeout: 5000 });
   });
 
-  test('hiển thị dữ liệu báo cáo từ API', async () => {
+  test('hiá»ƒn thá»‹ dá»¯ liá»‡u bÃ¡o cÃ¡o tá»« API', async () => {
     render(<Reports />);
 
     await waitFor(() => {
@@ -177,26 +177,26 @@ describe('Reports component', () => {
       const cells1 = within(row1).getAllByRole('cell');
       console.log('Cells for ORD001:', cells1.map(cell => cell.textContent));
       expect(cells1[0]).toHaveTextContent('ORD001');
-      expect(cells1[1]).toHaveTextContent('17:00:00 1/5/2025');
+      expect(cells1[1]).toHaveTextContent('01/05/2025 17:00:00');
 
       const row2 = within(table).getByText('ORD002').closest('tr');
       const cells2 = within(row2).getAllByRole('cell');
       console.log('Cells for ORD002:', cells2.map(cell => cell.textContent));
       expect(cells2[0]).toHaveTextContent('ORD002');
-      expect(cells2[1]).toHaveTextContent('19:00:00 2/5/2025');
+      expect(cells2[1]).toHaveTextContent('02/05/2025 19:00:00');
 
       const row3 = within(table).getByText('ORD003').closest('tr');
       const cells3 = within(row3).getAllByRole('cell');
       console.log('Cells for ORD003:', cells3.map(cell => cell.textContent));
       expect(cells3[0]).toHaveTextContent('ORD003');
-      expect(cells3[1]).toHaveTextContent('21:00:00 2/5/2025');
+      expect(cells3[1]).toHaveTextContent('02/05/2025 21:00:00');
     }, { timeout: 5000 });
 
     expect(screen.getByTestId('line-chart')).toBeInTheDocument();
     expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
   });
 
-  test('xuất báo cáo dưới dạng Excel', async () => {
+  test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng Excel', async () => {
     render(<Reports />);
 
     await waitFor(() => {
@@ -221,7 +221,7 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('xuất báo cáo dưới dạng PDF', async () => {
+  test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng PDF', async () => {
     render(<Reports />);
 
     await waitFor(() => {
@@ -251,7 +251,7 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('xử lý lỗi khi lấy dữ liệu báo cáo', async () => {
+  test('xá»­ lÃ½ lá»—i khi láº¥y dá»¯ liá»‡u bÃ¡o cÃ¡o', async () => {
     axios.get.mockImplementation(() => Promise.reject(new Error('Network error')));
 
     render(<Reports />);
@@ -268,7 +268,7 @@ describe('Reports component', () => {
     expect(within(table).queryByText('ORD001')).not.toBeInTheDocument();
   });
 
-  test('xử lý lỗi khi xuất Excel', async () => {
+  test('xá»­ lÃ½ lá»—i khi xuáº¥t Excel', async () => {
     XLSX.write.mockImplementation(() => {
       throw new Error('Excel generation error');
     });
@@ -294,7 +294,7 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('xử lý lỗi khi xuất PDF', async () => {
+  test('xá»­ lÃ½ lá»—i khi xuáº¥t PDF', async () => {
     html2canvas.mockRejectedValue(new Error('Canvas error'));
 
     render(<Reports />);
@@ -318,7 +318,7 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('snapshot của giao diện Reports', async () => {
+  test('snapshot cá»§a giao diá»‡n Reports', async () => {
     const { container } = render(<Reports />);
 
     await waitFor(() => {
@@ -329,7 +329,7 @@ describe('Reports component', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('xử lý lỗi khi report-sections không tồn tại', async () => {
+  test('xá»­ lÃ½ lá»—i khi report-sections khÃ´ng tá»“n táº¡i', async () => {
     jest.spyOn(document, 'getElementById').mockImplementation((id) => {
       if (id === 'report-sections') return null;
       return document.createElement('div');

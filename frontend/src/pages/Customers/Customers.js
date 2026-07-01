@@ -25,7 +25,7 @@ import {
 import {
   applyListFilters,
   formatDateInputValue,
-  formatVietnamDateTime,
+  formatVietnamDate,
 } from '../../utils/listFilters';
 
 const API_BASE = 'http://localhost:8000';
@@ -69,7 +69,7 @@ const Customers = () => {
             customer.phoneNumber,
             customer.gender,
             formatGender(customer.gender),
-            formatVietnamDateTime(customer.joinDate),
+            formatVietnamDate(customer.joinDate),
           ]
             .filter(Boolean)
             .join(' '),
@@ -309,7 +309,7 @@ const Customers = () => {
                 <TableCell>{customer.fullName}</TableCell>
                 <TableCell>{customer.phoneNumber}</TableCell>
                 <TableCell>{formatGender(customer.gender)}</TableCell>
-                <TableCell>{formatVietnamDateTime(customer.joinDate)}</TableCell>
+                <TableCell>{formatVietnamDate(customer.joinDate)}</TableCell>
                 <TableCell>
                   <ActionGroup>
                     <Button onClick={() => handleEditCustomer(customer)}>Sửa</Button>

@@ -118,6 +118,8 @@ public sealed class Invoice
     public string Address { get; set; } = "";
     [MaxLength(50)] public string PaymentMethod { get; set; } = "Cash";
     [MaxLength(50)] public string Status { get; set; } = "Pending";
+    public string ReceiptImage { get; set; } = "";
+    [MaxLength(255)] public string ReceiptFileName { get; set; } = "";
 }
 
 public sealed class InvoiceDetail

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -65,7 +65,7 @@ describe('Medicines component', () => {
 
     // Mock API responses with delay to simulate real API
     axios.get.mockImplementation((url) => new Promise(resolve => setTimeout(() => {
-      if (url === 'http://localhost:8000/api/medicines/medicines/') {
+      if (url.includes('/api/medicines/medicines/')) {
         resolve({ data: mockMedicines });
       } else {
         resolve({ data: null });
@@ -73,22 +73,25 @@ describe('Medicines component', () => {
     }, 100)));
 
     axios.post.mockImplementation((url, data, config) => {
+      const getField = (name) => (typeof data.get === 'function' ? data.get(name) : data[name]);
+      if (typeof data.get !== 'function') data.get = (name) => data[name];
       const newMedicine = {
-        medicineID: data.get('medicineID') || `MED${mockMedicines.length + 1}`, // Tạo ID mới nếu không có
-        medicineName: data.get('medicineName'),
-        ingredients: data.get('ingredients'),
-        catalog: data.get('catalog'),
-        origin: data.get('origin'),
-        unit: data.get('unit'),
-        stockQuantity: parseInt(data.get('stockQuantity')),
-        unitPrice: parseInt(data.get('unitPrice')),
-        expiryDate: data.get('expiryDate'),
+        medicineID: data.get('medicineID') || `MED${mockMedicines.length + 1}`, // Táº¡o ID má»›i náº¿u khÃ´ng cÃ³
+        medicineName: getField('medicineName'),
+        ingredients: getField('ingredients'),
+        catalog: getField('catalog'),
+        origin: getField('origin'),
+        unit: getField('unit'),
+        stockQuantity: parseInt(getField('stockQuantity')),
+        unitPrice: parseInt(getField('unitPrice')),
+        expiryDate: getField('expiryDate'),
       };
       mockMedicines.push(newMedicine);
       return Promise.resolve({ data: newMedicine });
     });
 
     axios.put.mockImplementation((url, data, config) => {
+      if (typeof data.get !== 'function') data.get = (name) => data[name];
       const updatedMedicine = {
         medicineID: data.get('medicineID'),
         medicineName: data.get('medicineName'),
@@ -128,7 +131,7 @@ describe('Medicines component', () => {
     jest.clearAllMocks();
   });
 
-  test('hiển thị Sidebar, tiêu đề và bảng danh sách thuốc', async () => {
+  test('hiá»ƒn thá»‹ Sidebar, tiÃªu Ä‘á» vÃ  báº£ng danh sÃ¡ch thuá»‘c', async () => {
     render(<Medicines />);
 
     await screen.findByText(/Mocked Sidebar/i, { timeout: 5000 });
@@ -146,36 +149,36 @@ describe('Medicines component', () => {
     expect(screen.getByText(/Hạn sử dụng/i)).toBeInTheDocument();
     expect(screen.getByText(/Hành động/i)).toBeInTheDocument();
 
-    // Kiểm tra dữ liệu thuốc
+    // Kiá»ƒm tra dá»¯ liá»‡u thuá»‘c
     await screen.findByText('MED001', { timeout: 5000 });
     const row1 = screen.getByText('MED001').closest('tr');
     const cells1 = within(row1).getAllByRole('cell');
     expect(cells1[0]).toHaveTextContent('1'); // STT
-    expect(cells1[1]).toHaveTextContent('MED001'); // Mã thuốc
-    expect(cells1[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
-    expect(cells1[3]).toHaveTextContent('Paracetamol 500mg'); // Thành phần
-    expect(cells1[4]).toHaveTextContent('Thuốc kê đơn'); // Danh mục
-    expect(cells1[5]).toHaveTextContent('Việt Nam'); // Xuất xứ
-    expect(cells1[6]).toHaveTextContent('Viên'); // Đơn vị tính
-    expect(cells1[7]).toHaveTextContent('100'); // Số lượng
-    expect(cells1[8]).toHaveTextContent('5.000 VND'); // Đơn giá
-    expect(cells1[9]).toHaveTextContent('2025-12-31'); // Hạn sử dụng
+    expect(cells1[1]).toHaveTextContent('MED001'); // MÃ£ thuá»‘c
+    expect(cells1[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
+    expect(cells1[3]).toHaveTextContent('Paracetamol 500mg'); // ThÃ nh pháº§n
+    expect(cells1[4]).toHaveTextContent('Thuốc kê đơn'); // Danh má»¥c
+    expect(cells1[5]).toHaveTextContent('Việt Nam'); // Xuáº¥t xá»©
+    expect(cells1[6]).toHaveTextContent('Viên'); // ÄÆ¡n vá»‹ tÃ­nh
+    expect(cells1[7]).toHaveTextContent('100'); // Sá»‘ lÆ°á»£ng
+    expect(cells1[8]).toHaveTextContent('5.000 VND'); // ÄÆ¡n giÃ¡
+    expect(cells1[9]).toHaveTextContent('31/12/2025'); // Háº¡n sá»­ dá»¥ng
 
     const row2 = screen.getByText('MED002').closest('tr');
     const cells2 = within(row2).getAllByRole('cell');
     expect(cells2[0]).toHaveTextContent('2'); // STT
-    expect(cells2[1]).toHaveTextContent('MED002'); // Mã thuốc
-    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // Tên thuốc
-    expect(cells2[3]).toHaveTextContent('Amoxicillin 250mg'); // Thành phần
-    expect(cells2[4]).toHaveTextContent('Thuốc không kê đơn'); // Danh mục
-    expect(cells2[5]).toHaveTextContent('Nhật Bản'); // Xuất xứ
-    expect(cells2[6]).toHaveTextContent('Hộp'); // Đơn vị tính
-    expect(cells2[7]).toHaveTextContent('50'); // Số lượng
-    expect(cells2[8]).toHaveTextContent('10.000 VND'); // Đơn giá
-    expect(cells2[9]).toHaveTextContent('2025-06-30'); // Hạn sử dụng
+    expect(cells2[1]).toHaveTextContent('MED002'); // MÃ£ thuá»‘c
+    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // TÃªn thuá»‘c
+    expect(cells2[3]).toHaveTextContent('Amoxicillin 250mg'); // ThÃ nh pháº§n
+    expect(cells2[4]).toHaveTextContent('Thuốc không kê đơn'); // Danh má»¥c
+    expect(cells2[5]).toHaveTextContent('Nhật Bản'); // Xuáº¥t xá»©
+    expect(cells2[6]).toHaveTextContent('Hộp'); // ÄÆ¡n vá»‹ tÃ­nh
+    expect(cells2[7]).toHaveTextContent('50'); // Sá»‘ lÆ°á»£ng
+    expect(cells2[8]).toHaveTextContent('10.000 VND'); // ÄÆ¡n giÃ¡
+    expect(cells2[9]).toHaveTextContent('30/06/2025'); // Háº¡n sá»­ dá»¥ng
   });
 
-  test('tìm kiếm thuốc theo tên hoặc mã thuốc', async () => {
+  test('tÃ¬m kiáº¿m thuá»‘c theo tÃªn hoáº·c mÃ£ thuá»‘c', async () => {
     render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
@@ -183,31 +186,31 @@ describe('Medicines component', () => {
     const row2 = screen.getByText(/MED002/i).closest('tr');
     const cells1 = within(row1).getAllByRole('cell');
     const cells2 = within(row2).getAllByRole('cell');
-    expect(cells1[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
-    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // Tên thuốc
+    expect(cells1[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
+    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // TÃªn thuá»‘c
 
     const searchInput = screen.getByPlaceholderText(/Tìm kiếm thuốc.../i);
     fireEvent.change(searchInput, { target: { value: 'Paracetamol' } });
 
-    expect(cells1[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
+    expect(cells1[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
     expect(screen.queryByText(/Amoxicillin/i)).not.toBeInTheDocument();
 
     fireEvent.change(searchInput, { target: { value: 'MED002' } });
     expect(screen.queryByText(/Paracetamol/i)).not.toBeInTheDocument();
-    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // Tên thuốc
+    expect(cells2[2]).toHaveTextContent('Amoxicillin'); // TÃªn thuá»‘c
   });
 
-  test('thêm thuốc mới', async () => {
+  test('thÃªm thuá»‘c má»›i', async () => {
     render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
 
-    // Mở form thêm thuốc
+    // Má»Ÿ form thÃªm thuá»‘c
     const addButton = screen.getByRole('button', { name: /THÊM/i });
     fireEvent.click(addButton);
     expect(screen.getByRole('button', { name: /Thêm mới/i })).toBeInTheDocument();
 
-    // Điền form
+    // Äiá»n form
     fireEvent.change(screen.getByPlaceholderText(/Tên thuốc/i), { target: { value: 'Ibuprofen' } });
     fireEvent.change(screen.getByPlaceholderText(/Thành phần/i), { target: { value: 'Ibuprofen 400mg' } });
     fireEvent.change(screen.getByPlaceholderText(/Số lượng/i), { target: { value: '200' } });
@@ -215,114 +218,114 @@ describe('Medicines component', () => {
     fireEvent.change(screen.getByPlaceholderText(/Đơn giá/i), { target: { value: '6000' } });
     fireEvent.change(screen.getByPlaceholderText(/Hạn sử dụng/i), { target: { value: '2026-01-01' } });
 
-    // Tìm các <select> và chọn giá trị
+    // TÃ¬m cÃ¡c <select> vÃ  chá»n giÃ¡ trá»‹
     const selects = screen.getAllByRole('combobox');
-    // Đơn vị tính (select đầu tiên)
+    // ÄÆ¡n vá»‹ tÃ­nh (select Ä‘áº§u tiÃªn)
     fireEvent.change(selects[0], { target: { value: 'UNIT001' } });
-    // Danh mục (select thứ hai)
+    // Danh má»¥c (select thá»© hai)
     fireEvent.change(selects[1], { target: { value: 'CAT001' } });
-    // Xuất xứ (select thứ ba)
+    // Xuáº¥t xá»© (select thá»© ba)
     fireEvent.change(selects[2], { target: { value: 'ORG001' } });
 
-    // Gửi form
+    // Gá»­i form
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Thêm mới/i }));
     });
 
-    // Kiểm tra thuốc mới được thêm
+    // Kiá»ƒm tra thuá»‘c má»›i Ä‘Æ°á»£c thÃªm
     await screen.findByText('Ibuprofen', { timeout: 5000 });
     const newRow = screen.getByText('Ibuprofen').closest('tr');
     const cells = within(newRow).getAllByRole('cell');
-    expect(cells[2]).toHaveTextContent('Ibuprofen'); // Tên thuốc
-    expect(cells[3]).toHaveTextContent('Ibuprofen 400mg'); // Thành phần
-    expect(cells[4]).toHaveTextContent('Thuốc kê đơn'); // Danh mục
-    expect(cells[5]).toHaveTextContent('Việt Nam'); // Xuất xứ
-    expect(cells[6]).toHaveTextContent('Viên'); // Đơn vị tính
-    expect(cells[7]).toHaveTextContent('200'); // Số lượng
-    expect(cells[8]).toHaveTextContent('6.000 VND'); // Đơn giá
-    expect(cells[9]).toHaveTextContent('2026-01-01'); // Hạn sử dụng
+    expect(cells[2]).toHaveTextContent('Ibuprofen'); // TÃªn thuá»‘c
+    expect(cells[3]).toHaveTextContent('Ibuprofen 400mg'); // ThÃ nh pháº§n
+    expect(cells[4]).toHaveTextContent('Thuốc kê đơn'); // Danh má»¥c
+    expect(cells[5]).toHaveTextContent('Việt Nam'); // Xuáº¥t xá»©
+    expect(cells[6]).toHaveTextContent('Viên'); // ÄÆ¡n vá»‹ tÃ­nh
+    expect(cells[7]).toHaveTextContent('200'); // Sá»‘ lÆ°á»£ng
+    expect(cells[8]).toHaveTextContent('6.000 VND'); // ÄÆ¡n giÃ¡
+    expect(cells[9]).toHaveTextContent('01/01/2026'); // Háº¡n sá»­ dá»¥ng
   });
 
-  test('sửa thuốc', async () => {
+  test('sá»­a thuá»‘c', async () => {
     render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
     const row = screen.getByText(/MED001/i).closest('tr');
     const cells = within(row).getAllByRole('cell');
-    expect(cells[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
+    expect(cells[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
 
-    // Mở form sửa thuốc
+    // Má»Ÿ form sá»­a thuá»‘c
     const editButton = within(row).getByRole('button', { name: /Sửa/i });
     fireEvent.click(editButton);
     expect(screen.getByRole('button', { name: /Cập nhật/i })).toBeInTheDocument();
 
-    // Kiểm tra dữ liệu đã được điền sẵn
+    // Kiá»ƒm tra dá»¯ liá»‡u Ä‘Ã£ Ä‘Æ°á»£c Ä‘iá»n sáºµn
     expect(screen.getByPlaceholderText(/Tên thuốc/i)).toHaveValue('Paracetamol');
     expect(screen.getByPlaceholderText(/Thành phần/i)).toHaveValue('Paracetamol 500mg');
-    expect(screen.getByPlaceholderText(/Số lượng/i)).toHaveValue(100); // Số lượng là số
-    expect(screen.getByPlaceholderText(/Đơn giá/i)).toHaveValue(5000); // Đơn giá là số
+    expect(screen.getByPlaceholderText(/Số lượng/i)).toHaveValue(100); // Sá»‘ lÆ°á»£ng lÃ  sá»‘
+    expect(screen.getByPlaceholderText(/Đơn giá/i)).toHaveValue(5000); // ÄÆ¡n giÃ¡ lÃ  sá»‘
     expect(screen.getByPlaceholderText(/Hạn sử dụng/i)).toHaveValue('2025-12-31');
     const selects = screen.getAllByRole('combobox');
-    expect(selects[0]).toHaveValue('UNIT001'); // Đơn vị tính
-    expect(selects[1]).toHaveValue('CAT001'); // Danh mục
-    expect(selects[2]).toHaveValue('ORG001'); // Xuất xứ
+    expect(selects[0]).toHaveValue('UNIT001'); // ÄÆ¡n vá»‹ tÃ­nh
+    expect(selects[1]).toHaveValue('CAT001'); // Danh má»¥c
+    expect(selects[2]).toHaveValue('ORG001'); // Xuáº¥t xá»©
 
-    // Cập nhật dữ liệu
+    // Cáº­p nháº­t dá»¯ liá»‡u
     fireEvent.change(screen.getByPlaceholderText(/Tên thuốc/i), { target: { value: 'Paracetamol Updated' } });
     fireEvent.change(screen.getByPlaceholderText(/Số lượng/i), { target: { value: '150' } });
     fireEvent.change(screen.getByPlaceholderText(/Đơn giá/i), { target: { value: '7000' } });
 
-    // Gửi form
+    // Gá»­i form
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /Cập nhật/i }));
     });
 
-    // Kiểm tra thuốc đã được cập nhật
+    // Kiá»ƒm tra thuá»‘c Ä‘Ã£ Ä‘Æ°á»£c cáº­p nháº­t
     await screen.findByText(/Paracetamol Updated/i, { timeout: 5000 });
     const updatedRow = screen.getByText(/Paracetamol Updated/i).closest('tr');
     const updatedCells = within(updatedRow).getAllByRole('cell');
-    expect(updatedCells[2]).toHaveTextContent('Paracetamol Updated'); // Tên thuốc
-    expect(updatedCells[7]).toHaveTextContent('150'); // Số lượng
-    expect(updatedCells[8]).toHaveTextContent('7.000 VND'); // Đơn giá
+    expect(updatedCells[2]).toHaveTextContent('Paracetamol Updated'); // TÃªn thuá»‘c
+    expect(updatedCells[7]).toHaveTextContent('150'); // Sá»‘ lÆ°á»£ng
+    expect(updatedCells[8]).toHaveTextContent('7.000 VND'); // ÄÆ¡n giÃ¡
   });
 
-  test('xóa thuốc', async () => {
+  test('xÃ³a thuá»‘c', async () => {
     render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
     const row = screen.getByText(/MED001/i).closest('tr');
     const cells = within(row).getAllByRole('cell');
-    expect(cells[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
+    expect(cells[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
 
     const deleteButton = within(row).getByRole('button', { name: /Xóa/i });
     await act(async () => {
       fireEvent.click(deleteButton);
     });
 
-    // Đợi bảng cập nhật và chỉ hiển thị Amoxicillin
+    // Äá»£i báº£ng cáº­p nháº­t vÃ  chá»‰ hiá»ƒn thá»‹ Amoxicillin
     await waitFor(async () => {
       const rows = screen.getAllByRole('row');
-      // Mong đợi chỉ có 1 hàng dữ liệu (cộng với hàng tiêu đề, tổng 2 hàng)
-      expect(rows.length).toBe(2); // Tiêu đề + 1 hàng dữ liệu
+      // Mong Ä‘á»£i chá»‰ cÃ³ 1 hÃ ng dá»¯ liá»‡u (cá»™ng vá»›i hÃ ng tiÃªu Ä‘á», tá»•ng 2 hÃ ng)
+      expect(rows.length).toBe(2); // TiÃªu Ä‘á» + 1 hÃ ng dá»¯ liá»‡u
       const remainingRow = screen.getByText('MED002').closest('tr');
       const remainingCells = within(remainingRow).getAllByRole('cell');
-      expect(remainingCells[2]).toHaveTextContent('Amoxicillin'); // Tên thuốc
+      expect(remainingCells[2]).toHaveTextContent('Amoxicillin'); // TÃªn thuá»‘c
     }, { timeout: 5000 });
 
-    // Kiểm tra tên thuốc "Paracetamol" không còn trong cột tên thuốc
+    // Kiá»ƒm tra tÃªn thuá»‘c "Paracetamol" khÃ´ng cÃ²n trong cá»™t tÃªn thuá»‘c
     await waitFor(() => {
-      const medicineNameCells = screen.getAllByRole('cell').filter((cell, index) => index % 11 === 2); // Tên thuốc ở cột thứ 3 (index 2)
+      const medicineNameCells = screen.getAllByRole('cell').filter((cell, index) => index % 11 === 2); // TÃªn thuá»‘c á»Ÿ cá»™t thá»© 3 (index 2)
       expect(medicineNameCells.some(cell => cell.textContent === 'Paracetamol')).toBe(false);
     }, { timeout: 5000 });
   });
 
-  test('tải xuống file Excel', async () => {
+  test('táº£i xuá»‘ng file Excel', async () => {
     render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
     const row = screen.getByText(/MED001/i).closest('tr');
     const cells = within(row).getAllByRole('cell');
-    expect(cells[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
+    expect(cells[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
 
     const downloadButton = screen.getByRole('button', { name: /Tải xuống/i });
     fireEvent.click(downloadButton);
@@ -334,13 +337,13 @@ describe('Medicines component', () => {
     expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'Medicines.xlsx');
   });
 
-  test('snapshot của giao diện Medicines', async () => {
+  test('snapshot cá»§a giao diá»‡n Medicines', async () => {
     const { container } = render(<Medicines />);
 
     await screen.findByText(/MED001/i, { timeout: 5000 });
     const row = screen.getByText(/MED001/i).closest('tr');
     const cells = within(row).getAllByRole('cell');
-    expect(cells[2]).toHaveTextContent('Paracetamol'); // Tên thuốc
+    expect(cells[2]).toHaveTextContent('Paracetamol'); // TÃªn thuá»‘c
 
     expect(container).toMatchSnapshot();
   });

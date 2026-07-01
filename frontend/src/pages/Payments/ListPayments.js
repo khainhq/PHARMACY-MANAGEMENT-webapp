@@ -17,7 +17,7 @@ import {
   ActionGroup,
   EmptyCell,
 } from './PaymentsStyles';
-import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
+import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
@@ -71,7 +71,7 @@ const ListPayments = () => {
             payment.employeeName,
             payment.medicineSummary,
             formatPaymentStatus(payment.status),
-            formatVietnamDateTime(payment.paymentTime),
+            formatVietnamDate(payment.paymentTime),
           ]
             .filter(Boolean)
             .join(' '),
@@ -235,7 +235,7 @@ const ListPayments = () => {
                 <tr key={payment.paymentID}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{payment.paymentID}</TableCell>
-                  <TableCell>{formatVietnamDateTime(payment.paymentTime)}</TableCell>
+                  <TableCell>{formatVietnamDate(payment.paymentTime)}</TableCell>
                   <TableCell>{payment.supplierName || payment.supplier}</TableCell>
                   <TableCell>{payment.employeeName || payment.employee}</TableCell>
                   <TableCell>{payment.medicineSummary}</TableCell>

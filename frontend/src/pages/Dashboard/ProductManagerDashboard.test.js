@@ -45,7 +45,7 @@ describe('ProductManagerDashboard component', () => {
       unit: 'CVBDF123T',
       catalog: 'ZAQ321QWE',
       origin: 'XCVSDF123',
-      expiryDate: '2026-01-01',
+      expiryDate: '2099-01-01',
     },
     {
       medicineID: 'MED002',

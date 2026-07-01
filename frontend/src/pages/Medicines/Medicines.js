@@ -20,6 +20,7 @@ import {
   unitMap,
   ActionButton,
 } from './MedicinesStyles';
+import { formatVietnamDate } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const emptyForm = {
@@ -227,7 +228,7 @@ const Medicines = () => {
                 <TableCell>{unitMap[medicine.unit] || medicine.unit}</TableCell>
                 <TableCell>{medicine.stockQuantity}</TableCell>
                 <TableCell>{formatMoney(medicine.unitPrice)} VND</TableCell>
-                <TableCell>{medicine.expiryDate ? medicine.expiryDate.split('T')[0] : ''}</TableCell>
+                <TableCell>{formatVietnamDate(medicine.expiryDate)}</TableCell>
                 <TableCell>
                   <ActionButton onClick={() => handleEditMedicine(medicine)}>Sửa</ActionButton>
                   <ActionButton onClick={() => handleDeleteMedicine(medicine.medicineID)}>Xóa</ActionButton>

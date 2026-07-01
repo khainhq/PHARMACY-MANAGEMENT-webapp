@@ -18,6 +18,7 @@ import {
   Toolbar,
   Button,
 } from './ReportStyles';
+import { formatVietnamDate, formatVietnamDateTime } from '../../utils/listFilters';
 
 const Reports = () => {
   const [salesData, setSalesData] = useState([]);
@@ -31,7 +32,7 @@ const Reports = () => {
     try {
       const salesResponse = await axios.get('http://localhost:8000/api/sales/orders/', { headers });
       const formattedSalesData = salesResponse.data.map((order) => ({
-        date: new Date(order.orderTime).toLocaleDateString('en-GB'),
+        date: formatVietnamDate(order.orderTime),
         total: parseFloat(order.totalAmount),
       }));
 
@@ -161,7 +162,7 @@ const Reports = () => {
                   {orders.map((order) => (
                     <tr key={order.orderID}>
                       <TableCell>{order.orderID}</TableCell>
-                      <TableCell>{new Date(order.orderTime).toLocaleString()}</TableCell>
+                      <TableCell>{formatVietnamDateTime(order.orderTime)}</TableCell>
                     </tr>
                   ))}
                 </tbody>

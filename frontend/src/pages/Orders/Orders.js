@@ -13,6 +13,7 @@ import {
   Input,
   Select,
 } from './OrdersStyles';
+import { formatVietnamDateTime } from '../../utils/listFilters';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -222,10 +223,10 @@ const Orders = () => {
               <tr key={order.orderID}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{order.orderID}</TableCell>
-                <TableCell>{new Date(order.orderTime).toLocaleString()}</TableCell>
+                <TableCell>{formatVietnamDateTime(order.orderTime)}</TableCell>
                 <TableCell>{order.employee}</TableCell>
                 <TableCell>{order.customer}</TableCell>
-                <TableCell>{parseFloat(order.totalAmount).toLocaleString()} VND</TableCell>
+                <TableCell>{parseFloat(order.totalAmount).toLocaleString('vi-VN')} VND</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEditOrder(order)}>Sửa</Button>
                   <Button onClick={() => handleDeleteOrder(order.orderID)}>Xóa</Button>

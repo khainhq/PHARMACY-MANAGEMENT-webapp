@@ -20,7 +20,7 @@ import {
   EmptyCell,
   genderMap,
 } from './EmployeesStyles';
-import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
+import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' };
@@ -55,7 +55,7 @@ const Employees = () => {
             employee.phoneNumber,
             genderMap[employee.gender] || employee.gender,
             employee.yearOfBirth,
-            formatVietnamDateTime(employee.hireDate),
+            formatVietnamDate(employee.hireDate),
           ]
             .filter(Boolean)
             .join(' '),
@@ -268,7 +268,7 @@ const Employees = () => {
                 <TableCell>{employee.phoneNumber}</TableCell>
                 <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
                 <TableCell>{employee.yearOfBirth}</TableCell>
-                <TableCell>{formatVietnamDateTime(employee.hireDate)}</TableCell>
+                <TableCell>{formatVietnamDate(employee.hireDate)}</TableCell>
                 <TableCell>
                   <ActionGroup>
                     <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>

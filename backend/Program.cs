@@ -381,6 +381,8 @@ static void MapInvoiceEndpoints(WebApplication app)
         invoice.Address = input.Address;
         invoice.PaymentMethod = input.PaymentMethod;
         invoice.Status = NormalizeStatus(input.Status);
+        invoice.ReceiptImage = input.ReceiptImage ?? "";
+        invoice.ReceiptFileName = input.ReceiptFileName ?? "";
         await db.SaveChangesAsync();
         return Results.Ok(await GetInvoiceAsync(db, id));
     }).RequireToken();
@@ -403,6 +405,14 @@ static void MapInvoiceEndpoints(WebApplication app)
             else if (jsonProp.NameEquals("paymentMethod"))
             {
                 invoice.PaymentMethod = jsonProp.Value.GetString() ?? invoice.PaymentMethod;
+            }
+            else if (jsonProp.NameEquals("receiptImage"))
+            {
+                invoice.ReceiptImage = jsonProp.Value.GetString() ?? "";
+            }
+            else if (jsonProp.NameEquals("receiptFileName"))
+            {
+                invoice.ReceiptFileName = (jsonProp.Value.GetString() ?? "").Trim();
             }
         }
 
@@ -464,6 +474,8 @@ static async Task<object?> GetInvoiceAsync(PharmacyDbContext db, int id)
             x.invoice.Address,
             x.invoice.PaymentMethod,
             x.invoice.Status,
+            x.invoice.ReceiptImage,
+            x.invoice.ReceiptFileName,
             totalAmount = db.InvoiceDetails
                 .Where(detail => detail.InvoiceID == x.invoice.InvoiceID)
                 .Sum(detail => (decimal?)detail.UnitPrice * detail.Quantity) ?? 0

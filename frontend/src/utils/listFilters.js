@@ -68,6 +68,21 @@ export const formatVietnamDateTime = (value) => {
   return `${dateParts.day}/${dateParts.month}/${dateParts.year} ${dateParts.hour}:${dateParts.minute}:${dateParts.second}`;
 };
 
+export const formatVietnamDate = (value) => {
+  const date = toVietnamDate(value);
+  if (!date) return '';
+
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: VIETNAM_TIME_ZONE,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).formatToParts(date);
+
+  const dateParts = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${dateParts.day}/${dateParts.month}/${dateParts.year}`;
+};
+
 export const formatDateInputValue = (value) => getVietnamDateKey(value);
 
 export const applyListFilters = (
