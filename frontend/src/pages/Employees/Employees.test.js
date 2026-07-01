@@ -143,6 +143,35 @@ describe('Employees component', () => {
     });
   });
 
+  test('không thêm nhân viên khi số điện thoại, năm sinh và ngày vào làm không hợp lệ', async () => {
+    axios.post.mockResolvedValue({ data: {} });
+
+    render(<Employees />);
+
+    const addButton = screen.getByRole('button', { name: /Thêm Nhân viên/i });
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText(/Họ tên/i)).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByPlaceholderText(/Họ tên/i), { target: { value: 'Lý Thông' } });
+    fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '116' } });
+    fireEvent.change(screen.getByLabelText('Chọn giới tính'), { target: { value: 'Male' } });
+    fireEvent.change(screen.getByPlaceholderText(/Năm sinh/i), { target: { value: '2000' } });
+    fireEvent.change(screen.getByPlaceholderText(/Ngày vào làm/i), { target: { value: '2001-01-01' } });
+
+    const submitButton = screen
+      .getAllByRole('button')
+      .find((button) => button.textContent === 'Thêm nhân viên' && button.getAttribute('type') === 'submit');
+    fireEvent.click(submitButton);
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Số điện thoại không đúng định dạng.');
+    expect(alert).toHaveTextContent('Nhân viên phải đủ 16 tuổi');
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
   test('chỉnh sửa thông tin nhân viên', async () => {
     axios.put.mockResolvedValue({ data: {} });
 

@@ -186,7 +186,7 @@ describe('Suppliers component', () => {
     })));
 
     fireEvent.change(nameInput, { target: { value: 'Supplier C' } });
-    fireEvent.change(phoneInput, { target: { value: '1234567890' } });
+    fireEvent.change(phoneInput, { target: { value: '0934567890' } });
     fireEvent.change(addressInput, { target: { value: '789 Pine Rd' } });
 
     await act(async () => {
@@ -199,7 +199,7 @@ describe('Suppliers component', () => {
         'http://localhost:8000/api/medicines/suppliers/',
         expect.objectContaining({
           supplierName: 'Supplier C',
-          phoneNumber: '1234567890',
+          phoneNumber: '0934567890',
           address: '789 Pine Rd',
           supplierID: expect.any(String),
         }),
@@ -207,6 +207,27 @@ describe('Suppliers component', () => {
       );
       expect(screen.queryByPlaceholderText(/Tên nhà cung cấp/i)).not.toBeInTheDocument();
     }, { timeout: 5000 });
+  });
+
+  test('không lưu nhà cung cấp khi số điện thoại sai định dạng', async () => {
+    render(<Suppliers />);
+
+    fireEvent.click(screen.getByText(/THÊM/i));
+
+    const submitButton = await screen.findByText(/Thêm mới/i);
+    const form = submitButton.closest('form');
+    if (!form) throw new Error('Form not found');
+
+    fireEvent.change(within(form).getByTestId('name-input'), { target: { value: 'Công ty dược F' } });
+    fireEvent.change(within(form).getByTestId('phone-input'), { target: { value: 'Lam Dong' } });
+    fireEvent.change(within(form).getByTestId('address-input'), { target: { value: 'Lam Dong' } });
+
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Số điện thoại không đúng định dạng.');
+    expect(axios.post).not.toHaveBeenCalled();
   });
 
   test('sửa nhà cung cấp', async () => {
@@ -339,7 +360,7 @@ describe('Suppliers component', () => {
     })));
 
     fireEvent.change(nameInput, { target: { value: 'Supplier C' } });
-    fireEvent.change(phoneInput, { target: { value: '1234567890' } });
+    fireEvent.change(phoneInput, { target: { value: '0934567890' } });
     fireEvent.change(addressInput, { target: { value: '789 Pine Rd' } });
 
     await act(async () => {

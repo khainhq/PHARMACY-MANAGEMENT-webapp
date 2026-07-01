@@ -139,7 +139,7 @@ describe('Accounts component', () => {
         {
           username: 'newuser',
           password: 'password123',
-          role: '2',
+          role: 2,
           employee: 'emp3',
         },
         { headers: { Authorization: 'Token dummyToken' } }
@@ -152,8 +152,32 @@ describe('Accounts component', () => {
     });
   });
 
+  test('hiển thị lỗi cụ thể từ API khi tạo tài khoản thất bại', async () => {
+    axios.post.mockRejectedValue({ response: { data: { error: 'Mã nhân viên không hợp lệ.' } } });
+
+    render(<Accounts />);
+
+    fireEvent.click(screen.getByText(/THÊM/i));
+    fireEvent.change(screen.getByPlaceholderText(/Tên tài khoản/i), {
+      target: { value: 'Test' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Mật khẩu/i), {
+      target: { value: 'password123' },
+    });
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: '2' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Nhân viên \(ID\)/i), {
+      target: { value: 'EMP004' },
+    });
+
+    fireEvent.click(screen.getByText(/Tạo tài khoản/i));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Mã nhân viên không hợp lệ.');
+  });
+
   test('sửa tài khoản hiện có', async () => {
-    axios.put.mockResolvedValue({ data: {} });
+    axios.patch.mockResolvedValue({ data: {} });
 
     render(<Accounts />);
 
@@ -178,13 +202,13 @@ describe('Accounts component', () => {
     // Nhấn nút Cập nhật tài khoản
     fireEvent.click(screen.getByText(/Cập nhật tài khoản/i));
 
-    // Kiểm tra axios.put được gọi
+    // Kiểm tra axios.patch được gọi
     await waitFor(() => {
-      expect(axios.put).toHaveBeenCalledWith(
+      expect(axios.patch).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/accounts/1/',
         {
           username: 'updateduser',
-          role: '2',
+          role: 2,
           employee: 'emp1',
         },
         { headers: { Authorization: 'Token dummyToken' } }

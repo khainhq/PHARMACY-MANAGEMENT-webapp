@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaUserPlus, FaSearch } from 'react-icons/fa';
@@ -21,6 +21,12 @@ import {
   genderMap,
 } from './EmployeesStyles';
 import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
+import {
+  EMPLOYEE_DATE_ERROR,
+  PHONE_FORMAT_ERROR,
+  isValidEmployeeYearAndHireDate,
+  isValidVietnamPhoneNumber,
+} from '../../utils/validation';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' };
@@ -37,7 +43,7 @@ const Employees = () => {
   const [editingEmployeeID, setEditingEmployeeID] = useState(null);
   const [error, setError] = useState('');
 
-  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+  const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
   const filteredEmployees = useMemo(
     () =>
@@ -63,18 +69,18 @@ const Employees = () => {
     [employees, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
   );
 
-  const fetchEmployees = async () => {
+  const fetchEmployees = useCallback(async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/auth/employees/`, { headers: authHeaders() });
       setEmployees(response.data);
     } catch (fetchError) {
       setError('Không tải được danh sách nhân viên.');
     }
-  };
+  }, [authHeaders]);
 
   useEffect(() => {
     fetchEmployees();
-  }, []);
+  }, [fetchEmployees]);
 
   const handleSearch = (e) => {
     setSearchKeyword(e.target.value);
@@ -105,6 +111,13 @@ const Employees = () => {
     is_active: true,
   });
 
+  const validateForm = () => {
+    const errors = [];
+    if (!isValidVietnamPhoneNumber(form.phoneNumber)) errors.push(PHONE_FORMAT_ERROR);
+    if (!isValidEmployeeYearAndHireDate(form.yearOfBirth, form.hireDate)) errors.push(EMPLOYEE_DATE_ERROR);
+    return errors.join(' ');
+  };
+
   const resetForm = () => {
     setForm(emptyForm);
     setShowForm(false);
@@ -114,6 +127,12 @@ const Employees = () => {
   const handleAddEmployee = async (e) => {
     e.preventDefault();
     setError('');
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     try {
       await axios.post(`${API_BASE}/api/auth/employees/`, buildPayload(generateEmployeeID()), { headers: authHeaders() });
       resetForm();
@@ -138,6 +157,12 @@ const Employees = () => {
   const handleUpdateEmployee = async (e) => {
     e.preventDefault();
     setError('');
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     try {
       await axios.put(`${API_BASE}/api/auth/employees/${editingEmployeeID}/`, buildPayload(editingEmployeeID), { headers: authHeaders() });
       resetForm();
@@ -219,15 +244,15 @@ const Employees = () => {
         {showForm && (
           <Form onSubmit={editingEmployeeID ? handleUpdateEmployee : handleAddEmployee}>
             <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
-            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required />
+            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required aria-invalid={error.includes(PHONE_FORMAT_ERROR)} />
             <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
               <option value="Other">Khác</option>
             </Select>
-            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => setForm({ ...form, yearOfBirth: e.target.value })} required />
-            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => setForm({ ...form, hireDate: e.target.value })} required />
+            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => setForm({ ...form, yearOfBirth: e.target.value })} required aria-invalid={error.includes(EMPLOYEE_DATE_ERROR)} />
+            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => setForm({ ...form, hireDate: e.target.value })} required aria-invalid={error.includes(EMPLOYEE_DATE_ERROR)} />
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Button type="submit">{editingEmployeeID ? 'Cập nhật' : 'Thêm nhân viên'}</Button>
               <Button type="button" onClick={resetForm}>Hủy</Button>

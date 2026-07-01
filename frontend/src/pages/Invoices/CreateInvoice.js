@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
+import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
 import {
   Container,
   LeftSection,
@@ -310,6 +311,7 @@ const CreateInvoice = () => {
     if (cart.length === 0) return 'Giỏ hàng trống, không thể tạo hóa đơn.';
     if (!form.customerName.trim()) return 'Vui lòng nhập tên khách hàng.';
     if (!form.phoneNumber.trim()) return 'Vui lòng nhập số điện thoại.';
+    if (!isValidVietnamPhoneNumber(form.phoneNumber)) return PHONE_FORMAT_ERROR;
     if (!form.gender) return 'Vui lòng chọn giới tính.';
     if (!form.address.trim()) return 'Vui lòng nhập địa chỉ.';
     return '';
