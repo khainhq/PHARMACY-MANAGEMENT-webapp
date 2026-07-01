@@ -2,39 +2,65 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  background-color: #f3f4f6; /* Màu nền tổng thể nhẹ nhàng */
-  font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
+  box-sizing: border-box;
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 export const Content = styled.div`
   flex: 1;
-  padding: 2rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
-  background-color: #ffffff; /* Màu nền trắng */
-  border-radius: 12px; /* Bo góc mềm mại */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  min-width: 0;
+  padding: clamp(1rem, 1.5vw, 2rem);
+  margin-left: 250px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 `;
 
 export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1.5rem;
 `;
 
+export const ToolbarSide = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+`;
+
 export const Button = styled.button`
-  background-color: rgb(6, 150, 102); /* Màu xanh lá cây */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background-color: rgb(6, 150, 102);
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.62rem 0.95rem;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.2;
+  min-height: 36px;
+  white-space: nowrap;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: rgb(3, 93, 64); /* Màu xanh lá cây đậm hơn */
+    background-color: rgb(3, 93, 64);
   }
 `;
 
@@ -42,33 +68,80 @@ export const SearchInput = styled.input`
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  width: 250px;
+  width: min(380px, 100%);
   font-size: 0.9rem;
+`;
+
+export const FilterBar = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+`;
+
+export const FilterField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
 `;
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 1080px;
+  table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
   background-color: #ffffff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TableHeader = styled.th`
-  background-color: #059669; /* Màu xanh đậm */
+  background-color: #059669;
   color: #ffffff;
-  padding: 1rem;
+  padding: 0.85rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.94rem;
+  line-height: 1.35;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: normal;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 1rem;
+  padding: 0.75rem 0.85rem;
   font-size: 0.9rem;
-  color: #374151; /* Màu chữ xám đậm */
+  line-height: 1.4;
+  color: #374151;
+  vertical-align: middle;
+  overflow-wrap: break-word;
+  word-break: normal;
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+
+  ${Button} {
+    min-width: 72px;
+    padding: 0.5rem 0.75rem;
+  }
+`;
+
+export const EmptyCell = styled.td`
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
 `;
 
 export const Form = styled.form`
@@ -80,7 +153,7 @@ export const Form = styled.form`
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const Input = styled.input`
@@ -95,4 +168,5 @@ export const Select = styled.select`
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
+  background-color: #ffffff;
 `;

@@ -36,11 +36,79 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           </span>
         </div>
       </div>
+      <div
+        class="sc-iQQCXo fyMdLj"
+      >
+        <label
+          class="sc-gDpztx kKFJcP"
+        >
+          Sắp xếp
+          <select
+            aria-label="Sắp xếp nhân viên"
+            class="sc-dcKlJK eGWLq"
+          >
+            <option
+              value=""
+            >
+              Mặc định
+            </option>
+            <option
+              value="newest"
+            >
+              Mới nhất
+            </option>
+            <option
+              value="oldest"
+            >
+              Cũ nhất
+            </option>
+          </select>
+        </label>
+        <label
+          class="sc-gDpztx kKFJcP"
+        >
+          Ngày cụ thể
+          <input
+            aria-label="Lọc nhân viên theo ngày cụ thể"
+            class="sc-jScdur bAGGGS"
+            type="date"
+            value=""
+          />
+        </label>
+        <label
+          class="sc-gDpztx kKFJcP"
+        >
+          Từ ngày
+          <input
+            aria-label="Lọc nhân viên từ ngày"
+            class="sc-jScdur bAGGGS"
+            type="date"
+            value=""
+          />
+        </label>
+        <label
+          class="sc-gDpztx kKFJcP"
+        >
+          Đến ngày
+          <input
+            aria-label="Lọc nhân viên đến ngày"
+            class="sc-jScdur bAGGGS"
+            type="date"
+            value=""
+          />
+        </label>
+        <button
+          class="sc-fWnslK gjFfxD"
+          type="button"
+        >
+          Bỏ lọc
+        </button>
+      </div>
       <h2>
         DANH SÁCH THÔNG TIN NHÂN VIÊN
       </h2>
       <table
-        class="sc-iQQCXo GVseh"
+        class="sc-kpOvIu ixlBDG"
       >
         <colgroup>
           <col
@@ -71,42 +139,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         <thead>
           <tr>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               STT
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Mã nhân viên
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Họ tên
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Số điện thoại
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Giới tính
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Năm sinh
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Ngày vào làm
             </th>
             <th
-              class="sc-gDpztx eliDym"
+              class="sc-icnseD hgeqAh"
             >
               Hành động
             </th>
@@ -115,106 +183,112 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         <tbody>
           <tr>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               1
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               AB12CDEF
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               Nguyen Van A
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               0123456789
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               Nam
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               1990
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
-              2023-01-15
+              15/01/2023 00:00:00
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
-              <button
-                class="sc-fWnslK gjFfxD"
+              <div
+                class="sc-cXawGu fMUdLf"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK gjFfxD"
-                style="margin-left: 0.5rem;"
-              >
-                Xóa
-              </button>
+                <button
+                  class="sc-fWnslK gjFfxD"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK gjFfxD"
+                >
+                  Xóa
+                </button>
+              </div>
             </td>
           </tr>
           <tr>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               2
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               XY34WXYZ
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               Tran Thi B
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               0987654321
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               Nữ
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
               1995
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
-              2023-06-20
+              20/06/2023 00:00:00
             </td>
             <td
-              class="sc-kpOvIu hfVPyZ"
+              class="sc-jMsorb jiKWAU"
             >
-              <button
-                class="sc-fWnslK gjFfxD"
+              <div
+                class="sc-cXawGu fMUdLf"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK gjFfxD"
-                style="margin-left: 0.5rem;"
-              >
-                Xóa
-              </button>
+                <button
+                  class="sc-fWnslK gjFfxD"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK gjFfxD"
+                >
+                  Xóa
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

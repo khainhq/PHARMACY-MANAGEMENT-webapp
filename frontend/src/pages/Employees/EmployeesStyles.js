@@ -64,6 +64,23 @@ export const SearchInput = styled.input`
   font-size: 0.9rem;
 `;
 
+export const FilterBar = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+`;
+
+export const FilterField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 700;
+`;
+
 export const Table = styled.table`
   width: 100%;
   min-width: 980px;
@@ -101,6 +118,26 @@ export const TableCell = styled.td`
   &:hover {
     background-color: #f9fafb;
   }
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+
+  ${Button} {
+    min-width: 72px;
+    padding: 0.5rem 0.75rem;
+  }
+`;
+
+export const EmptyCell = styled.td`
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
 `;
 
 export const genderMap = {

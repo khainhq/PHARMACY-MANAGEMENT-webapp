@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaUserPlus, FaSearch } from 'react-icons/fa';
@@ -6,6 +6,8 @@ import {
   Container,
   Content,
   Toolbar,
+  FilterBar,
+  FilterField,
   Button,
   SearchInput,
   Table,
@@ -14,16 +16,22 @@ import {
   Form,
   Input,
   Select,
+  ActionGroup,
+  EmptyCell,
   genderMap,
 } from './EmployeesStyles';
+import { applyListFilters, formatVietnamDateTime } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' };
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
-  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployeeID, setEditingEmployeeID] = useState(null);
@@ -31,11 +39,34 @@ const Employees = () => {
 
   const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
 
+  const filteredEmployees = useMemo(
+    () =>
+      applyListFilters(employees, {
+        keyword: searchKeyword,
+        sortOrder,
+        selectedDate,
+        fromDate,
+        toDate,
+        getDate: (employee) => employee.hireDate,
+        getSearchText: (employee) =>
+          [
+            employee.employeeID,
+            employee.fullName,
+            employee.phoneNumber,
+            genderMap[employee.gender] || employee.gender,
+            employee.yearOfBirth,
+            formatVietnamDateTime(employee.hireDate),
+          ]
+            .filter(Boolean)
+            .join(' '),
+      }),
+    [employees, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
+  );
+
   const fetchEmployees = async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/auth/employees/`, { headers: authHeaders() });
       setEmployees(response.data);
-      setFilteredEmployees(response.data);
     } catch (fetchError) {
       setError('Không tải được danh sách nhân viên.');
     }
@@ -46,13 +77,15 @@ const Employees = () => {
   }, []);
 
   const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase();
-    setSearchKeyword(keyword);
-    setFilteredEmployees(employees.filter((employee) =>
-      employee.fullName.toLowerCase().includes(keyword) ||
-      employee.phoneNumber.includes(keyword) ||
-      employee.employeeID.toLowerCase().includes(keyword)
-    ));
+    setSearchKeyword(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setSearchKeyword('');
+    setSortOrder('');
+    setSelectedDate('');
+    setFromDate('');
+    setToDate('');
   };
 
   const generateEmployeeID = () => {
@@ -142,13 +175,52 @@ const Employees = () => {
           </div>
         </Toolbar>
 
+        <FilterBar>
+          <FilterField>
+            Sắp xếp
+            <Select aria-label="Sắp xếp nhân viên" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+              <option value="">Mặc định</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+            </Select>
+          </FilterField>
+          <FilterField>
+            Ngày cụ thể
+            <Input
+              aria-label="Lọc nhân viên theo ngày cụ thể"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Từ ngày
+            <Input
+              aria-label="Lọc nhân viên từ ngày"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </FilterField>
+          <FilterField>
+            Đến ngày
+            <Input
+              aria-label="Lọc nhân viên đến ngày"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </FilterField>
+          <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
+        </FilterBar>
+
         {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
 
         {showForm && (
           <Form onSubmit={editingEmployeeID ? handleUpdateEmployee : handleAddEmployee}>
             <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
             <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required />
-            <Select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
+            <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
@@ -196,13 +268,20 @@ const Employees = () => {
                 <TableCell>{employee.phoneNumber}</TableCell>
                 <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
                 <TableCell>{employee.yearOfBirth}</TableCell>
-                <TableCell>{employee.hireDate ? employee.hireDate.split('T')[0] : ''}</TableCell>
+                <TableCell>{formatVietnamDateTime(employee.hireDate)}</TableCell>
                 <TableCell>
-                  <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>
-                  <Button onClick={() => handleDeleteEmployee(employee.employeeID)} style={{ marginLeft: '0.5rem' }}>Xóa</Button>
+                  <ActionGroup>
+                    <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>
+                    <Button onClick={() => handleDeleteEmployee(employee.employeeID)}>Xóa</Button>
+                  </ActionGroup>
                 </TableCell>
               </tr>
             ))}
+            {filteredEmployees.length === 0 && (
+              <tr>
+                <EmptyCell colSpan={8}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+              </tr>
+            )}
           </tbody>
         </Table>
       </Content>
