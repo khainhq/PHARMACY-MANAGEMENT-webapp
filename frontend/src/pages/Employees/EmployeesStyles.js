@@ -2,39 +2,57 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: flex;
-  background-color: #f3f4f6; /* Màu nền tổng thể */
-  font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
+  box-sizing: border-box;
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 export const Content = styled.div`
   flex: 1;
-  padding: 2rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
-  background-color: #ffffff; /* Màu nền trắng */
-  border-radius: 12px; /* Bo góc mềm mại */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  min-width: 0;
+  padding: clamp(1rem, 1.5vw, 2rem);
+  margin-left: 250px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 `;
 
 export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1rem;
 `;
 
 export const Button = styled.button`
-  background-color: rgb(6, 150, 102); /* Màu xanh lá cây */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: rgb(6, 150, 102);
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.62rem 0.95rem;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1.2;
+  min-height: 36px;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: rgb(3, 93, 64); /* Màu xanh lá cây đậm hơn */
+    background-color: rgb(3, 93, 64);
   }
 `;
 
@@ -42,36 +60,46 @@ export const SearchInput = styled.input`
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  width: 250px;
+  width: min(320px, 100%);
   font-size: 0.9rem;
 `;
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 980px;
+  table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
   background-color: #ffffff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TableHeader = styled.th`
-  background-color: rgb(6, 150, 102); /* Màu xanh đậm */
+  background-color: rgb(6, 150, 102);
   color: #ffffff;
-  padding: 1rem;
+  padding: 0.75rem 0.85rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: normal;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 1rem;
+  padding: 0.7rem 0.85rem;
   font-size: 0.9rem;
-  color: #374151; /* Màu chữ xám đậm */
+  line-height: 1.35;
+  color: #374151;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: normal;
 
   &:hover {
-    background-color: #f9fafb; /* Hiệu ứng hover */
+    background-color: #f9fafb;
   }
 `;
 
@@ -80,6 +108,8 @@ export const genderMap = {
   Female: 'Nữ',
   Nam: 'Nam',
   Nữ: 'Nữ',
+  Other: 'Khác',
+  Khác: 'Khác',
 };
 
 export const Form = styled.form`
@@ -91,7 +121,7 @@ export const Form = styled.form`
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const Input = styled.input`

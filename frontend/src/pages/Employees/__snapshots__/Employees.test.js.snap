@@ -3,30 +3,30 @@
 exports[`Employees component snapshot của giao diện Employees 1`] = `
 <div>
   <div
-    class="sc-Qotzb kXLuAq"
+    class="sc-Qotzb kjsCWq"
   >
     <div>
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw iVIbeH"
+      class="sc-fYsHOw pzYOl"
     >
       <div
-        class="sc-dKREkF iApnru"
+        class="sc-dKREkF eYbohZ"
       >
         <div>
           <button
-            class="sc-fWnslK crIFxk"
+            class="sc-fWnslK gjFfxD"
           >
             <span>
               FaUserPlus
             </span>
-             Thêm Nhân viên
+             Thêm nhân viên
           </button>
         </div>
         <div>
           <input
-            class="sc-dIMoHT kyHkWK"
+            class="sc-dIMoHT jTrrWb"
             placeholder="Tìm kiếm nhân viên..."
             type="text"
             value=""
@@ -40,47 +40,73 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         DANH SÁCH THÔNG TIN NHÂN VIÊN
       </h2>
       <table
-        class="sc-iQQCXo imaQCp"
+        class="sc-iQQCXo GVseh"
       >
+        <colgroup>
+          <col
+            style="width: 5%;"
+          />
+          <col
+            style="width: 12%;"
+          />
+          <col
+            style="width: 20%;"
+          />
+          <col
+            style="width: 14%;"
+          />
+          <col
+            style="width: 9%;"
+          />
+          <col
+            style="width: 9%;"
+          />
+          <col
+            style="width: 15%;"
+          />
+          <col
+            style="width: 16%;"
+          />
+        </colgroup>
         <thead>
           <tr>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               STT
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Mã nhân viên
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Họ tên
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Số điện thoại
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Giới tính
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Năm sinh
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Ngày vào làm
             </th>
             <th
-              class="sc-gDpztx eBAPhe"
+              class="sc-gDpztx eliDym"
             >
               Hành động
             </th>
@@ -89,50 +115,50 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         <tbody>
           <tr>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               1
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               AB12CDEF
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               Nguyen Van A
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               0123456789
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               Nam
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               1990
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               2023-01-15
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               <button
-                class="sc-fWnslK crIFxk"
+                class="sc-fWnslK gjFfxD"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK crIFxk"
+                class="sc-fWnslK gjFfxD"
                 style="margin-left: 0.5rem;"
               >
                 Xóa
@@ -141,50 +167,50 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           </tr>
           <tr>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               2
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               XY34WXYZ
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               Tran Thi B
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               0987654321
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               Nữ
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               1995
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               2023-06-20
             </td>
             <td
-              class="sc-kpOvIu kKQyyu"
+              class="sc-kpOvIu hfVPyZ"
             >
               <button
-                class="sc-fWnslK crIFxk"
+                class="sc-fWnslK gjFfxD"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK crIFxk"
+                class="sc-fWnslK gjFfxD"
                 style="margin-left: 0.5rem;"
               >
                 Xóa

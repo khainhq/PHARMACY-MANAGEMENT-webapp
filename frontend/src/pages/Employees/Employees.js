@@ -165,6 +165,16 @@ const Employees = () => {
 
         <h2>DANH SÁCH THÔNG TIN NHÂN VIÊN</h2>
         <Table>
+          <colgroup>
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '12%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '14%' }} />
+            <col style={{ width: '9%' }} />
+            <col style={{ width: '9%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '16%' }} />
+          </colgroup>
           <thead>
             <tr>
               <TableHeader>STT</TableHeader>
