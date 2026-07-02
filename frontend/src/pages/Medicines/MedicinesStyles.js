@@ -1,25 +1,46 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
+  display: block;
+  box-sizing: border-box;
+  min-height: 100vh;
   background-color: #f3f4f6;
   font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 `;
 
 export const Content = styled.div`
-  flex: 1;
-  padding: 2rem;
-  margin-left: 250px;
+  width: calc(100% - 260px);
+  max-width: calc(100% - 260px);
+  min-width: 0;
+  padding: clamp(0.85rem, 1.5vw, 2rem);
+  margin-left: 260px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 `;
 
 export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1.5rem;
+
+  > div {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
 `;
 
 export const Button = styled.button`
@@ -30,6 +51,9 @@ export const Button = styled.button`
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 600;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
@@ -40,6 +64,8 @@ export const Button = styled.button`
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 0;
+  table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
   background-color: #ffffff;
@@ -51,15 +77,24 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: rgb(6, 150, 102);
   color: #fff;
-  padding: 0.5rem;
+  padding: 0.55rem 0.6rem;
   text-align: left;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 1rem;
-  font-size: 0.9rem;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.86rem;
+  line-height: 1.35;
   color: #374151;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 export const catalogMap = {
@@ -136,12 +171,12 @@ export const SectionDivider = styled.hr`
 `;
 
 export const ActionButton = styled(Button)`
-  width: 80px;
-  padding: 0.5rem 1rem;
-  margin-right: 0.5rem;
-  margin-bottom: 0.2rem;
+  display: block;
+  width: min(80px, 100%);
+  padding: 0.5rem 0.65rem;
+  margin: 0 auto 0.35rem;
 
   &:last-child {
-    margin-right: 0;
+    margin-bottom: 0;
   }
 `;

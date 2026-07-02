@@ -4,7 +4,9 @@ export const Container = styled.div`
   display: flex;
   align-items: flex-start;
   box-sizing: border-box;
-  width: auto;
+  width: calc(100% - 260px);
+  max-width: calc(100% - 260px);
+  min-width: 0;
   min-height: 100vh;
   margin-left: 260px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem);
@@ -90,11 +92,12 @@ export const MedicineList = styled.div`
 
 export const PaymentDetailsTable = styled.div`
   margin-bottom: 2rem;
-  overflow-x: auto;
+  overflow-x: hidden;
 
   table {
-    min-width: 640px;
-    table-layout: auto;
+    min-width: 0;
+    width: 100%;
+    table-layout: fixed;
   }
 `;
 
@@ -248,7 +251,7 @@ export const CenteredButton = styled(Button)`
 export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 export const ActionGroup = styled.div`

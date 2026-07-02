@@ -9,7 +9,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw pzYOl"
+      class="sc-fYsHOw dsqMEw"
     >
       <div
         class="sc-dKREkF eYbohZ"
@@ -108,7 +108,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         DANH SÁCH THÔNG TIN NHÂN VIÊN
       </h2>
       <table
-        class="sc-kpOvIu ixlBDG"
+        class="sc-kpOvIu krkAuT"
       >
         <colgroup>
           <col
@@ -221,7 +221,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
               class="sc-jMsorb jiKWAU"
             >
               <div
-                class="sc-cXawGu fMUdLf"
+                class="sc-cXawGu eBPonH"
               >
                 <button
                   class="sc-fWnslK gjFfxD"
@@ -276,7 +276,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
               class="sc-jMsorb jiKWAU"
             >
               <div
-                class="sc-cXawGu fMUdLf"
+                class="sc-cXawGu eBPonH"
               >
                 <button
                   class="sc-fWnslK gjFfxD"

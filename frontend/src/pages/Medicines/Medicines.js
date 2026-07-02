@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import Sidebar from '../../components/Sidebar';
@@ -46,9 +46,9 @@ const Medicines = () => {
   const [editingMedicineID, setEditingMedicineID] = useState(null);
   const [error, setError] = useState('');
 
-  const authHeaders = () => ({ Authorization: `Token ${sessionStorage.getItem('token')}` });
+  const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
-  const fetchMedicines = async () => {
+  const fetchMedicines = useCallback(async () => {
     try {
       const response = await axios.get(`${API_BASE}/api/medicines/medicines/`, { headers: authHeaders() });
       setMedicines(response.data);
@@ -56,11 +56,11 @@ const Medicines = () => {
     } catch (fetchError) {
       setError('Không tải được danh sách thuốc.');
     }
-  };
+  }, [authHeaders]);
 
   useEffect(() => {
     fetchMedicines();
-  }, []);
+  }, [fetchMedicines]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();

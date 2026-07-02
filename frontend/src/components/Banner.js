@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -41,11 +41,6 @@ const BannerContainer = styled.section`
   position: relative;
   overflow: hidden;
   background: #075985;
-  cursor: grab;
-
-  &:active {
-    cursor: grabbing;
-  }
 `;
 
 const Track = styled.div`
@@ -148,7 +143,6 @@ const Dot = styled.button`
 
 const Banner = () => {
   const [active, setActive] = useState(0);
-  const startX = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -157,27 +151,8 @@ const Banner = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const beginDrag = (clientX) => {
-    startX.current = clientX;
-  };
-
-  const endDrag = (clientX) => {
-    if (startX.current === null) return;
-    const distance = clientX - startX.current;
-    if (Math.abs(distance) > 50) {
-      setActive((current) => distance < 0 ? (current + 1) % slides.length : (current - 1 + slides.length) % slides.length);
-    }
-    startX.current = null;
-  };
-
   return (
-    <BannerContainer
-      onMouseDown={(event) => beginDrag(event.clientX)}
-      onMouseUp={(event) => endDrag(event.clientX)}
-      onMouseLeave={(event) => endDrag(event.clientX)}
-      onTouchStart={(event) => beginDrag(event.touches[0].clientX)}
-      onTouchEnd={(event) => endDrag(event.changedTouches[0].clientX)}
-    >
+    <BannerContainer>
       <Track $index={active}>
         {slides.map((slide, index) => (
           <Slide $image={slide.image} key={slide.image}>

@@ -3,20 +3,20 @@
 exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
 <div>
   <div
-    class="sc-Qotzb jvBlGB"
+    class="sc-Qotzb faffRo"
   >
     <div>
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw rJhqE"
+      class="sc-fYsHOw jpXJqR"
     >
       <div
-        class="sc-dKREkF cbBVLp"
+        class="sc-dKREkF cgYjGx"
       >
         <div>
           <button
-            class="sc-fWnslK HqgGZ"
+            class="sc-fWnslK cGWGOW"
           >
             <svg
               fill="currentColor"
@@ -43,7 +43,7 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
             value=""
           />
           <button
-            class="sc-fWnslK HqgGZ"
+            class="sc-fWnslK cGWGOW"
           >
             <svg
               fill="currentColor"
@@ -67,62 +67,62 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
         DANH SÁCH THÔNG TIN THUỐC
       </h2>
       <table
-        class="sc-dIMoHT xtTYn"
+        class="sc-dIMoHT SySBV"
       >
         <thead>
           <tr>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               STT
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Mã thuốc
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Tên thuốc
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Thành phần
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Danh mục
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Xuất xứ
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Đơn vị tính
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Số lượng
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Đơn giá
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Hạn sử dụng
             </th>
             <th
-              class="sc-iQQCXo boefCj"
+              class="sc-iQQCXo cdgGSi"
             >
               Hành động
             </th>
@@ -131,66 +131,66 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
         <tbody>
           <tr>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               1
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               MED001
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Paracetamol
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Paracetamol 500mg
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Thuốc kê đơn
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Việt Nam
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Viên
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               100
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               5.000
                VND
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               31/12/2025
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               <button
-                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
+                class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
+                class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"
               >
                 Xóa
               </button>
@@ -198,66 +198,66 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
           </tr>
           <tr>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               2
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               MED002
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Amoxicillin
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Amoxicillin 250mg
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Thuốc không kê đơn
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Nhật Bản
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               Hộp
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               50
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               10.000
                VND
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               30/06/2025
             </td>
             <td
-              class="sc-gDpztx gcEzrB"
+              class="sc-gDpztx izLaYp"
             >
               <button
-                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
+                class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"
               >
                 Sửa
               </button>
               <button
-                class="sc-fWnslK sc-cUiCeM HqgGZ cyWcxl"
+                class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"
               >
                 Xóa
               </button>

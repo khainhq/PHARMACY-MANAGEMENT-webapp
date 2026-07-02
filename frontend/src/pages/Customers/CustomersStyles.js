@@ -21,7 +21,7 @@ export const Content = styled.div`
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 export const Toolbar = styled.div`
@@ -91,7 +91,7 @@ export const FilterField = styled.label`
 
 export const Table = styled.table`
   width: 100%;
-  min-width: 1080px;
+  min-width: 0;
   table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
@@ -128,10 +128,10 @@ export const ActionGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 
   ${Button} {
-    min-width: 72px;
+    min-width: 0;
     padding: 0.5rem 0.75rem;
   }
 `;
