@@ -37,20 +37,21 @@ const slides = [
 
 const BannerContainer = styled.section`
   color: #ffffff;
-  min-height: 640px;
+  height: clamp(500px, calc(100svh - 74px), 600px);
+  min-height: 500px;
   position: relative;
   overflow: hidden;
   background: #075985;
 `;
 
 const Track = styled.div`
-  height: 640px;
+  height: 100%;
   display: flex;
   transform: translateX(${({ $index }) => `-${$index * 100}%`});
   transition: transform 0.55s ease;
 
   @media (max-width: 768px) {
-    height: 650px;
+    height: 100%;
   }
 `;
 
@@ -68,7 +69,7 @@ const Content = styled.div`
   max-width: 1200px;
   height: 100%;
   margin: 0 auto;
-  padding: 5rem 1.5rem 7rem;
+  padding: clamp(2.25rem, 5svh, 3.35rem) 1.5rem clamp(3.75rem, 7svh, 4.75rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,27 +81,28 @@ const Badge = styled(motion.div)`
   border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.14);
+  font-size: 0.95rem;
   font-weight: 700;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.95rem;
 `;
 
 const Title = styled(motion.h1)`
   max-width: 680px;
-  font-size: 3.7rem;
-  line-height: 1.12;
+  font-size: clamp(2.45rem, 4.1vw, 3.2rem);
+  line-height: 1.08;
   font-weight: 800;
-  margin: 0 0 1.5rem;
+  margin: 0 0 1rem;
 
   @media (max-width: 768px) {
-    font-size: 2.4rem;
+    font-size: 2.15rem;
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  max-width: 620px;
-  font-size: 1.2rem;
-  line-height: 1.75;
-  margin: 0 0 2rem;
+  max-width: 590px;
+  font-size: clamp(1rem, 1.6vw, 1.08rem);
+  line-height: 1.62;
+  margin: 0 0 1.45rem;
   color: #e0f2fe;
 `;
 
@@ -110,9 +112,10 @@ const BannerButton = styled(motion.a)`
   align-items: center;
   background: #22c55e;
   color: #ffffff;
-  padding: 1rem 1.6rem;
+  padding: 0.82rem 1.3rem;
   border-radius: 8px;
   font-weight: 800;
+  font-size: 1rem;
   text-decoration: none;
   box-shadow: 0 16px 32px rgba(34, 197, 94, 0.24);
 
@@ -124,7 +127,7 @@ const BannerButton = styled(motion.a)`
 const Dots = styled.div`
   position: absolute;
   left: 50%;
-  bottom: 2rem;
+  bottom: 1.25rem;
   transform: translateX(-50%);
   display: flex;
   gap: 0.7rem;
@@ -132,8 +135,8 @@ const Dots = styled.div`
 `;
 
 const Dot = styled.button`
-  width: 13px;
-  height: 13px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.9);
   background: ${({ $active }) => $active ? '#ffffff' : 'rgba(255, 255, 255, 0.28)'};

@@ -6,7 +6,7 @@ import { theme } from '../styles/theme';
 const NavBar = styled.nav`
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 8px 28px rgba(3, 105, 161, 0.08);
-  padding: 0.75rem 0;
+  padding: 0.45rem 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -17,9 +17,9 @@ const NavContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.15rem;
   gap: 1rem;
 
   @media (max-width: 640px) {
@@ -40,20 +40,20 @@ const LogoContainer = styled(Link)`
 `;
 
 const LogoImage = styled.img`
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   object-fit: cover;
-  margin-right: 0.7rem;
+  margin-right: 0.6rem;
 
   @media (max-width: 640px) {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
   }
 `;
 
 const LogoText = styled.span`
-  font-size: 1.9rem;
+  font-size: clamp(1.45rem, 2.2vw, 1.7rem);
   font-weight: 800;
   color: ${theme.colors.primary};
   white-space: nowrap;
@@ -70,7 +70,7 @@ const LogoText = styled.span`
 const NavLinks = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   flex-wrap: wrap;
   justify-content: flex-end;
 
@@ -86,8 +86,9 @@ const NavLink = styled(Link)`
   color: ${theme.colors.primary};
   text-decoration: none;
   font-weight: 700;
-  padding: 0.55rem 0.85rem;
+  padding: 0.45rem 0.7rem;
   border-radius: 8px;
+  font-size: 0.95rem;
   transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
@@ -103,10 +104,11 @@ const NavLink = styled(Link)`
 const LoginButton = styled(Link)`
   background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary});
   color: ${theme.colors.white};
-  padding: 0.7rem 1.2rem;
+  padding: 0.6rem 1.05rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 700;
+  font-size: 0.95rem;
   box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
 
   @media (max-width: 640px) {
