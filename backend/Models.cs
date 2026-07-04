@@ -14,8 +14,10 @@ public sealed class Employee
     [MaxLength(255)] public string FullName { get; set; } = "";
     [MaxLength(15)] public string PhoneNumber { get; set; } = "";
     [MaxLength(10)] public string Gender { get; set; } = "";
+    public DateTime? BirthDate { get; set; }
     public int YearOfBirth { get; set; }
     public DateTime HireDate { get; set; }
+    public DateTime? ResignationDate { get; set; }
     [JsonPropertyName("is_active")] public bool IsActive { get; set; } = true;
 }
 

@@ -1,5 +1,5 @@
 export const PHONE_FORMAT_ERROR = 'Số điện thoại không đúng định dạng.';
-export const EMPLOYEE_DATE_ERROR = 'Năm sinh và ngày vào làm không hợp lệ. Nhân viên phải đủ 16 tuổi vào ngày vào làm.';
+export const EMPLOYEE_DATE_ERROR = 'Ngày sinh và ngày vào làm không hợp lệ. Nhân viên phải đủ 16 tuổi vào ngày vào làm.';
 
 export const isValidVietnamPhoneNumber = (value) => /^(0\d{9}|\+84\d{9})$/.test(String(value || '').trim());
 
@@ -61,4 +61,19 @@ export const isValidEmployeeYearAndHireDate = (yearOfBirth, hireDate) => {
   if (birthYear < 1900 || birthYear > currentYear) return false;
 
   return hireDateValue.getFullYear() - birthYear >= 16;
+};
+
+export const isValidEmployeeBirthDateAndHireDate = (birthDate, hireDate) => {
+  const birthDateValue = new Date(`${birthDate}T00:00:00`);
+  const hireDateValue = new Date(`${hireDate}T00:00:00`);
+  if (!birthDate || !hireDate || Number.isNaN(birthDateValue.getTime()) || Number.isNaN(hireDateValue.getTime())) {
+    return false;
+  }
+
+  const today = new Date();
+  if (birthDateValue.getFullYear() < 1900 || birthDateValue > today) return false;
+
+  const minimumHireDate = new Date(birthDateValue);
+  minimumHireDate.setFullYear(minimumHireDate.getFullYear() + 16);
+  return hireDateValue >= minimumHireDate;
 };

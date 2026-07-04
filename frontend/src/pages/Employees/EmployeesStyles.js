@@ -17,7 +17,7 @@ export const Content = styled.div`
   flex: 1;
   min-width: 0;
   padding: clamp(1rem, 1.5vw, 2rem);
-  margin-left: 250px;
+  margin-left: 220px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -83,7 +83,7 @@ export const FilterField = styled.label`
 
 export const Table = styled.table`
   width: 100%;
-  min-width: 0;
+  min-width: 980px;
   table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
@@ -91,6 +91,11 @@ export const Table = styled.table`
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+export const TableViewport = styled.div`
+  width: 100%;
+  overflow-x: auto;
 `;
 
 export const TableHeader = styled.th`
@@ -171,12 +176,32 @@ export const Form = styled.form`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
+export const FormField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+`;
+
+export const HelpText = styled.span`
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 600;
+`;
+
 export const Input = styled.input`
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
   color: #374151;
+
+  &[aria-invalid='true'] {
+    border-color: #dc2626;
+    background-color: #fff1f2;
+  }
 `;
 
 export const Select = styled.select`
@@ -185,4 +210,23 @@ export const Select = styled.select`
   border-radius: 8px;
   font-size: 0.9rem;
   color: #374151;
+`;
+
+export const SectionTitle = styled.h2`
+  margin: 1.75rem 0 0.8rem;
+  color: #0f172a;
+  font-size: clamp(1.1rem, 1.4vw, 1.35rem);
+`;
+
+export const StatusBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  background: ${({ $active }) => ($active ? '#dcfce7' : '#fee2e2')};
+  color: ${({ $active }) => ($active ? '#166534' : '#991b1b')};
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
 `;

@@ -9,7 +9,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw dsqMEw"
+      class="sc-fYsHOw gJKJmj"
     >
       <div
         class="sc-dKREkF eYbohZ"
@@ -45,7 +45,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           Sắp xếp
           <select
             aria-label="Sắp xếp nhân viên"
-            class="sc-dcKlJK eGWLq"
+            class="sc-lixPIL bQXbeD"
           >
             <option
               value=""
@@ -70,7 +70,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           Ngày cụ thể
           <input
             aria-label="Lọc nhân viên theo ngày cụ thể"
-            class="sc-jScdur bAGGGS"
+            class="sc-cZSric lawpFf"
             type="date"
             value=""
           />
@@ -81,7 +81,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           Từ ngày
           <input
             aria-label="Lọc nhân viên từ ngày"
-            class="sc-jScdur bAGGGS"
+            class="sc-cZSric lawpFf"
             type="date"
             value=""
           />
@@ -92,7 +92,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           Đến ngày
           <input
             aria-label="Lọc nhân viên đến ngày"
-            class="sc-jScdur bAGGGS"
+            class="sc-cZSric lawpFf"
             type="date"
             value=""
           />
@@ -104,195 +104,328 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           Bỏ lọc
         </button>
       </div>
-      <h2>
+      <h2
+        class="sc-etfXYe cFcIjd"
+      >
         DANH SÁCH THÔNG TIN NHÂN VIÊN
       </h2>
-      <table
-        class="sc-kpOvIu krkAuT"
+      <div
+        class="sc-icnseD zmpJf"
       >
-        <colgroup>
-          <col
-            style="width: 5%;"
-          />
-          <col
-            style="width: 12%;"
-          />
-          <col
-            style="width: 20%;"
-          />
-          <col
-            style="width: 14%;"
-          />
-          <col
-            style="width: 9%;"
-          />
-          <col
-            style="width: 9%;"
-          />
-          <col
-            style="width: 15%;"
-          />
-          <col
-            style="width: 16%;"
-          />
-        </colgroup>
-        <thead>
-          <tr>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              STT
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Mã nhân viên
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Họ tên
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Số điện thoại
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Giới tính
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Năm sinh
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Ngày vào làm
-            </th>
-            <th
-              class="sc-icnseD hMjDHl"
-            >
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              1
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              AB12CDEF
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              Nguyen Van A
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              0123456789
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              Nam
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              1990
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              15/01/2023
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              <div
-                class="sc-cXawGu eBPonH"
+        <table
+          class="sc-kpOvIu ixlBDG"
+        >
+          <colgroup>
+            <col
+              style="width: 56px;"
+            />
+            <col
+              style="width: 130px;"
+            />
+            <col
+              style="width: 210px;"
+            />
+            <col
+              style="width: 150px;"
+            />
+            <col
+              style="width: 100px;"
+            />
+            <col
+              style="width: 135px;"
+            />
+            <col
+              style="width: 135px;"
+            />
+            <col
+              style="width: 120px;"
+            />
+            <col
+              style="width: 150px;"
+            />
+          </colgroup>
+          <thead>
+            <tr>
+              <th
+                class="sc-jMsorb bmPOoA"
               >
-                <button
-                  class="sc-fWnslK gjFfxD"
-                >
-                  Sửa
-                </button>
-                <button
-                  class="sc-fWnslK gjFfxD"
-                >
-                  Xóa
-                </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              2
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              XY34WXYZ
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              Tran Thi B
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              0987654321
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              Nữ
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              1995
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              20/06/2023
-            </td>
-            <td
-              class="sc-jMsorb iVRIIU"
-            >
-              <div
-                class="sc-cXawGu eBPonH"
+                STT
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
               >
-                <button
-                  class="sc-fWnslK gjFfxD"
+                Mã nhân viên
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Họ tên
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Số điện thoại
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Giới tính
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Ngày sinh
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Ngày vào làm
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Trạng thái
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                1
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                AB12CDEF
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                Nguyen Van A
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                0123456789
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                Nam
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                10/02/1990
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                15/01/2023
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                <span
+                  class="sc-dFaThA jTBZye"
                 >
-                  Sửa
-                </button>
-                <button
-                  class="sc-fWnslK gjFfxD"
+                  Đang làm
+                </span>
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                <div
+                  class="sc-jJAtPt kykyyR"
                 >
-                  Xóa
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                  <button
+                    class="sc-fWnslK gjFfxD"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    class="sc-fWnslK gjFfxD"
+                  >
+                    Nghỉ việc
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                2
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                XY34WXYZ
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                Tran Thi B
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                0987654321
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                Nữ
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                21/07/1995
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                20/06/2023
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                <span
+                  class="sc-dFaThA jTBZye"
+                >
+                  Đang làm
+                </span>
+              </td>
+              <td
+                class="sc-cXawGu Pybno"
+              >
+                <div
+                  class="sc-jJAtPt kykyyR"
+                >
+                  <button
+                    class="sc-fWnslK gjFfxD"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    class="sc-fWnslK gjFfxD"
+                  >
+                    Nghỉ việc
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h2
+        class="sc-etfXYe cFcIjd"
+      >
+        NHÂN VIÊN ĐÃ NGHỈ VIỆC
+      </h2>
+      <div
+        class="sc-icnseD zmpJf"
+      >
+        <table
+          class="sc-kpOvIu ixlBDG"
+        >
+          <colgroup>
+            <col
+              style="width: 56px;"
+            />
+            <col
+              style="width: 130px;"
+            />
+            <col
+              style="width: 220px;"
+            />
+            <col
+              style="width: 150px;"
+            />
+            <col
+              style="width: 105px;"
+            />
+            <col
+              style="width: 135px;"
+            />
+            <col
+              style="width: 135px;"
+            />
+            <col
+              style="width: 135px;"
+            />
+            <col
+              style="width: 120px;"
+            />
+          </colgroup>
+          <thead>
+            <tr>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                STT
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Mã nhân viên
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Họ tên
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Số điện thoại
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Giới tính
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Ngày sinh
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Ngày vào làm
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Ngày nghỉ việc
+              </th>
+              <th
+                class="sc-jMsorb bmPOoA"
+              >
+                Trạng thái
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-cUiCeM jAyBXv"
+                colspan="9"
+              >
+                Chưa có nhân viên nghỉ việc phù hợp với bộ lọc.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

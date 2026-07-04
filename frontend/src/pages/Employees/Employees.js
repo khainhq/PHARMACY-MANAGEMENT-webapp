@@ -14,23 +14,35 @@ import {
   Table,
   TableHeader,
   TableCell,
+  TableViewport,
   Form,
+  FormField,
+  HelpText,
   Input,
   Select,
   ActionGroup,
   EmptyCell,
   genderMap,
+  SectionTitle,
+  StatusBadge,
 } from './EmployeesStyles';
 import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 import {
   EMPLOYEE_DATE_ERROR,
   PHONE_FORMAT_ERROR,
-  isValidEmployeeYearAndHireDate,
+  isValidEmployeeBirthDateAndHireDate,
   isValidVietnamPhoneNumber,
 } from '../../utils/validation';
 
 const API_BASE = 'http://127.0.0.1:8000';
-const emptyForm = { fullName: '', phoneNumber: '', gender: '', yearOfBirth: '', hireDate: '' };
+const emptyForm = { fullName: '', phoneNumber: '', gender: '', birthDate: '', hireDate: '' };
+
+const toDateInputValue = (value) => (value ? String(value).split('T')[0] : '');
+const getBirthDateInputValue = (employee) =>
+  toDateInputValue(employee.birthDate) || (employee.yearOfBirth ? `${employee.yearOfBirth}-01-01` : '');
+const getBirthYear = (birthDate) => new Date(`${birthDate}T00:00:00`).getFullYear();
+const formatEmployeeBirthDate = (employee) =>
+  employee.birthDate ? formatVietnamDate(employee.birthDate) : employee.yearOfBirth || '';
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -62,13 +74,25 @@ const Employees = () => {
             employee.fullName,
             employee.phoneNumber,
             genderMap[employee.gender] || employee.gender,
-            employee.yearOfBirth,
+            formatEmployeeBirthDate(employee),
             formatVietnamDate(employee.hireDate),
+            formatVietnamDate(employee.resignationDate),
+            employee.is_active === false ? 'Đã nghỉ việc' : 'Đang làm việc',
           ]
             .filter(Boolean)
             .join(' '),
       }),
     [employees, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
+  );
+
+  const activeEmployees = useMemo(
+    () => filteredEmployees.filter((employee) => employee.is_active !== false),
+    [filteredEmployees]
+  );
+
+  const resignedEmployees = useMemo(
+    () => filteredEmployees.filter((employee) => employee.is_active === false),
+    [filteredEmployees]
   );
 
   const fetchEmployees = useCallback(async () => {
@@ -108,15 +132,17 @@ const Employees = () => {
     fullName: form.fullName.trim(),
     phoneNumber: form.phoneNumber.trim(),
     gender: form.gender,
-    yearOfBirth: Number(form.yearOfBirth),
+    birthDate: form.birthDate,
+    yearOfBirth: getBirthYear(form.birthDate),
     hireDate: form.hireDate,
     is_active: true,
+    resignationDate: null,
   });
 
   const validateForm = () => {
     const errors = [];
     if (!isValidVietnamPhoneNumber(form.phoneNumber)) errors.push(PHONE_FORMAT_ERROR);
-    if (!isValidEmployeeYearAndHireDate(form.yearOfBirth, form.hireDate)) errors.push(EMPLOYEE_DATE_ERROR);
+    if (!isValidEmployeeBirthDateAndHireDate(form.birthDate, form.hireDate)) errors.push(EMPLOYEE_DATE_ERROR);
     return errors.join(' ');
   };
 
@@ -153,7 +179,7 @@ const Employees = () => {
       fullName: employee.fullName,
       phoneNumber: employee.phoneNumber,
       gender: employee.gender,
-      yearOfBirth: employee.yearOfBirth,
+      birthDate: getBirthDateInputValue(employee),
       hireDate: employee.hireDate ? employee.hireDate.split('T')[0] : '',
     });
     setShowForm(true);
@@ -180,16 +206,16 @@ const Employees = () => {
     }
   };
 
-  const handleDeleteEmployee = async (employeeID) => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa nhân viên này?');
-    if (!confirmDelete) return;
+  const handleResignEmployee = async (employeeID) => {
+    const confirmResign = window.confirm('Bạn có chắc chắn muốn chuyển nhân viên này sang danh sách nghỉ việc?');
+    if (!confirmResign) return;
     setFormError('');
     try {
       await axios.delete(`${API_BASE}/api/auth/employees/${employeeID}/`, { headers: authHeaders() });
-      showSuccess('Xóa nhân viên thành công.');
+      showSuccess('Đã lưu nhân viên vào danh sách nghỉ việc.');
       await fetchEmployees();
-    } catch (deleteError) {
-      showError('Không xóa được nhân viên này vì có thể đang liên kết với tài khoản hoặc chứng từ.');
+    } catch (resignError) {
+      showError('Không cập nhật trạng thái nghỉ việc cho nhân viên này.');
     }
   };
 
@@ -250,16 +276,32 @@ const Employees = () => {
 
         {showForm && (
           <Form onSubmit={editingEmployeeID ? handleUpdateEmployee : handleAddEmployee}>
-            <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
-            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => { setForm({ ...form, phoneNumber: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(PHONE_FORMAT_ERROR)} />
-            <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
-              <option value="">Chọn giới tính</option>
-              <option value="Male">Nam</option>
-              <option value="Female">Nữ</option>
-              <option value="Other">Khác</option>
-            </Select>
-            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => { setForm({ ...form, yearOfBirth: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
-            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => { setForm({ ...form, hireDate: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
+            <FormField>
+              Họ tên
+              <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
+            </FormField>
+            <FormField>
+              Số điện thoại
+              <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => { setForm({ ...form, phoneNumber: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(PHONE_FORMAT_ERROR)} />
+            </FormField>
+            <FormField>
+              Giới tính
+              <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
+                <option value="">Chọn giới tính</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+                <option value="Other">Khác</option>
+              </Select>
+            </FormField>
+            <FormField>
+              Ngày tháng năm sinh
+              <Input type="date" value={form.birthDate} onChange={(e) => { setForm({ ...form, birthDate: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
+            </FormField>
+            <FormField>
+              Ngày vào làm
+              <Input type="date" value={form.hireDate} onChange={(e) => { setForm({ ...form, hireDate: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
+              <HelpText>Ngày bắt đầu làm việc tại nhà thuốc.</HelpText>
+            </FormField>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Button type="submit">{editingEmployeeID ? 'Cập nhật' : 'Thêm nhân viên'}</Button>
               <Button type="button" onClick={resetForm}>Hủy</Button>
@@ -267,55 +309,110 @@ const Employees = () => {
           </Form>
         )}
 
-        <h2>DANH SÁCH THÔNG TIN NHÂN VIÊN</h2>
-        <Table>
-          <colgroup>
-            <col style={{ width: '5%' }} />
-            <col style={{ width: '12%' }} />
-            <col style={{ width: '20%' }} />
-            <col style={{ width: '14%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '9%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '16%' }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <TableHeader>STT</TableHeader>
-              <TableHeader>Mã nhân viên</TableHeader>
-              <TableHeader>Họ tên</TableHeader>
-              <TableHeader>Số điện thoại</TableHeader>
-              <TableHeader>Giới tính</TableHeader>
-              <TableHeader>Năm sinh</TableHeader>
-              <TableHeader>Ngày vào làm</TableHeader>
-              <TableHeader>Hành động</TableHeader>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredEmployees.map((employee, index) => (
-              <tr key={employee.employeeID}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{employee.employeeID}</TableCell>
-                <TableCell>{employee.fullName}</TableCell>
-                <TableCell>{employee.phoneNumber}</TableCell>
-                <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
-                <TableCell>{employee.yearOfBirth}</TableCell>
-                <TableCell>{formatVietnamDate(employee.hireDate)}</TableCell>
-                <TableCell>
-                  <ActionGroup>
-                    <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>
-                    <Button onClick={() => handleDeleteEmployee(employee.employeeID)}>Xóa</Button>
-                  </ActionGroup>
-                </TableCell>
-              </tr>
-            ))}
-            {filteredEmployees.length === 0 && (
+        <SectionTitle>DANH SÁCH THÔNG TIN NHÂN VIÊN</SectionTitle>
+        <TableViewport>
+          <Table>
+            <colgroup>
+              <col style={{ width: '56px' }} />
+              <col style={{ width: '130px' }} />
+              <col style={{ width: '210px' }} />
+              <col style={{ width: '150px' }} />
+              <col style={{ width: '100px' }} />
+              <col style={{ width: '135px' }} />
+              <col style={{ width: '135px' }} />
+              <col style={{ width: '120px' }} />
+              <col style={{ width: '150px' }} />
+            </colgroup>
+            <thead>
               <tr>
-                <EmptyCell colSpan={8}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+                <TableHeader>STT</TableHeader>
+                <TableHeader>Mã nhân viên</TableHeader>
+                <TableHeader>Họ tên</TableHeader>
+                <TableHeader>Số điện thoại</TableHeader>
+                <TableHeader>Giới tính</TableHeader>
+                <TableHeader>Ngày sinh</TableHeader>
+                <TableHeader>Ngày vào làm</TableHeader>
+                <TableHeader>Trạng thái</TableHeader>
+                <TableHeader>Hành động</TableHeader>
               </tr>
-            )}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {activeEmployees.map((employee, index) => (
+                <tr key={employee.employeeID}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{employee.employeeID}</TableCell>
+                  <TableCell>{employee.fullName}</TableCell>
+                  <TableCell>{employee.phoneNumber}</TableCell>
+                  <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
+                  <TableCell>{formatEmployeeBirthDate(employee)}</TableCell>
+                  <TableCell>{formatVietnamDate(employee.hireDate)}</TableCell>
+                  <TableCell><StatusBadge $active>Đang làm</StatusBadge></TableCell>
+                  <TableCell>
+                    <ActionGroup>
+                      <Button onClick={() => handleEditEmployee(employee)}>Sửa</Button>
+                      <Button onClick={() => handleResignEmployee(employee.employeeID)}>Nghỉ việc</Button>
+                    </ActionGroup>
+                  </TableCell>
+                </tr>
+              ))}
+              {activeEmployees.length === 0 && (
+                <tr>
+                  <EmptyCell colSpan={9}>Chưa có dữ liệu phù hợp với bộ lọc.</EmptyCell>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableViewport>
+
+        <SectionTitle>NHÂN VIÊN ĐÃ NGHỈ VIỆC</SectionTitle>
+        <TableViewport>
+          <Table>
+            <colgroup>
+              <col style={{ width: '56px' }} />
+              <col style={{ width: '130px' }} />
+              <col style={{ width: '220px' }} />
+              <col style={{ width: '150px' }} />
+              <col style={{ width: '105px' }} />
+              <col style={{ width: '135px' }} />
+              <col style={{ width: '135px' }} />
+              <col style={{ width: '135px' }} />
+              <col style={{ width: '120px' }} />
+            </colgroup>
+            <thead>
+              <tr>
+                <TableHeader>STT</TableHeader>
+                <TableHeader>Mã nhân viên</TableHeader>
+                <TableHeader>Họ tên</TableHeader>
+                <TableHeader>Số điện thoại</TableHeader>
+                <TableHeader>Giới tính</TableHeader>
+                <TableHeader>Ngày sinh</TableHeader>
+                <TableHeader>Ngày vào làm</TableHeader>
+                <TableHeader>Ngày nghỉ việc</TableHeader>
+                <TableHeader>Trạng thái</TableHeader>
+              </tr>
+            </thead>
+            <tbody>
+              {resignedEmployees.map((employee, index) => (
+                <tr key={employee.employeeID}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{employee.employeeID}</TableCell>
+                  <TableCell>{employee.fullName}</TableCell>
+                  <TableCell>{employee.phoneNumber}</TableCell>
+                  <TableCell>{genderMap[employee.gender] || employee.gender}</TableCell>
+                  <TableCell>{formatEmployeeBirthDate(employee)}</TableCell>
+                  <TableCell>{formatVietnamDate(employee.hireDate)}</TableCell>
+                  <TableCell>{formatVietnamDate(employee.resignationDate)}</TableCell>
+                  <TableCell><StatusBadge $active={false}>Đã nghỉ</StatusBadge></TableCell>
+                </tr>
+              ))}
+              {resignedEmployees.length === 0 && (
+                <tr>
+                  <EmptyCell colSpan={9}>Chưa có nhân viên nghỉ việc phù hợp với bộ lọc.</EmptyCell>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </TableViewport>
       </Content>
     </Container>
   );

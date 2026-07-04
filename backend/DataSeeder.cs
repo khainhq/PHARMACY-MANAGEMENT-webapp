@@ -20,9 +20,9 @@ public static class DataSeeder
         var productRole = await db.Roles.FirstAsync(x => x.RoleName == "Product_manager");
 
         db.Employees.AddRange(
-            new Employee { EmployeeID = "EMP001", FullName = "Nguyen Hoang Khai", PhoneNumber = "0900000001", Gender = "Male", YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date },
-            new Employee { EmployeeID = "EMP002", FullName = "Nhan vien ban hang", PhoneNumber = "0900000002", Gender = "Female", YearOfBirth = 2001, HireDate = DateTime.UtcNow.Date },
-            new Employee { EmployeeID = "EMP003", FullName = "Quan ly san pham", PhoneNumber = "0900000003", Gender = "Male", YearOfBirth = 1999, HireDate = DateTime.UtcNow.Date });
+            new Employee { EmployeeID = "EMP001", FullName = "Nguyen Hoang Khai", PhoneNumber = "0900000001", Gender = "Male", BirthDate = new DateTime(2000, 3, 10), YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date },
+            new Employee { EmployeeID = "EMP002", FullName = "Nhan vien ban hang", PhoneNumber = "0900000002", Gender = "Female", BirthDate = new DateTime(2001, 5, 12), YearOfBirth = 2001, HireDate = DateTime.UtcNow.Date },
+            new Employee { EmployeeID = "EMP003", FullName = "Quan ly san pham", PhoneNumber = "0900000003", Gender = "Male", BirthDate = new DateTime(1999, 9, 20), YearOfBirth = 1999, HireDate = DateTime.UtcNow.Date });
 
         db.Customers.AddRange(
             new Customer { CustomerID = "CUS001", FullName = "Khach hang 1", PhoneNumber = "0910000001", Gender = "Male" },

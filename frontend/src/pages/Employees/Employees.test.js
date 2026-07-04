@@ -37,16 +37,20 @@ describe('Employees component', () => {
           fullName: 'Nguyen Van A',
           phoneNumber: '0123456789',
           gender: 'Male',
+          birthDate: '1990-02-10',
           yearOfBirth: 1990,
           hireDate: '2023-01-15',
+          is_active: true,
         },
         {
           employeeID: 'XY34WXYZ',
           fullName: 'Tran Thi B',
           phoneNumber: '0987654321',
           gender: 'Female',
+          birthDate: '1995-07-21',
           yearOfBirth: 1995,
           hireDate: '2023-06-20',
+          is_active: true,
         },
       ],
     });
@@ -72,8 +76,8 @@ describe('Employees component', () => {
       expect(screen.getByText(/0987654321/i)).toBeInTheDocument();
       expect(screen.getByText(/Nam/i)).toBeInTheDocument();
       expect(screen.getByText(/Nữ/i)).toBeInTheDocument();
-      expect(screen.getByText(/1990/i)).toBeInTheDocument();
-      expect(screen.getByText(/1995/i)).toBeInTheDocument();
+      expect(screen.getByText(/10\/02\/1990/i)).toBeInTheDocument();
+      expect(screen.getByText(/21\/07\/1995/i)).toBeInTheDocument();
       expect(screen.getByText(/15\/01\/2023/i)).toBeInTheDocument();
       expect(screen.getByText(/20\/06\/2023/i)).toBeInTheDocument();
     });
@@ -104,8 +108,8 @@ describe('Employees component', () => {
       expect(screen.getByPlaceholderText(/Họ tên/i)).toBeInTheDocument();
       expect(screen.getByPlaceholderText(/Số điện thoại/i)).toBeInTheDocument();
       expect(screen.getByText(/Chọn giới tính/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Năm sinh/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Ngày vào làm/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Ngày tháng năm sinh/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Ngày vào làm/i)).toBeInTheDocument();
     });
   });
 
@@ -125,8 +129,8 @@ describe('Employees component', () => {
     fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '0912345678' } });
     const genderSelect = screen.getByLabelText('Chọn giới tính');
     fireEvent.change(genderSelect, { target: { value: 'Female' } });
-    fireEvent.change(screen.getByPlaceholderText(/Năm sinh/i), { target: { value: '1992' } });
-    fireEvent.change(screen.getByPlaceholderText(/Ngày vào làm/i), { target: { value: '2023-12-01' } });
+    fireEvent.change(screen.getByLabelText(/Ngày tháng năm sinh/i), { target: { value: '1992-04-12' } });
+    fireEvent.change(screen.getByLabelText(/Ngày vào làm/i), { target: { value: '2023-12-01' } });
 
     const submitButtons = screen.getAllByRole('button');
     const submitButton = submitButtons.find(button => button.textContent === 'Thêm nhân viên' && button.getAttribute('type') === 'submit');
@@ -141,6 +145,7 @@ describe('Employees component', () => {
           fullName: 'Le Thi C',
           phoneNumber: '0912345678',
           gender: 'Female',
+          birthDate: '1992-04-12',
           yearOfBirth: 1992,
           hireDate: '2023-12-01',
         }),
@@ -150,7 +155,7 @@ describe('Employees component', () => {
     });
   });
 
-  test('không thêm nhân viên khi số điện thoại, năm sinh và ngày vào làm không hợp lệ', async () => {
+  test('không thêm nhân viên khi số điện thoại, ngày sinh và ngày vào làm không hợp lệ', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
     renderEmployees();
@@ -165,8 +170,8 @@ describe('Employees component', () => {
     fireEvent.change(screen.getByPlaceholderText(/Họ tên/i), { target: { value: 'Lý Thông' } });
     fireEvent.change(screen.getByPlaceholderText(/Số điện thoại/i), { target: { value: '116' } });
     fireEvent.change(screen.getByLabelText('Chọn giới tính'), { target: { value: 'Male' } });
-    fireEvent.change(screen.getByPlaceholderText(/Năm sinh/i), { target: { value: '2000' } });
-    fireEvent.change(screen.getByPlaceholderText(/Ngày vào làm/i), { target: { value: '2001-01-01' } });
+    fireEvent.change(screen.getByLabelText(/Ngày tháng năm sinh/i), { target: { value: '2000-01-01' } });
+    fireEvent.change(screen.getByLabelText(/Ngày vào làm/i), { target: { value: '2001-01-01' } });
 
     const submitButton = screen
       .getAllByRole('button')
@@ -207,6 +212,7 @@ describe('Employees component', () => {
           fullName: 'Nguyen Van B',
           phoneNumber: '0999999999',
           gender: 'Male',
+          birthDate: '1990-02-10',
           yearOfBirth: 1990,
           hireDate: '2023-01-15',
           is_active: true,
@@ -217,7 +223,7 @@ describe('Employees component', () => {
     });
   });
 
-  test('xóa nhân viên', async () => {
+  test('chuyển nhân viên sang trạng thái nghỉ việc', async () => {
     axios.delete.mockResolvedValue({ data: {} });
 
     renderEmployees();
@@ -226,7 +232,7 @@ describe('Employees component', () => {
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();
     });
 
-    const deleteButton = screen.getAllByRole('button', { name: /Xóa/i })[0];
+    const deleteButton = screen.getAllByRole('button', { name: /Nghỉ việc/i })[0];
     await act(async () => {
       fireEvent.click(deleteButton);
     });
