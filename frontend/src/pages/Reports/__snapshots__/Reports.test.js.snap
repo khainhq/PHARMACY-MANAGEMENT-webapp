@@ -9,17 +9,17 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw dZnbbE"
+      class="sc-fYsHOw hwKLUp"
     >
       <div
-        class="sc-cXawGu bRLcWV"
+        class="sc-jJAtPt eNzFjD"
       >
         <h1>
           Báo Cáo
         </h1>
         <div>
           <button
-            class="sc-jJAtPt gMbApZ"
+            class="sc-cUiCeM hAZloY"
           >
             <svg
               fill="currentColor"
@@ -38,7 +38,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             Tải xuống Excel
           </button>
           <button
-            class="sc-jJAtPt gMbApZ"
+            class="sc-cUiCeM hAZloY"
           >
             <svg
               fill="currentColor"
@@ -111,7 +111,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
           class="sc-dKREkF efIfYf"
         >
           <div
-            class="sc-iQQCXo jHGWaL"
+            class="sc-iQQCXo dEtvbO"
           >
             <h3>
               Doanh thu theo ngày
@@ -141,7 +141,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo jHGWaL"
+            class="sc-iQQCXo dEtvbO"
           >
             <h3>
               Khách hàng theo số hóa đơn
@@ -171,7 +171,37 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo jHGWaL"
+            class="sc-iQQCXo dEtvbO"
+          >
+            <h3>
+              Cơ cấu trạng thái hóa đơn
+            </h3>
+            <div
+              data-testid="responsive-container"
+            >
+              <div
+                data-testid="pie-chart"
+              >
+                <div>
+                  Pie
+                  <div>
+                    Cell
+                  </div>
+                  <div>
+                    Cell
+                  </div>
+                </div>
+                <div>
+                  Tooltip
+                </div>
+                <div>
+                  Legend
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="sc-iQQCXo dEtvbO"
           >
             <h3>
               Thuốc đã bán
@@ -201,110 +231,114 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo jHGWaL"
+            class="sc-iQQCXo dEtvbO"
           >
             <h3>
               Chi tiết hóa đơn
             </h3>
-            <table
-              class="sc-gDpztx VxetT"
+            <div
+              class="sc-jMsorb dEtsTO"
             >
-              <thead>
-                <tr>
-                  <th
-                    class="sc-kpOvIu kgNMAj"
-                  >
-                    Mã hóa đơn
-                  </th>
-                  <th
-                    class="sc-kpOvIu kgNMAj"
-                  >
-                    Thời gian
-                  </th>
-                  <th
-                    class="sc-kpOvIu kgNMAj"
-                  >
-                    Khách hàng
-                  </th>
-                  <th
-                    class="sc-kpOvIu kgNMAj"
-                  >
-                    Tổng tiền
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    INV003
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    02/05/2025 21:00:00
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    Tran Thi B
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    150.000
-                     VND
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    INV002
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    02/05/2025 19:00:00
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    Nguyen Van A
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    200.000
-                     VND
-                  </td>
-                </tr>
-                <tr>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    INV001
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    01/05/2025 17:00:00
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    Nguyen Van A
-                  </td>
-                  <td
-                    class="sc-icnseD fkqbyh"
-                  >
-                    100.000
-                     VND
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <table
+                class="sc-gDpztx gthBYI"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="sc-kpOvIu kgNMAj"
+                    >
+                      Mã hóa đơn
+                    </th>
+                    <th
+                      class="sc-kpOvIu kgNMAj"
+                    >
+                      Thời gian
+                    </th>
+                    <th
+                      class="sc-kpOvIu kgNMAj"
+                    >
+                      Khách hàng
+                    </th>
+                    <th
+                      class="sc-kpOvIu kgNMAj"
+                    >
+                      Tổng tiền
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      INV003
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      02/05/2025 21:00:00
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      Tran Thi B
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      150.000
+                       VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      INV002
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      02/05/2025 19:00:00
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      Nguyen Van A
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      200.000
+                       VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      INV001
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      01/05/2025 17:00:00
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      Nguyen Van A
+                    </td>
+                    <td
+                      class="sc-icnseD fkqbyh"
+                    >
+                      100.000
+                       VND
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

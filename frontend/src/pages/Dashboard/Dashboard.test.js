@@ -24,6 +24,9 @@ jest.mock('recharts', () => ({
   Scatter: () => null,
   ZAxis: () => null,
   Legend: () => null,
+  PieChart: () => <div data-testid="mocked-piechart">Mocked PieChart</div>,
+  Pie: () => null,
+  Cell: () => null,
 }));
 
 const renderDashboard = () => render(

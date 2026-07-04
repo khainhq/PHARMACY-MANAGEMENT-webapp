@@ -41,6 +41,10 @@ jest.mock('recharts', () => ({
   CartesianGrid: () => <div>CartesianGrid</div>,
   Tooltip: () => <div>Tooltip</div>,
   ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
+  PieChart: ({ children }) => <div data-testid="pie-chart">{children}</div>,
+  Pie: ({ children }) => <div>Pie{children}</div>,
+  Cell: () => <div>Cell</div>,
+  Legend: () => <div>Legend</div>,
 }));
 
 jest.setTimeout(30000);
@@ -145,14 +149,19 @@ describe('Reports component', () => {
       expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
       expect(screen.getByText(/Doanh thu theo ngày/i)).toBeInTheDocument();
       expect(screen.getByText(/Khách hàng theo số hóa đơn/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cơ cấu trạng thái hóa đơn/i)).toBeInTheDocument();
       expect(screen.getAllByText(/Thuốc đã bán/i).length).toBeGreaterThanOrEqual(2);
       expect(screen.getByText(/Chi tiết hóa đơn/i)).toBeInTheDocument();
     }, { timeout: 5000 });
 
     expect(screen.getByText(/Tải xuống Excel/i)).toBeInTheDocument();
     expect(screen.getByText(/Tải xuống PDF/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('450.000 VND')).toBeInTheDocument();
+    }, { timeout: 5000 });
     expect(screen.getByTestId('line-chart')).toBeInTheDocument();
     expect(screen.getAllByTestId('bar-chart')).toHaveLength(2);
+    expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
 
     const table = screen.getByRole('table');
     expect(within(table).getByText(/Mã hóa đơn/i)).toBeInTheDocument();

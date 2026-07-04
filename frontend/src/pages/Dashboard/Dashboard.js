@@ -16,6 +16,9 @@ import {
   Scatter,
   ZAxis,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from 'recharts';
 import Sidebar from '../../components/Sidebar';
 import {
@@ -43,9 +46,18 @@ const API_BASE = 'http://127.0.0.1:8000';
 const REFRESH_INTERVAL_MS = 5000;
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
+const PIE_COLORS = ['#2563eb', '#16a34a', '#f97316', '#dc2626'];
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const toNumber = (value) => Number(value || 0);
+const invoiceStatusLabels = {
+  Paid: 'Đã thanh toán',
+  Pending: 'Chưa thanh toán',
+  'Đã thanh toán': 'Đã thanh toán',
+  'Chưa thanh toán': 'Chưa thanh toán',
+};
+
+const formatInvoiceStatus = (status) => invoiceStatusLabels[status] || status || 'Không xác định';
 
 const shortenLabel = (value, maxLength = 24) => {
   const text = String(value || '');
@@ -69,6 +81,7 @@ const Dashboard = () => {
   const [expiredMedicinesCount, setExpiredMedicinesCount] = useState(0);
   const [topSellingMedicines, setTopSellingMedicines] = useState([]);
   const [paymentData, setPaymentData] = useState([]);
+  const [invoiceStatusData, setInvoiceStatusData] = useState([]);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [inventoryMovement, setInventoryMovement] = useState([]);
 
@@ -140,6 +153,7 @@ const Dashboard = () => {
             medicineID,
             name: fullName,
             shortName: shortenLabel(fullName),
+            chartLabel: medicineID,
             quantity,
             unit: medicine?.unit ? unitMap[medicine.unit] : '',
           };
@@ -162,6 +176,14 @@ const Dashboard = () => {
         .map(([date, totalCost]) => ({ date, totalCost }))
         .sort((left, right) => toVietnamDate(left.date) - toVietnamDate(right.date));
 
+      const invoiceStatuses = invoices.reduce((acc, invoice) => {
+        const status = formatInvoiceStatus(invoice.status);
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+
+      const invoiceStatusChartData = Object.entries(invoiceStatuses).map(([name, value]) => ({ name, value }));
+
       const movementData = medicines
         .map((medicine) => {
           const fullName = medicine.medicineName || medicine.medicineID;
@@ -169,6 +191,7 @@ const Dashboard = () => {
             medicineID: medicine.medicineID,
             name: fullName,
             shortName: shortenLabel(fullName, 22),
+            chartLabel: medicine.medicineID,
             stockQuantity: toNumber(medicine.stockQuantity),
             importedQuantity: importedQuantityByMedicine[medicine.medicineID] || 0,
             soldQuantity: soldQuantityByMedicine[medicine.medicineID] || 0,
@@ -185,6 +208,7 @@ const Dashboard = () => {
       setExpiringMedicines(upcomingExpiringMedicines);
       setTopSellingMedicines(topSelling);
       setPaymentData(paymentChartData);
+      setInvoiceStatusData(invoiceStatusChartData);
       setInventoryMovement(movementData.slice(0, 10));
       setStats({
         totalRevenue: Object.values(invoiceTotals).reduce((sum, total) => sum + total, 0),
@@ -265,10 +289,10 @@ const Dashboard = () => {
         <RecentSection>
           <h2>Chi phí nhập thuốc theo thời gian</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={paymentData} margin={{ left: 50, right: 24 }}>
+            <LineChart data={paymentData} margin={{ top: 16, right: 28, bottom: 24, left: 82 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis tickFormatter={(value) => formatMoney(value)} />
+              <YAxis width={88} tickFormatter={(value) => formatMoney(value)} />
               <Tooltip formatter={(value) => `${formatMoney(value)} VND`} />
               <Line type="monotone" dataKey="totalCost" name="Chi phí nhập" stroke="#0ea5e9" strokeWidth={2} />
             </LineChart>
@@ -341,37 +365,64 @@ const Dashboard = () => {
           </SectionGrid>
         </RecentSection>
 
-        <RecentSection>
-          <h2>Top thuốc bán chạy nhất</h2>
-          {topSellingMedicines.length > 0 ? (
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart data={topSellingMedicines} layout="vertical" margin={{ top: 8, right: 28, bottom: 8, left: 34 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" allowDecimals={false} />
-                <YAxis dataKey="shortName" type="category" width={190} interval={0} />
-                <Tooltip
-                  formatter={(value, name, props) => {
-                    const unit = props.payload.unit || 'đơn vị';
-                    return [`${value} ${unit}`, 'Đã bán'];
-                  }}
-                  labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
-                />
-                <Bar dataKey="quantity" name="Đã bán" fill="#2563eb" />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <EmptyState as="p">Chưa có dữ liệu thuốc đã bán.</EmptyState>
-          )}
-        </RecentSection>
+        <ChartGrid>
+          <RecentSection>
+            <h2>Top thuốc bán chạy nhất</h2>
+            {topSellingMedicines.length > 0 ? (
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart data={topSellingMedicines} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" allowDecimals={false} />
+                  <YAxis dataKey="chartLabel" type="category" width={88} interval={0} />
+                  <Tooltip
+                    formatter={(value, name, props) => {
+                      const unit = props.payload.unit || 'đơn vị';
+                      return [`${value} ${unit}`, 'Đã bán'];
+                    }}
+                    labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
+                  />
+                  <Bar dataKey="quantity" name="Đã bán" fill="#2563eb" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState as="p">Chưa có dữ liệu thuốc đã bán.</EmptyState>
+            )}
+          </RecentSection>
+
+          <RecentSection>
+            <h2>Cơ cấu trạng thái hóa đơn</h2>
+            {invoiceStatusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={340}>
+                <PieChart margin={{ top: 8, right: 16, bottom: 18, left: 16 }}>
+                  <Pie
+                    data={invoiceStatusData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={100}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {invoiceStatusData.map((entry, index) => (
+                      <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value} hóa đơn`, 'Số lượng']} />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState as="p">Chưa có dữ liệu trạng thái hóa đơn.</EmptyState>
+            )}
+          </RecentSection>
+        </ChartGrid>
 
         <ChartGrid>
           <RecentSection>
             <h2>Tồn kho so với đã bán</h2>
             <ResponsiveContainer width="100%" height={320}>
-              <ScatterChart margin={{ top: 20, right: 24, bottom: 20, left: 12 }}>
+              <ScatterChart margin={{ top: 20, right: 36, bottom: 36, left: 44 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" dataKey="soldQuantity" name="Đã bán" allowDecimals={false} />
-                <YAxis type="number" dataKey="stockQuantity" name="Tồn kho" allowDecimals={false} />
+                <YAxis width={56} type="number" dataKey="stockQuantity" name="Tồn kho" allowDecimals={false} />
                 <ZAxis type="number" dataKey="importedQuantity" range={[70, 260]} name="Đã nhập" />
                 <Tooltip
                   cursor={{ strokeDasharray: '3 3' }}
@@ -386,12 +437,12 @@ const Dashboard = () => {
           <RecentSection>
             <h2>Số lượng tồn, nhập, bán</h2>
             <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 8, right: 28, bottom: 8, left: 34 }}>
+              <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" allowDecimals={false} />
-                <YAxis dataKey="shortName" type="category" width={170} interval={0} />
+                <YAxis dataKey="chartLabel" type="category" width={88} interval={0} />
                 <Tooltip labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''} />
-                <Legend />
+                <Legend verticalAlign="bottom" height={36} />
                 <Bar dataKey="stockQuantity" name="Tồn kho" fill="#16a34a" />
                 <Bar dataKey="importedQuantity" name="Đã nhập" fill="#0ea5e9" />
                 <Bar dataKey="soldQuantity" name="Đã bán" fill="#f97316" />

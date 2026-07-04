@@ -8,7 +8,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   flex: 1;
   min-width: 0;
-  margin-left: 260px;
+  margin-left: 220px;
   padding: clamp(1rem, 1.5vw, 2rem);
   background-color: #ffffff; /* Màu nền trắng */
   min-height: 100vh;
@@ -84,10 +84,18 @@ export const RecentSection = styled.div`
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 0;
+  overflow: hidden;
 
   h2 {
     margin: 0 0 1rem;
     color: #0f172a;
+    font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+    line-height: 1.25;
+  }
+
+  .recharts-wrapper {
+    max-width: 100%;
   }
 `;
 
@@ -105,6 +113,7 @@ export const ChartGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
+  align-items: stretch;
 
   @media (max-width: 1180px) {
     grid-template-columns: 1fr;
@@ -118,6 +127,7 @@ export const ResponsiveTableWrap = styled.div`
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   margin-top: 1rem;
   table-layout: fixed;

@@ -7,8 +7,8 @@ export const Container = styled.div`
 export const Content = styled.div`
   flex: 1;
   min-width: 0;
-  margin-left: 260px;
-  padding: 2rem;
+  margin-left: 220px;
+  padding: clamp(1rem, 1.6vw, 2rem);
   background-color: #f3f4f6; /* Màu nền sáng */
   min-height: 100vh;
   overflow-x: hidden;
@@ -61,6 +61,8 @@ export const StatCard = styled.div`
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-5px);
@@ -68,15 +70,21 @@ export const StatCard = styled.div`
   }
 
   h3 {
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 1.25vw, 1.2rem);
     font-weight: 600;
     color: #0f172a;
     margin-bottom: 1rem;
+    line-height: 1.25;
+  }
+
+  .recharts-wrapper {
+    max-width: 100%;
   }
 `;
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
   margin-top: 1rem;
   table-layout: fixed;
@@ -97,6 +105,11 @@ export const TableCell = styled.td`
   font-size: 0.875rem;
   color: #374151;
   overflow-wrap: anywhere;
+`;
+
+export const TableScroll = styled.div`
+  width: 100%;
+  overflow-x: auto;
 `;
 
 export const EmptyCell = styled.td`

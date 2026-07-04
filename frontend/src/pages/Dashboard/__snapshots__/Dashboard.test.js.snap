@@ -9,7 +9,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw gxYQNO"
+      class="sc-fYsHOw dCwvMO"
     >
       <h1>
         Dashboard
@@ -168,7 +168,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
         </a>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
+        class="sc-gDpztx ftAIaS"
       >
         <h2>
           Chi phí nhập thuốc theo thời gian
@@ -182,7 +182,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
         </div>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
+        class="sc-gDpztx ftAIaS"
       >
         <div
           class="sc-kpOvIu jycqxI"
@@ -195,7 +195,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
               class="sc-jMsorb dEtsTO"
             >
               <table
-                class="sc-cXawGu dihwAl"
+                class="sc-cXawGu egbndy"
               >
                 <thead>
                   <tr>
@@ -280,7 +280,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
               class="sc-jMsorb dEtsTO"
             >
               <table
-                class="sc-cXawGu dihwAl"
+                class="sc-cXawGu egbndy"
               >
                 <thead>
                   <tr>
@@ -358,24 +358,42 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
         </div>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
+        class="sc-icnseD fopAsC"
       >
-        <h2>
-          Top thuốc bán chạy nhất
-        </h2>
-        <div>
-          <div
-            data-testid="mocked-barchart"
-          >
-            Mocked BarChart
+        <div
+          class="sc-gDpztx ftAIaS"
+        >
+          <h2>
+            Top thuốc bán chạy nhất
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-barchart"
+            >
+              Mocked BarChart
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-gDpztx ftAIaS"
+        >
+          <h2>
+            Cơ cấu trạng thái hóa đơn
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-piechart"
+            >
+              Mocked PieChart
+            </div>
           </div>
         </div>
       </div>
       <div
-        class="sc-icnseD kupQig"
+        class="sc-icnseD fopAsC"
       >
         <div
-          class="sc-gDpztx lbsXLv"
+          class="sc-gDpztx ftAIaS"
         >
           <h2>
             Tồn kho so với đã bán
@@ -389,7 +407,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           </div>
         </div>
         <div
-          class="sc-gDpztx lbsXLv"
+          class="sc-gDpztx ftAIaS"
         >
           <h2>
             Số lượng tồn, nhập, bán
@@ -417,7 +435,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw gxYQNO"
+      class="sc-fYsHOw dCwvMO"
     >
       <h1>
         Dashboard
@@ -576,7 +594,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
         </a>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
+        class="sc-gDpztx ftAIaS"
       >
         <h2>
           Chi phí nhập thuốc theo thời gian
@@ -590,7 +608,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
         </div>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
+        class="sc-gDpztx ftAIaS"
       >
         <div
           class="sc-kpOvIu jycqxI"
@@ -603,7 +621,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
               class="sc-jMsorb dEtsTO"
             >
               <table
-                class="sc-cXawGu dihwAl"
+                class="sc-cXawGu egbndy"
               >
                 <thead>
                   <tr>
@@ -650,7 +668,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
               class="sc-jMsorb dEtsTO"
             >
               <table
-                class="sc-cXawGu dihwAl"
+                class="sc-cXawGu egbndy"
               >
                 <thead>
                   <tr>
@@ -692,22 +710,38 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
         </div>
       </div>
       <div
-        class="sc-gDpztx lbsXLv"
-      >
-        <h2>
-          Top thuốc bán chạy nhất
-        </h2>
-        <p
-          class="sc-jScdur rOXso"
-        >
-          Chưa có dữ liệu thuốc đã bán.
-        </p>
-      </div>
-      <div
-        class="sc-icnseD kupQig"
+        class="sc-icnseD fopAsC"
       >
         <div
-          class="sc-gDpztx lbsXLv"
+          class="sc-gDpztx ftAIaS"
+        >
+          <h2>
+            Top thuốc bán chạy nhất
+          </h2>
+          <p
+            class="sc-jScdur rOXso"
+          >
+            Chưa có dữ liệu thuốc đã bán.
+          </p>
+        </div>
+        <div
+          class="sc-gDpztx ftAIaS"
+        >
+          <h2>
+            Cơ cấu trạng thái hóa đơn
+          </h2>
+          <p
+            class="sc-jScdur rOXso"
+          >
+            Chưa có dữ liệu trạng thái hóa đơn.
+          </p>
+        </div>
+      </div>
+      <div
+        class="sc-icnseD fopAsC"
+      >
+        <div
+          class="sc-gDpztx ftAIaS"
         >
           <h2>
             Tồn kho so với đã bán
@@ -721,7 +755,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           </div>
         </div>
         <div
-          class="sc-gDpztx lbsXLv"
+          class="sc-gDpztx ftAIaS"
         >
           <h2>
             Số lượng tồn, nhập, bán
