@@ -17,7 +17,7 @@ export const Content = styled.div`
   flex: 1;
   min-width: 0;
   padding: clamp(1rem, 1.5vw, 2rem);
-  margin-left: 250px;
+  margin-left: 220px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

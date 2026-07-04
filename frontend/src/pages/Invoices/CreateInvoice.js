@@ -7,7 +7,6 @@ import {
   countryDialOptions,
   isValidInternationalPhoneNumber,
   normalizeInternationalPhoneNumber,
-  PHONE_FORMAT_ERROR,
 } from '../../utils/validation';
 import {
   Container,
@@ -31,6 +30,11 @@ import {
   Field,
   FieldError,
   PhoneInputGroup,
+  CountryPicker,
+  CountryButton,
+  CountryMenu,
+  CountryOption,
+  FlagMark,
   InvoiceActions,
   TableViewport,
   unitMap,
@@ -38,8 +42,30 @@ import {
 
 const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
-const REQUIRED_FIELD_ERROR = 'Không được để trống.';
+const REQUIRED_FIELD_ERROR = 'Không được để thiếu';
+const PHONE_FIELD_ERROR = 'Vui lòng nhập đúng định dạng số điện thoại.';
 const DEFAULT_COUNTRY_CODE = 'VN';
+
+const countryFlagStyles = {
+  VN: { background: '#da251d', symbol: '★', symbolColor: '#ffde00' },
+  US: { background: 'linear-gradient(180deg, #b91c1c 0 14%, #fff 14% 28%, #b91c1c 28% 42%, #fff 42% 56%, #b91c1c 56% 70%, #fff 70% 84%, #b91c1c 84% 100%)' },
+  JP: { background: 'radial-gradient(circle at center, #bc002d 0 32%, #fff 34% 100%)' },
+  KR: { background: 'linear-gradient(135deg, #fff 0 42%, #cd2e3a 42% 50%, #0047a0 50% 58%, #fff 58% 100%)' },
+  SG: { background: 'linear-gradient(180deg, #ef3340 0 50%, #fff 50% 100%)', symbol: '✦', symbolColor: '#ffffff' },
+  TH: { background: 'linear-gradient(180deg, #a51931 0 18%, #fff 18% 32%, #2d2a4a 32% 68%, #fff 68% 82%, #a51931 82% 100%)' },
+  CN: { background: '#de2910', symbol: '★', symbolColor: '#ffde00' },
+  FR: { background: 'linear-gradient(90deg, #002654 0 33%, #fff 33% 66%, #ce1126 66% 100%)' },
+  DE: { background: 'linear-gradient(180deg, #000 0 33%, #dd0000 33% 66%, #ffce00 66% 100%)' },
+};
+
+const flagProps = (countryCode) => {
+  const style = countryFlagStyles[countryCode] || {};
+  return {
+    $background: style.background,
+    $symbol: style.symbol,
+    $symbolColor: style.symbolColor,
+  };
+};
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 
@@ -258,6 +284,8 @@ const CreateInvoice = () => {
   });
   const [selectedCountryCode, setSelectedCountryCode] = useState(DEFAULT_COUNTRY_CODE);
   const [formErrors, setFormErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
+  const [isCountryMenuOpen, setIsCountryMenuOpen] = useState(false);
   const [reviewInvoiceData, setReviewInvoiceData] = useState(null);
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -270,6 +298,31 @@ const CreateInvoice = () => {
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
   const selectedCountry = countryDialOptions.find((country) => country.code === selectedCountryCode) || countryDialOptions[0];
+
+  const validateField = useCallback((field, value = form[field]) => {
+    if (field === 'customerName' && !String(value || '').trim()) return REQUIRED_FIELD_ERROR;
+    if (field === 'address' && !String(value || '').trim()) return REQUIRED_FIELD_ERROR;
+    if (field === 'gender' && !value) return REQUIRED_FIELD_ERROR;
+    if (field === 'phoneNumber') {
+      if (!String(value || '').trim()) return REQUIRED_FIELD_ERROR;
+      if (!isValidInternationalPhoneNumber(value, selectedCountry)) return PHONE_FIELD_ERROR;
+    }
+    return '';
+  }, [form, selectedCountry]);
+
+  const updateFieldError = useCallback((field, value = form[field]) => {
+    const message = validateField(field, value);
+    setFormErrors((current) => {
+      const next = { ...current };
+      if (message) {
+        next[field] = message;
+      } else {
+        delete next[field];
+      }
+      return next;
+    });
+    return message;
+  }, [form, validateField]);
 
   const fetchMedicines = useCallback(async () => {
     try {
@@ -324,26 +377,24 @@ const CreateInvoice = () => {
 
   const updateFormField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
-    setFormErrors((current) => {
-      if (!current[field]) return current;
-      const next = { ...current };
-      delete next[field];
-      return next;
-    });
+    if (touchedFields[field]) {
+      updateFieldError(field, value);
+    }
+  };
+
+  const handleFieldBlur = (field) => {
+    setTouchedFields((current) => ({ ...current, [field]: true }));
+    updateFieldError(field);
   };
 
   const validateCheckout = () => {
-    const nextErrors = {};
+    const requiredFields = ['customerName', 'phoneNumber', 'gender', 'address'];
+    const nextErrors = requiredFields.reduce((errors, field) => {
+      const message = validateField(field);
+      return message ? { ...errors, [field]: message } : errors;
+    }, {});
 
-    if (!form.customerName.trim()) nextErrors.customerName = REQUIRED_FIELD_ERROR;
-    if (!form.phoneNumber.trim()) {
-      nextErrors.phoneNumber = REQUIRED_FIELD_ERROR;
-    } else if (!isValidInternationalPhoneNumber(form.phoneNumber, selectedCountry)) {
-      nextErrors.phoneNumber = PHONE_FORMAT_ERROR;
-    }
-    if (!form.gender) nextErrors.gender = REQUIRED_FIELD_ERROR;
-    if (!form.address.trim()) nextErrors.address = REQUIRED_FIELD_ERROR;
-
+    setTouchedFields(requiredFields.reduce((fields, field) => ({ ...fields, [field]: true }), {}));
     setFormErrors(nextErrors);
 
     if (cart.length === 0) return 'Giỏ hàng trống, không thể tạo hóa đơn.';
@@ -423,6 +474,8 @@ const CreateInvoice = () => {
       setForm({ customerName: '', phoneNumber: '', address: '', paymentMethod: 'Cash', status: 'Paid', gender: '' });
       setSelectedCountryCode(DEFAULT_COUNTRY_CODE);
       setFormErrors({});
+      setTouchedFields({});
+      setIsCountryMenuOpen(false);
       showSuccess('Tạo hóa đơn thành công.');
       await fetchMedicines();
     } catch (checkoutError) {
@@ -729,6 +782,7 @@ const CreateInvoice = () => {
               placeholder="Tên khách hàng"
               value={form.customerName}
               onChange={(e) => updateFormField('customerName', e.target.value)}
+              onBlur={() => handleFieldBlur('customerName')}
               required
               aria-invalid={Boolean(formErrors.customerName)}
             />
@@ -737,31 +791,57 @@ const CreateInvoice = () => {
           <Field>
             Số điện thoại
             <PhoneInputGroup>
-              <Select
-                aria-label="Chọn mã quốc gia"
-                value={selectedCountryCode}
-                onChange={(e) => {
-                  setSelectedCountryCode(e.target.value);
-                  setFormErrors((current) => {
-                    if (!current.phoneNumber) return current;
-                    const next = { ...current };
-                    delete next.phoneNumber;
-                    return next;
-                  });
+              <CountryPicker
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setIsCountryMenuOpen(false);
+                    if (touchedFields.phoneNumber) updateFieldError('phoneNumber');
+                  }
                 }}
               >
-                {countryDialOptions.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.flag} {country.dialCode} {country.name}
-                  </option>
-                ))}
-              </Select>
+                <CountryButton
+                  type="button"
+                  aria-label="Chọn mã quốc gia"
+                  aria-haspopup="listbox"
+                  aria-expanded={isCountryMenuOpen}
+                  onClick={() => setIsCountryMenuOpen((open) => !open)}
+                >
+                  <FlagMark {...flagProps(selectedCountry.code)} />
+                  <span>{selectedCountry.dialCode}</span>
+                  <span>{selectedCountry.name}</span>
+                </CountryButton>
+                {isCountryMenuOpen && (
+                  <CountryMenu role="listbox" aria-label="Danh sách mã quốc gia">
+                    {countryDialOptions.map((country) => (
+                      <CountryOption
+                        type="button"
+                        key={country.code}
+                        role="option"
+                        aria-selected={country.code === selectedCountryCode}
+                        $active={country.code === selectedCountryCode}
+                        onClick={() => {
+                          setSelectedCountryCode(country.code);
+                          setIsCountryMenuOpen(false);
+                          if (touchedFields.phoneNumber) {
+                            setTimeout(() => updateFieldError('phoneNumber', form.phoneNumber), 0);
+                          }
+                        }}
+                      >
+                        <FlagMark {...flagProps(country.code)} />
+                        <span>{country.dialCode}</span>
+                        <span>{country.name}</span>
+                      </CountryOption>
+                    ))}
+                  </CountryMenu>
+                )}
+              </CountryPicker>
               <Input
                 type="tel"
                 aria-label="Số điện thoại"
                 placeholder={`Ví dụ: ${selectedCountry.example}`}
                 value={form.phoneNumber}
                 onChange={(e) => updateFormField('phoneNumber', e.target.value)}
+                onBlur={() => handleFieldBlur('phoneNumber')}
                 required
                 aria-invalid={Boolean(formErrors.phoneNumber)}
               />
@@ -774,6 +854,7 @@ const CreateInvoice = () => {
               aria-label="Chọn giới tính"
               value={form.gender}
               onChange={(e) => updateFormField('gender', e.target.value)}
+              onBlur={() => handleFieldBlur('gender')}
               required
               aria-invalid={Boolean(formErrors.gender)}
             >
@@ -791,6 +872,7 @@ const CreateInvoice = () => {
               placeholder="Địa chỉ"
               value={form.address}
               onChange={(e) => updateFormField('address', e.target.value)}
+              onBlur={() => handleFieldBlur('address')}
               required
               aria-invalid={Boolean(formErrors.address)}
             />

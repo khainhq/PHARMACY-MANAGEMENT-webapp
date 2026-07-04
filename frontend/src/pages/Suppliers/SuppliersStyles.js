@@ -9,7 +9,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   flex: 1;
   padding: 2rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
+  margin-left: 220px; /* Khoảng trống bằng độ rộng của sidebar */
   background-color: #ffffff; /* Màu nền trắng */
   border-radius: 12px; /* Bo góc mềm mại */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */

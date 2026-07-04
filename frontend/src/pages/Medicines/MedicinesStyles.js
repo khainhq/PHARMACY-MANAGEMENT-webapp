@@ -16,11 +16,11 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  width: calc(100% - 260px);
-  max-width: calc(100% - 260px);
+  width: calc(100% - 220px);
+  max-width: calc(100% - 220px);
   min-width: 0;
   padding: clamp(0.85rem, 1.5vw, 2rem);
-  margin-left: 260px;
+  margin-left: 220px;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

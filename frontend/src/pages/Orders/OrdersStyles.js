@@ -7,7 +7,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   flex: 1;
   padding: 2rem;
-  margin-left: 250px; /* Khoảng trống bằng độ rộng của sidebar */
+  margin-left: 220px; /* Khoảng trống bằng độ rộng của sidebar */
   padding: 1rem;
 `;
 

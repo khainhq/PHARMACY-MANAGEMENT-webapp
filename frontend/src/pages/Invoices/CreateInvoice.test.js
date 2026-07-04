@@ -133,7 +133,7 @@ describe('CreateInvoice component', () => {
     expect(screen.getByText('Giỏ hàng')).toBeInTheDocument();
     expect(screen.getByText('Thông tin hóa đơn')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Tên khách hàng')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'Chọn mã quốc gia' })).toHaveValue('VN');
+    expect(screen.getByRole('button', { name: 'Chọn mã quốc gia' })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Số điện thoại' })).toBeInTheDocument();
     expect(screen.getByText('Ibuprofen')).toBeInTheDocument();
   });
@@ -169,7 +169,7 @@ describe('CreateInvoice component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'TẠO HÓA ĐƠN' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Số điện thoại không đúng định dạng.');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Vui lòng nhập đúng định dạng số điện thoại.');
     expect(screen.queryByText('Kiểm tra hóa đơn trước khi lưu')).not.toBeInTheDocument();
     expect(axios.post).not.toHaveBeenCalled();
   });

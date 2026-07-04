@@ -5,11 +5,11 @@ export const Container = styled.div`
   grid-template-columns: minmax(0, 1.45fr) minmax(420px, 0.85fr);
   align-items: stretch;
   box-sizing: border-box;
-  width: calc(100% - 260px);
-  max-width: calc(100% - 260px);
+  width: calc(100% - 220px);
+  max-width: calc(100% - 220px);
   min-width: 0;
   height: 100vh;
-  margin-left: 260px;
+  margin-left: 220px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6;
@@ -27,6 +27,23 @@ export const Container = styled.div`
     height: auto;
     min-height: 100vh;
     overflow: visible;
+  }
+`;
+
+export const ListContainer = styled.div`
+  box-sizing: border-box;
+  width: calc(100% - 220px);
+  min-height: 100vh;
+  margin-left: 220px;
+  padding: clamp(1rem, 1.6vw, 2rem);
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 `;
 
@@ -148,6 +165,7 @@ export const InvoiceInfo = styled.div`
 
 export const Table = styled.table`
   width: 100%;
+  min-width: ${({ $minWidth }) => $minWidth || '0'};
   table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1rem;
@@ -209,10 +227,21 @@ export const Input = styled.input`
   border-radius: 8px;
   font-size: 0.9rem;
 
+  &:focus {
+    border-color: #111827;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1);
+  }
+
   &[aria-invalid='true'] {
     border-color: #dc2626;
     background-color: #fff1f2;
     box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+  }
+
+  &[aria-invalid='true']:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.18);
   }
 `;
 
@@ -237,6 +266,89 @@ export const FieldError = styled.span`
   font-weight: 700;
 `;
 
+export const CountryPicker = styled.div`
+  position: relative;
+  min-width: 0;
+`;
+
+export const CountryButton = styled.button`
+  display: flex;
+  width: 100%;
+  min-height: 45px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #111827;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1);
+  }
+`;
+
+export const CountryMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 0.35rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.18);
+`;
+
+export const CountryOption = styled.button`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.58rem 0.65rem;
+  border: 0;
+  border-radius: 8px;
+  background: ${({ $active }) => ($active ? '#e0f2fe' : 'transparent')};
+  color: #0f172a;
+  font-size: 0.88rem;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+`;
+
+export const FlagMark = styled.span`
+  position: relative;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  border-radius: 3px;
+  background: ${({ $background }) => $background || '#e5e7eb'};
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+
+  &::after {
+    content: ${({ $symbol }) => ($symbol ? `'${$symbol}'` : "''")};
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: ${({ $symbolColor }) => $symbolColor || '#ffffff'};
+    font-size: 0.48rem;
+    line-height: 1;
+  }
+`;
+
 export const PhoneInputGroup = styled.div`
   display: grid;
   grid-template-columns: minmax(132px, 0.42fr) minmax(0, 1fr);
@@ -259,9 +371,9 @@ export const InvoiceActions = styled.div`
 `;
 
 export const ListContent = styled.div`
-  flex: 1;
+  width: 100%;
   min-width: 0;
-  padding: clamp(0.5rem, 1vw, 1rem);
+  padding: 0;
 `;
 
 export const ListToolbar = styled.div`
@@ -312,7 +424,8 @@ export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
 
   thead th {
     position: sticky;
@@ -348,10 +461,21 @@ export const Select = styled.select`
   border-radius: 8px;
   font-size: 0.9rem;
 
+  &:focus {
+    border-color: #111827;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1);
+  }
+
   &[aria-invalid='true'] {
     border-color: #dc2626;
     background-color: #fff1f2;
     box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+  }
+
+  &[aria-invalid='true']:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.18);
   }
 `;
 
@@ -369,7 +493,7 @@ export const Form = styled.form`
 export const Content = styled.div`
   flex: 1;
   padding: 1rem;
-  margin-left: 250px;
+  margin-left: 220px;
 `;
 
 export const unitMap = {

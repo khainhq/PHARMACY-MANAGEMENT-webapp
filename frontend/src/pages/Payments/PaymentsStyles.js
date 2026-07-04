@@ -4,11 +4,11 @@ export const Container = styled.div`
   display: flex;
   align-items: flex-start;
   box-sizing: border-box;
-  width: calc(100% - 260px);
-  max-width: calc(100% - 260px);
+  width: calc(100% - 220px);
+  max-width: calc(100% - 220px);
   min-width: 0;
   min-height: 100vh;
-  margin-left: 260px;
+  margin-left: 220px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6; /* Màu nền tổng thể */
@@ -213,7 +213,7 @@ export const Toolbar = styled.div`
   margin-bottom: 1rem;
 
   ${Input} {
-    width: min(720px, calc(100vw - 360px));
+    width: min(720px, calc(100vw - 320px));
     min-width: min(420px, 100%);
     margin-bottom: 0;
   }

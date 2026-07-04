@@ -22,12 +22,12 @@ const SidebarContainer = styled.div`
   top: 0;
   left: 0;
   height: 100vh;
-  width: 260px;
+  width: 220px;
   background: linear-gradient(135deg, #1e293b, rgb(2, 87, 53));
   color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0.85rem;
   z-index: 1000;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
@@ -51,33 +51,35 @@ const SidebarContainer = styled.div`
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
   padding: 0.25rem;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 `;
 
 const Avatar = styled.img`
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  margin-right: 1rem;
+  margin-right: 0.7rem;
   border: 2px solid #10b981;
 `;
 
 const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: 0;
 `;
 
 const Name = styled.span`
   font-weight: bold;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
 `;
 
 const Role = styled.span`
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   color: #6ee7b7;
+  line-height: 1.25;
 `;
 
 const Menu = styled.div`
@@ -87,52 +89,52 @@ const Menu = styled.div`
 const MenuItem = styled(NavLink)`
   display: flex;
   align-items: center;
-  padding: 0.58rem 0.82rem;
+  padding: 0.52rem 0.62rem;
   color: #cbd5e1;
   text-decoration: none;
   border-radius: 8px;
-  margin-bottom: 0.34rem;
-  font-size: 0.95rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 0.26rem;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  transition: background-color 0.3s ease, color 0.2s ease;
 
   &.active {
     background-color: #10b981;
     color: #fff;
-    transform: scale(1.05);
   }
 
   &:hover {
     background-color: #475569;
-    transform: scale(1.02);
   }
 
   svg {
-    margin-right: 1rem;
-    font-size: 1.2rem;
+    margin-right: 0.72rem;
+    font-size: 1.05rem;
+    flex: 0 0 auto;
   }
 `;
 
 const SubMenu = styled.div`
-  margin-left: 1.5rem;
+  margin-left: 0.8rem;
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   border-left: 2px solid #475569;
-  padding-left: 1rem;
+  padding-left: 0.65rem;
 `;
 
 const LogoutButton = styled.div`
   margin-top: 0.55rem;
-  padding: 0.68rem 0.85rem;
+  padding: 0.62rem 0.75rem;
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #fff;
   text-align: center;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: #b91c1c;
-    transform: scale(1.05);
   }
 `;
 

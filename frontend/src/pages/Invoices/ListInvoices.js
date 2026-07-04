@@ -3,7 +3,7 @@ import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { useToast } from '../../components/ToastProvider';
 import {
-  Container,
+  ListContainer,
   Table,
   TableHeader,
   TableCell,
@@ -258,7 +258,7 @@ const ListInvoices = () => {
   }, [fetchInvoices]);
 
   return (
-    <Container data-testid="main-content">
+    <ListContainer data-testid="main-content">
       <Sidebar />
       <ListContent data-testid="content-wrapper">
         <ListToolbar>
@@ -311,15 +311,15 @@ const ListInvoices = () => {
           <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
         </FilterBar>
         <TableViewport>
-          <Table data-testid="invoices-table">
+          <Table data-testid="invoices-table" $minWidth="1180px">
             <colgroup>
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '14%' }} />
-              <col style={{ width: '13%' }} />
-              <col style={{ width: '14%' }} />
-              <col style={{ width: '15%' }} />
-              <col style={{ width: '12%' }} />
-              <col style={{ width: '24%' }} />
+              <col style={{ width: '120px' }} />
+              <col style={{ width: '170px' }} />
+              <col style={{ width: '170px' }} />
+              <col style={{ width: '190px' }} />
+              <col style={{ width: '180px' }} />
+              <col style={{ width: '150px' }} />
+              <col style={{ width: '260px' }} />
             </colgroup>
             <thead>
               <tr>
@@ -461,7 +461,7 @@ const ListInvoices = () => {
           </ModalContent>
         </Modal>
       )}
-    </Container>
+    </ListContainer>
   );
 };
 
