@@ -13,34 +13,32 @@ const LoginContainer = styled.div`
   min-height: 100svh;
   height: 100svh;
   background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary}, ${theme.colors.accent});
-  padding: clamp(0.5rem, 2svh, 1rem);
+  padding: clamp(0.35rem, 1.4svh, 0.75rem);
   overflow: hidden;
 `;
 
 const LoginForm = styled.form`
   background-color: ${theme.colors.white};
-  padding: clamp(1.15rem, 2.6svh, 1.6rem);
+  padding: clamp(0.85rem, 2svh, 1.1rem);
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 390px;
-  max-height: calc(100svh - 1rem);
-  overflow-y: auto;
+  max-width: 360px;
 
   @media (max-width: 480px) {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 `;
 
 const LogoContainer = styled.div`
   text-align: center;
-  margin-bottom: 0.95rem;
+  margin-bottom: 0.6rem;
 `;
 
 const Logo = styled.img`
-  width: clamp(72px, 11svh, 88px);
-  height: clamp(72px, 11svh, 88px);
-  margin-bottom: 0.5rem;
+  width: clamp(52px, 9.5svh, 74px);
+  height: clamp(52px, 9.5svh, 74px);
+  margin-bottom: 0.35rem;
   border-radius: 8px;
   object-fit: cover;
 `;
@@ -48,31 +46,31 @@ const Logo = styled.img`
 const LoginTitle = styled.h2`
   color: ${theme.colors.primary};
   text-align: center;
-  font-size: clamp(1.45rem, 3.2svh, 1.75rem);
-  line-height: 1.18;
+  font-size: clamp(1.2rem, 2.9svh, 1.55rem);
+  line-height: 1.12;
   font-weight: 700;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
 `;
 
 const LoginSubtitle = styled.p`
   color: ${theme.colors.gray};
   text-align: center;
   margin-bottom: 0;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.84rem;
+  line-height: 1.32;
 `;
 
 const SwitchPanel = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 `;
 
 const SwitchLink = styled(Link)`
   text-align: center;
   text-decoration: none;
-  padding: 0.65rem 0.75rem;
+  padding: 0.52rem 0.7rem;
   border-radius: 8px;
   border: 1px solid ${({ $active }) => ($active ? theme.colors.primary : '#d1d5db')};
   background: ${({ $active }) => ($active ? '#e0f2fe' : '#ffffff')};
@@ -81,23 +79,24 @@ const SwitchLink = styled(Link)`
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 0.95rem;
+  margin-bottom: 0.65rem;
   position: relative;
 `;
 
 const FormLabel = styled.label`
   display: block;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
   color: ${theme.colors.darkGray};
   font-weight: 500;
+  font-size: 0.92rem;
 `;
 
 const FormControl = styled.input`
   width: 100%;
-  padding: 0.72rem 0.9rem;
+  padding: 0.58rem 0.8rem;
   border: 2px solid ${props => props.error ? theme.colors.error : '#e0e0e0'};
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   background-color: ${theme.colors.white};
 
@@ -137,7 +136,7 @@ const PasswordToggle = styled.button`
 const RememberMeContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.6rem;
 `;
 
 const Checkbox = styled.input`
@@ -147,13 +146,13 @@ const Checkbox = styled.input`
 
 const RememberMeLabel = styled.label`
   color: ${theme.colors.darkGray};
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   cursor: pointer;
 `;
 
 const LoginButton = styled.button`
   width: 100%;
-  padding: 0.78rem;
+  padding: 0.65rem;
   background-color: ${theme.colors.primary};
   color: ${theme.colors.white};
   border: none;
@@ -181,11 +180,12 @@ const LoginButton = styled.button`
 const ErrorMessage = styled.div`
   color: ${theme.colors.error};
   background-color: #fee2e2;
-  padding: 0.75rem;
+  padding: 0.55rem;
   border-radius: 8px;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.55rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
+  line-height: 1.35;
 `;
 
 const LoadingSpinner = styled(AiOutlineLoading3Quarters)`
