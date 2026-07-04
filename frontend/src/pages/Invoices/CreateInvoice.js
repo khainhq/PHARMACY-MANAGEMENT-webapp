@@ -3,7 +3,12 @@ import axios from 'axios';
 import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
 import { useToast } from '../../components/ToastProvider';
-import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
+import {
+  countryDialOptions,
+  isValidInternationalPhoneNumber,
+  normalizeInternationalPhoneNumber,
+  PHONE_FORMAT_ERROR,
+} from '../../utils/validation';
 import {
   Container,
   LeftSection,
@@ -23,11 +28,18 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Field,
+  FieldError,
+  PhoneInputGroup,
+  InvoiceActions,
+  TableViewport,
   unitMap,
 } from './InvoicesStyles';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
+const REQUIRED_FIELD_ERROR = 'Không được để trống.';
+const DEFAULT_COUNTRY_CODE = 'VN';
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 
@@ -244,6 +256,8 @@ const CreateInvoice = () => {
     status: 'Paid',
     gender: '',
   });
+  const [selectedCountryCode, setSelectedCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+  const [formErrors, setFormErrors] = useState({});
   const [reviewInvoiceData, setReviewInvoiceData] = useState(null);
   const [invoiceData, setInvoiceData] = useState(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
@@ -255,6 +269,7 @@ const CreateInvoice = () => {
   const { showSuccess, showError } = useToast();
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
+  const selectedCountry = countryDialOptions.find((country) => country.code === selectedCountryCode) || countryDialOptions[0];
 
   const fetchMedicines = useCallback(async () => {
     try {
@@ -307,19 +322,38 @@ const CreateInvoice = () => {
 
   const calculateTotal = () => cart.reduce((total, item) => total + item.quantity * item.unitPrice, 0);
 
+  const updateFormField = (field, value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setFormErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
   const validateCheckout = () => {
+    const nextErrors = {};
+
+    if (!form.customerName.trim()) nextErrors.customerName = REQUIRED_FIELD_ERROR;
+    if (!form.phoneNumber.trim()) {
+      nextErrors.phoneNumber = REQUIRED_FIELD_ERROR;
+    } else if (!isValidInternationalPhoneNumber(form.phoneNumber, selectedCountry)) {
+      nextErrors.phoneNumber = PHONE_FORMAT_ERROR;
+    }
+    if (!form.gender) nextErrors.gender = REQUIRED_FIELD_ERROR;
+    if (!form.address.trim()) nextErrors.address = REQUIRED_FIELD_ERROR;
+
+    setFormErrors(nextErrors);
+
     if (cart.length === 0) return 'Giỏ hàng trống, không thể tạo hóa đơn.';
-    if (!form.customerName.trim()) return 'Vui lòng nhập tên khách hàng.';
-    if (!form.phoneNumber.trim()) return 'Vui lòng nhập số điện thoại.';
-    if (!isValidVietnamPhoneNumber(form.phoneNumber)) return PHONE_FORMAT_ERROR;
-    if (!form.gender) return 'Vui lòng chọn giới tính.';
-    if (!form.address.trim()) return 'Vui lòng nhập địa chỉ.';
-    return '';
+    return Object.values(nextErrors)[0] || '';
   };
 
   const createInvoiceSnapshot = () => ({
     customerName: form.customerName.trim(),
-    customerPhone: form.phoneNumber.trim(),
+    customerPhone: normalizeInternationalPhoneNumber(form.phoneNumber, selectedCountry),
+    customerCountry: selectedCountry,
     address: form.address.trim(),
     gender: form.gender,
     paymentMethod: form.paymentMethod,
@@ -387,6 +421,8 @@ const CreateInvoice = () => {
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
       setCart([]);
       setForm({ customerName: '', phoneNumber: '', address: '', paymentMethod: 'Cash', status: 'Paid', gender: '' });
+      setSelectedCountryCode(DEFAULT_COUNTRY_CODE);
+      setFormErrors({});
       showSuccess('Tạo hóa đơn thành công.');
       await fetchMedicines();
     } catch (checkoutError) {
@@ -626,84 +662,169 @@ const CreateInvoice = () => {
         <MedicineList>
           <h2>Danh sách thuốc</h2>
           <Input type="text" placeholder="Tìm kiếm thuốc..." value={searchKeyword} onChange={handleSearch} />
-          <Table>
-            <thead>
-              <tr>
-                <TableHeader>Mã thuốc</TableHeader>
-                <TableHeader>Tên thuốc</TableHeader>
-                <TableHeader>Đơn vị tính</TableHeader>
-                <TableHeader>Tồn kho</TableHeader>
-                <TableHeader>Đơn giá</TableHeader>
-                <TableHeader>Hành động</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMedicines.map((medicine) => (
-                <tr key={medicine.medicineID}>
-                  <TableCell>{medicine.medicineID}</TableCell>
-                  <TableCell>{medicine.medicineName}</TableCell>
-                  <TableCell>{unitMap[medicine.unit] || medicine.unit}</TableCell>
-                  <TableCell>{medicine.stockQuantity}</TableCell>
-                  <TableCell>{formatMoney(medicine.unitPrice)} VND</TableCell>
-                  <TableCell><Button onClick={() => setSelectedMedicine(medicine)}>Chọn</Button></TableCell>
+          <TableViewport>
+            <Table>
+              <thead>
+                <tr>
+                  <TableHeader>Mã thuốc</TableHeader>
+                  <TableHeader>Tên thuốc</TableHeader>
+                  <TableHeader>Đơn vị tính</TableHeader>
+                  <TableHeader>Tồn kho</TableHeader>
+                  <TableHeader>Đơn giá</TableHeader>
+                  <TableHeader>Hành động</TableHeader>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {filteredMedicines.map((medicine) => (
+                  <tr key={medicine.medicineID}>
+                    <TableCell>{medicine.medicineID}</TableCell>
+                    <TableCell>{medicine.medicineName}</TableCell>
+                    <TableCell>{unitMap[medicine.unit] || medicine.unit}</TableCell>
+                    <TableCell>{medicine.stockQuantity}</TableCell>
+                    <TableCell>{formatMoney(medicine.unitPrice)} VND</TableCell>
+                    <TableCell><Button onClick={() => setSelectedMedicine(medicine)}>Chọn</Button></TableCell>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableViewport>
         </MedicineList>
       </LeftSection>
 
       <RightSection>
         <Cart>
           <h2>Giỏ hàng</h2>
-          <Table>
-            <thead>
-              <tr>
-                <TableHeader>Tên thuốc</TableHeader>
-                <TableHeader>Số lượng</TableHeader>
-                <TableHeader>Đơn giá</TableHeader>
-                <TableHeader>Thành tiền</TableHeader>
-                <TableHeader>Hành động</TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.medicineID}>
-                  <TableCell>{item.medicineName}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{formatMoney(item.unitPrice)} VND</TableCell>
-                  <TableCell>{formatMoney(item.quantity * item.unitPrice)} VND</TableCell>
-                  <TableCell><Button onClick={() => setCart(cart.filter((cartItem) => cartItem.medicineID !== item.medicineID))}>Xóa</Button></TableCell>
+          <TableViewport>
+            <Table>
+              <thead>
+                <tr>
+                  <TableHeader>Tên thuốc</TableHeader>
+                  <TableHeader>Số lượng</TableHeader>
+                  <TableHeader>Đơn giá</TableHeader>
+                  <TableHeader>Thành tiền</TableHeader>
+                  <TableHeader>Hành động</TableHeader>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {cart.map((item) => (
+                  <tr key={item.medicineID}>
+                    <TableCell>{item.medicineName}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{formatMoney(item.unitPrice)} VND</TableCell>
+                    <TableCell>{formatMoney(item.quantity * item.unitPrice)} VND</TableCell>
+                    <TableCell><Button onClick={() => setCart(cart.filter((cartItem) => cartItem.medicineID !== item.medicineID))}>Xóa</Button></TableCell>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </TableViewport>
         </Cart>
 
         <InvoiceInfo>
           <h2>Thông tin hóa đơn</h2>
-          <Input type="text" placeholder="Tên khách hàng" value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} required />
-          <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required />
-          <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
-            <option value="">Chọn giới tính</option>
-            <option value="Male">Nam</option>
-            <option value="Female">Nữ</option>
-            <option value="Other">Khác</option>
-          </Select>
-          <Input type="text" placeholder="Địa chỉ" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} required />
-          <Select value={form.paymentMethod} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value })} required>
-            <option value="Cash">Tiền mặt</option>
-            <option value="Card">Thẻ</option>
-          </Select>
-          <Select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} required>
-            <option value="Paid">Đã thanh toán</option>
-            <option value="Pending">Chưa thanh toán</option>
-          </Select>
+          <Field>
+            Tên khách hàng
+            <Input
+              type="text"
+              placeholder="Tên khách hàng"
+              value={form.customerName}
+              onChange={(e) => updateFormField('customerName', e.target.value)}
+              required
+              aria-invalid={Boolean(formErrors.customerName)}
+            />
+            {formErrors.customerName && <FieldError>{formErrors.customerName}</FieldError>}
+          </Field>
+          <Field>
+            Số điện thoại
+            <PhoneInputGroup>
+              <Select
+                aria-label="Chọn mã quốc gia"
+                value={selectedCountryCode}
+                onChange={(e) => {
+                  setSelectedCountryCode(e.target.value);
+                  setFormErrors((current) => {
+                    if (!current.phoneNumber) return current;
+                    const next = { ...current };
+                    delete next.phoneNumber;
+                    return next;
+                  });
+                }}
+              >
+                {countryDialOptions.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.flag} {country.dialCode} {country.name}
+                  </option>
+                ))}
+              </Select>
+              <Input
+                type="tel"
+                aria-label="Số điện thoại"
+                placeholder={`Ví dụ: ${selectedCountry.example}`}
+                value={form.phoneNumber}
+                onChange={(e) => updateFormField('phoneNumber', e.target.value)}
+                required
+                aria-invalid={Boolean(formErrors.phoneNumber)}
+              />
+            </PhoneInputGroup>
+            {formErrors.phoneNumber && <FieldError>{formErrors.phoneNumber}</FieldError>}
+          </Field>
+          <Field>
+            Giới tính
+            <Select
+              aria-label="Chọn giới tính"
+              value={form.gender}
+              onChange={(e) => updateFormField('gender', e.target.value)}
+              required
+              aria-invalid={Boolean(formErrors.gender)}
+            >
+              <option value="">Chọn giới tính</option>
+              <option value="Male">Nam</option>
+              <option value="Female">Nữ</option>
+              <option value="Other">Khác</option>
+            </Select>
+            {formErrors.gender && <FieldError>{formErrors.gender}</FieldError>}
+          </Field>
+          <Field>
+            Địa chỉ
+            <Input
+              type="text"
+              placeholder="Địa chỉ"
+              value={form.address}
+              onChange={(e) => updateFormField('address', e.target.value)}
+              required
+              aria-invalid={Boolean(formErrors.address)}
+            />
+            {formErrors.address && <FieldError>{formErrors.address}</FieldError>}
+          </Field>
+          <Field>
+            Phương thức thanh toán
+            <Select
+              aria-label="Chọn phương thức thanh toán"
+              value={form.paymentMethod}
+              onChange={(e) => updateFormField('paymentMethod', e.target.value)}
+              required
+            >
+              <option value="Cash">Tiền mặt</option>
+              <option value="Card">Thẻ</option>
+            </Select>
+          </Field>
+          <Field>
+            Trạng thái
+            <Select
+              aria-label="Chọn trạng thái hóa đơn"
+              value={form.status}
+              onChange={(e) => updateFormField('status', e.target.value)}
+              required
+            >
+              <option value="Paid">Đã thanh toán</option>
+              <option value="Pending">Chưa thanh toán</option>
+            </Select>
+          </Field>
           <h3>Tổng hóa đơn: {formatMoney(calculateTotal())} VND</h3>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+          <InvoiceActions>
             <Button style={{ backgroundColor: 'red' }} onClick={() => setCart([])}>HỦY BỎ</Button>
             <Button style={{ backgroundColor: 'green' }} onClick={handleCheckout}>TẠO HÓA ĐƠN</Button>
-          </div>
+          </InvoiceActions>
         </InvoiceInfo>
       </RightSection>
 

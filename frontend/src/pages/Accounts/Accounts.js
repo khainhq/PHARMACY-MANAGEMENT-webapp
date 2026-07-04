@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus } from 'react-icons/fa';
@@ -20,6 +20,7 @@ import {
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredAccounts, setFilteredAccounts] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -53,6 +54,11 @@ const Accounts = () => {
     return roleMap[account.role] || account.role || 'N/A';
   };
 
+  const usedEmployeeIDs = useMemo(
+    () => new Set(accounts.map((account) => accountEmployeeID(account)).filter(Boolean)),
+    [accounts]
+  );
+
   const apiErrorMessage = (error) => error.response?.data?.error || 'Có lỗi xảy ra khi lưu tài khoản.';
 
   const fetchAccounts = useCallback(async () => {
@@ -60,9 +66,13 @@ const Accounts = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/auth/accounts/', { headers });
-      setAccounts(response.data);
-      setFilteredAccounts(response.data);
+      const [accountsResponse, employeesResponse] = await Promise.all([
+        axios.get('http://localhost:8000/api/auth/accounts/', { headers }),
+        axios.get('http://localhost:8000/api/auth/employees/', { headers }),
+      ]);
+      setAccounts(accountsResponse.data);
+      setFilteredAccounts(accountsResponse.data);
+      setEmployees(employeesResponse.data);
     } catch (error) {
       console.error('Error fetching accounts:', error);
       showError('Không tải được danh sách tài khoản. Vui lòng thử lại.');
@@ -212,6 +222,7 @@ const Accounts = () => {
               required={!editingAccountID}
             />
             <Select
+              aria-label="Chọn quyền"
               value={form.role}
               onChange={(e) => setForm({ ...form, role: e.target.value })}
               required
@@ -220,12 +231,24 @@ const Accounts = () => {
               <option value="2">Nhân viên bán hàng</option>
               <option value="3">Nhân viên quản lý sản phẩm</option>
             </Select>
-            <Input
-              type="text"
-              placeholder="Nhân viên (ID)"
+            <Select
+              aria-label="Chọn nhân viên"
               value={form.employee}
               onChange={(e) => setForm({ ...form, employee: e.target.value })}
-            />
+            >
+              <option value="">Không gắn nhân viên</option>
+              {employees.filter((employee) => employee.employeeID).map((employee) => {
+                const employeeID = employee.employeeID;
+                const isCurrentEmployee = employeeID === form.employee;
+                const isUsedByOtherAccount = usedEmployeeIDs.has(employeeID) && !isCurrentEmployee;
+
+                return (
+                  <option key={employeeID} value={employeeID} disabled={isUsedByOtherAccount}>
+                    {`${employeeID} - ${employee.fullName || 'Chưa có tên'}${isUsedByOtherAccount ? ' (đã có tài khoản)' : ''}`}
+                  </option>
+                );
+              })}
+            </Select>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Button type="submit">{editingAccountID ? 'Cập nhật tài khoản' : 'Tạo tài khoản'}</Button>
               <Button

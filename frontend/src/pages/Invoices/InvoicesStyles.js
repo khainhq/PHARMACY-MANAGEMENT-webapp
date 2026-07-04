@@ -1,19 +1,20 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(420px, 0.85fr);
+  align-items: stretch;
   box-sizing: border-box;
   width: calc(100% - 260px);
   max-width: calc(100% - 260px);
   min-width: 0;
-  min-height: 100vh;
+  height: 100vh;
   margin-left: 260px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6;
   font-family: 'Roboto', sans-serif;
-  overflow-x: hidden;
+  overflow: hidden;
 
   *,
   *::before,
@@ -21,51 +22,60 @@ export const Container = styled.div`
     box-sizing: border-box;
   }
 
-  @media (max-width: 1320px) {
-    flex-direction: column;
+  @media (max-width: 1120px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 `;
 
 export const LeftSection = styled.div`
-  flex: 1 1 56%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   min-width: 0;
-  padding: 1.5rem;
+  min-height: 0;
+  padding: clamp(0.85rem, 1.2vw, 1.2rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
-  @media (max-width: 1320px) {
+  @media (max-width: 1120px) {
     width: 100%;
-    flex: 1 1 auto;
+    min-height: 560px;
   }
 `;
 
 export const RightSection = styled.div`
-  flex: 0 1 620px;
-  min-width: min(520px, 100%);
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(0.85rem, 1.2vw, 1.2rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
-  @media (max-width: 1320px) {
+  @media (max-width: 1120px) {
     width: 100%;
-    flex: 1 1 auto;
-    min-width: 0;
+    min-height: 560px;
   }
 `;
 export const MedicineDetails = styled.div`
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
+  flex: 0 0 auto;
+  margin-bottom: 0.85rem;
+  padding: 0.9rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
 
   h2 {
-    text-align: center;
-    margin-bottom: 1rem;
+    margin: 0 0 0.75rem;
     color: #0f172a;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
   }
 
   img {
@@ -75,8 +85,8 @@ export const MedicineDetails = styled.div`
   }
 
   p {
-    margin: 0.5rem 0;
-    font-size: 1rem;
+    margin: 0.32rem 0;
+    font-size: 0.9rem;
     color: #374151;
   }
 
@@ -86,12 +96,30 @@ export const MedicineDetails = styled.div`
 `;
 
 export const MedicineList = styled.div`
-  margin-top: 1rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+
+  h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  input {
+    margin-bottom: 0.75rem;
+  }
 `;
 
 export const Cart = styled.div`
-  margin-bottom: 1rem;
+  flex: 0 0 min(36%, 250px);
+  min-height: 150px;
+  margin-bottom: 0.85rem;
   overflow-x: hidden;
+  overflow-y: auto;
+
+  h2 {
+    margin: 0 0 0.75rem;
+  }
 
   table {
     min-width: 0;
@@ -101,7 +129,21 @@ export const Cart = styled.div`
 `;
 
 export const InvoiceInfo = styled.div`
-  margin-top: 1rem;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 0;
+  overflow-y: auto;
+  padding-right: 0.15rem;
+
+  h2 {
+    margin: 0 0 0.75rem;
+  }
+
+  h3 {
+    margin: 0.75rem 0;
+  }
 `;
 
 export const Table = styled.table`
@@ -162,10 +204,58 @@ export const Button = styled.button`
 export const Input = styled.input`
   width: 100%;
   padding: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
+
+  &[aria-invalid='true'] {
+    border-color: #dc2626;
+    background-color: #fff1f2;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+  }
+`;
+
+export const Field = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  color: #334155;
+  font-size: 0.83rem;
+  font-weight: 700;
+
+  ${Input},
+  select {
+    margin-bottom: 0;
+  }
+`;
+
+export const FieldError = styled.span`
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 700;
+`;
+
+export const PhoneInputGroup = styled.div`
+  display: grid;
+  grid-template-columns: minmax(132px, 0.42fr) minmax(0, 1fr);
+  gap: 0.55rem;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const InvoiceActions = styled.div`
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), #ffffff 28%);
 `;
 
 export const ListContent = styled.div`
@@ -218,9 +308,17 @@ export const FilterField = styled.label`
 `;
 
 export const TableViewport = styled.div`
+  flex: 1;
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  min-height: 0;
+  overflow: auto;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 `;
 
 export const ActionGroup = styled.div`
@@ -245,10 +343,16 @@ export const EmptyCell = styled.td`
 export const Select = styled.select`
   width: 100%;
   padding: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
+
+  &[aria-invalid='true'] {
+    border-color: #dc2626;
+    background-color: #fff1f2;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12);
+  }
 `;
 
 export const Form = styled.form`

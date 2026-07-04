@@ -84,6 +84,14 @@ export const TableHeader = styled.th`
   vertical-align: top;
   overflow-wrap: anywhere;
   word-break: break-word;
+
+  &:first-child,
+  &:nth-child(2),
+  &:nth-child(10) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
 `;
 
 export const TableCell = styled.td`
@@ -95,6 +103,15 @@ export const TableCell = styled.td`
   vertical-align: top;
   overflow-wrap: anywhere;
   word-break: break-word;
+
+  &:first-child,
+  &:nth-child(2),
+  &:nth-child(8),
+  &:nth-child(10) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
 `;
 
 export const catalogMap = {

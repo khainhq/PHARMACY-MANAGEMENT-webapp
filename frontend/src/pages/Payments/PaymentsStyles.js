@@ -213,7 +213,8 @@ export const Toolbar = styled.div`
   margin-bottom: 1rem;
 
   ${Input} {
-    width: min(560px, 100%);
+    width: min(720px, calc(100vw - 360px));
+    min-width: min(420px, 100%);
     margin-bottom: 0;
   }
 `;

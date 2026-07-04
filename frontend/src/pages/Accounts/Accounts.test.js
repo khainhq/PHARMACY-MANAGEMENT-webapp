@@ -1,14 +1,17 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import Accounts from './Accounts';
-import Sidebar from '../../components/Sidebar';
+import { ToastProvider } from '../../components/ToastProvider';
 
-// Giả lập axios
 jest.mock('axios');
-
-// Giả lập Sidebar
 jest.mock('../../components/Sidebar', () => () => <div data-testid="sidebar">Sidebar</div>);
+
+const renderAccounts = () => render(
+  <ToastProvider>
+    <Accounts />
+  </ToastProvider>
+);
 
 describe('Accounts component', () => {
   const mockAccounts = [
@@ -28,15 +31,25 @@ describe('Accounts component', () => {
     },
   ];
 
-  beforeEach(() => {
-    // Thiết lập sessionStorage
-    sessionStorage.setItem('token', 'dummyToken');
+  const mockEmployees = [
+    { employeeID: 'emp1', fullName: 'Nguyen Van A' },
+    { employeeID: 'emp2', fullName: 'Tran Thi B' },
+    { employeeID: 'emp3', fullName: 'Le Thi C' },
+  ];
 
-    // Reset mocks
+  beforeEach(() => {
+    sessionStorage.setItem('token', 'dummyToken');
     jest.clearAllMocks();
 
-    // Giả lập axios.get
-    axios.get.mockResolvedValue({ data: mockAccounts });
+    axios.get.mockImplementation((url) => {
+      if (url === 'http://localhost:8000/api/auth/employees/') {
+        return Promise.resolve({ data: mockEmployees });
+      }
+      if (url === 'http://localhost:8000/api/auth/accounts/') {
+        return Promise.resolve({ data: mockAccounts });
+      }
+      return Promise.reject(new Error(`Unexpected API call: ${url}`));
+    });
   });
 
   afterEach(() => {
@@ -44,19 +57,13 @@ describe('Accounts component', () => {
   });
 
   test('hiển thị Sidebar, Toolbar và bảng danh sách tài khoản', async () => {
-    const { container } = render(<Accounts />);
+    const { container } = renderAccounts();
 
-    // Kiểm tra Sidebar
     expect(screen.getByTestId('sidebar')).toBeInTheDocument();
-
-    // Kiểm tra Toolbar
     expect(screen.getByText(/THÊM/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Tìm kiếm tài khoản.../i)).toBeInTheDocument();
-
-    // Kiểm tra tiêu đề bảng
     expect(screen.getByText(/DANH SÁCH TÀI KHOẢN/i)).toBeInTheDocument();
 
-    // Kiểm tra dữ liệu bảng
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
       expect(screen.getByText('user2')).toBeInTheDocument();
@@ -66,73 +73,66 @@ describe('Accounts component', () => {
       expect(screen.getByText('Vô hiệu')).toBeInTheDocument();
     });
 
-    // Snapshot test cho trạng thái mặc định
     expect(container).toMatchSnapshot();
   });
 
   test('hiển thị form khi nhấn nút THÊM và chụp snapshot', async () => {
-    const { container } = render(<Accounts />);
+    const { container } = renderAccounts();
 
-    // Nhấn nút THÊM
     fireEvent.click(screen.getByText(/THÊM/i));
 
-    // Kiểm tra form hiển thị
     expect(screen.getByPlaceholderText(/Tên tài khoản/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Mật khẩu/i)).toBeInTheDocument();
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Nhân viên \(ID\)/i)).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Chọn quyền' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Chọn nhân viên' })).toBeInTheDocument();
     expect(screen.getByText(/Tạo tài khoản/i)).toBeInTheDocument();
     expect(screen.getByText(/Hủy/i)).toBeInTheDocument();
 
-    // Snapshot test khi form hiển thị
+    await waitFor(() => {
+      expect(screen.getByRole('option', { name: /emp3 - Le Thi C/i })).toBeInTheDocument();
+    });
+
     expect(container).toMatchSnapshot();
   });
 
   test('tìm kiếm tài khoản theo tên người dùng', async () => {
-    render(<Accounts />);
+    renderAccounts();
 
-    // Chờ dữ liệu tải
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
       expect(screen.getByText('user2')).toBeInTheDocument();
     });
 
-    // Nhập từ khóa tìm kiếm
     fireEvent.change(screen.getByPlaceholderText(/Tìm kiếm tài khoản.../i), {
       target: { value: 'user1' },
     });
 
-    // Kiểm tra kết quả tìm kiếm
     expect(screen.getByText('user1')).toBeInTheDocument();
     expect(screen.queryByText('user2')).not.toBeInTheDocument();
   });
 
-  test('thêm tài khoản mới', async () => {
+  test('thêm tài khoản mới bằng danh sách nhân viên hợp lệ', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Nhấn nút THÊM
     fireEvent.click(screen.getByText(/THÊM/i));
-
-    // Điền form
+    await screen.findByRole('option', { name: /emp3 - Le Thi C/i });
     fireEvent.change(screen.getByPlaceholderText(/Tên tài khoản/i), {
       target: { value: 'newuser' },
     });
     fireEvent.change(screen.getByPlaceholderText(/Mật khẩu/i), {
       target: { value: 'password123' },
     });
-    fireEvent.change(screen.getByRole('combobox'), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Chọn quyền' }), {
       target: { value: '2' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/Nhân viên \(ID\)/i), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Chọn nhân viên' }), {
       target: { value: 'emp3' },
     });
 
-    // Nhấn nút Tạo tài khoản
     fireEvent.click(screen.getByText(/Tạo tài khoản/i));
 
-    // Kiểm tra axios.post được gọi
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/accounts/',
@@ -146,16 +146,15 @@ describe('Accounts component', () => {
       );
     });
 
-    // Kiểm tra form bị ẩn
     await waitFor(() => {
       expect(screen.queryByPlaceholderText(/Tên tài khoản/i)).not.toBeInTheDocument();
     });
   });
 
   test('hiển thị lỗi cụ thể từ API khi tạo tài khoản thất bại', async () => {
-    axios.post.mockRejectedValue({ response: { data: { error: 'Mã nhân viên không hợp lệ.' } } });
+    axios.post.mockRejectedValue({ response: { data: { error: 'Tên tài khoản đã tồn tại.' } } });
 
-    render(<Accounts />);
+    renderAccounts();
 
     fireEvent.click(screen.getByText(/THÊM/i));
     fireEvent.change(screen.getByPlaceholderText(/Tên tài khoản/i), {
@@ -164,45 +163,36 @@ describe('Accounts component', () => {
     fireEvent.change(screen.getByPlaceholderText(/Mật khẩu/i), {
       target: { value: 'password123' },
     });
-    fireEvent.change(screen.getByRole('combobox'), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Chọn quyền' }), {
       target: { value: '2' },
-    });
-    fireEvent.change(screen.getByPlaceholderText(/Nhân viên \(ID\)/i), {
-      target: { value: 'EMP004' },
     });
 
     fireEvent.click(screen.getByText(/Tạo tài khoản/i));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Mã nhân viên không hợp lệ.');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Tên tài khoản đã tồn tại.');
   });
 
   test('sửa tài khoản hiện có', async () => {
     axios.patch.mockResolvedValue({ data: {} });
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Chờ dữ liệu tải
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
     });
 
-    // Nhấn nút Sửa
     fireEvent.click(screen.getAllByText(/Sửa/i)[0]);
 
-    // Kiểm tra form hiển thị với dữ liệu
     expect(screen.getByPlaceholderText(/Tên tài khoản/i)).toHaveValue('user1');
     expect(screen.getByPlaceholderText(/Mật khẩu/i)).toHaveValue('');
-    expect(screen.getByRole('combobox')).toHaveValue('2');
+    expect(screen.getByRole('combobox', { name: 'Chọn quyền' })).toHaveValue('2');
+    expect(screen.getByRole('combobox', { name: 'Chọn nhân viên' })).toHaveValue('emp1');
 
-    // Cập nhật dữ liệu
     fireEvent.change(screen.getByPlaceholderText(/Tên tài khoản/i), {
       target: { value: 'updateduser' },
     });
-
-    // Nhấn nút Cập nhật tài khoản
     fireEvent.click(screen.getByText(/Cập nhật tài khoản/i));
 
-    // Kiểm tra axios.patch được gọi
     await waitFor(() => {
       expect(axios.patch).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/accounts/1/',
@@ -220,17 +210,14 @@ describe('Accounts component', () => {
     axios.delete.mockResolvedValue({ data: {} });
     window.confirm = jest.fn().mockReturnValue(true);
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Chờ dữ liệu tải
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
     });
 
-    // Nhấn nút Xóa
     fireEvent.click(screen.getAllByText(/Xóa/i)[0]);
 
-    // Kiểm tra axios.delete được gọi
     await waitFor(() => {
       expect(axios.delete).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/accounts/1/',
@@ -239,20 +226,17 @@ describe('Accounts component', () => {
     });
   });
 
-  test('kích hoạt/vô hiệu hóa tài khoản', async () => {
+  test('kích hoạt hoặc vô hiệu hóa tài khoản', async () => {
     axios.patch.mockResolvedValue({ data: {} });
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Chờ dữ liệu tải
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
     });
 
-    // Nhấn nút Vô hiệu hóa
     fireEvent.click(screen.getAllByText(/Vô hiệu hóa/i)[0]);
 
-    // Kiểm tra axios.patch được gọi
     await waitFor(() => {
       expect(axios.patch).toHaveBeenCalledWith(
         'http://localhost:8000/api/auth/accounts/1/',
@@ -262,73 +246,53 @@ describe('Accounts component', () => {
     });
   });
 
-  // Interaction test: Nhấn nút Hủy
   test('nhấn nút Hủy đóng form và reset dữ liệu', async () => {
-    render(<Accounts />);
+    renderAccounts();
 
-    // Nhấn nút THÊM
     fireEvent.click(screen.getByText(/THÊM/i));
-
-    // Điền form
     fireEvent.change(screen.getByPlaceholderText(/Tên tài khoản/i), {
       target: { value: 'testuser' },
     });
-
-    // Nhấn nút Hủy
     fireEvent.click(screen.getByText(/Hủy/i));
 
-    // Kiểm tra form bị ẩn
     expect(screen.queryByPlaceholderText(/Tên tài khoản/i)).not.toBeInTheDocument();
 
-    // Nhấn lại nút THÊM và kiểm tra form rỗng
     fireEvent.click(screen.getByText(/THÊM/i));
     expect(screen.getByPlaceholderText(/Tên tài khoản/i)).toHaveValue('');
   });
 
-  // Interaction test: Gửi form không hợp lệ
   test('gửi form không hợp lệ không gọi API', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Nhấn nút THÊM
     fireEvent.click(screen.getByText(/THÊM/i));
-
-    // Để trống username (trường bắt buộc)
     fireEvent.change(screen.getByPlaceholderText(/Mật khẩu/i), {
       target: { value: 'password123' },
     });
-    fireEvent.change(screen.getByRole('combobox'), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Chọn quyền' }), {
       target: { value: '2' },
     });
-
-    // Nhấn nút Tạo tài khoản
     fireEvent.click(screen.getByText(/Tạo tài khoản/i));
 
-    // Kiểm tra axios.post không được gọi
     await waitFor(() => {
       expect(axios.post).not.toHaveBeenCalled();
     });
 
-    // Kiểm tra form vẫn hiển thị
     expect(screen.getByPlaceholderText(/Tên tài khoản/i)).toBeInTheDocument();
   });
 
-  // Responsive behavior test
   test('hiển thị đúng trên màn hình nhỏ', async () => {
-    // Giả lập màn hình nhỏ
     global.innerWidth = 500;
     global.dispatchEvent(new Event('resize'));
 
-    render(<Accounts />);
+    renderAccounts();
 
-    // Chờ dữ liệu tải
     await waitFor(() => {
       expect(screen.getByText('user1')).toBeInTheDocument();
       expect(screen.getByText('user2')).toBeInTheDocument();
     });
 
-    // Kiểm tra các phần tử chính vẫn hiển thị
     expect(screen.getByTestId('sidebar')).toBeInTheDocument();
     expect(screen.getByText(/THÊM/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Tìm kiếm tài khoản.../i)).toBeInTheDocument();

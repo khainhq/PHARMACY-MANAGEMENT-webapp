@@ -139,42 +139,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         <thead>
           <tr>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               STT
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Mã nhân viên
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Họ tên
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Số điện thoại
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Giới tính
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Năm sinh
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Ngày vào làm
             </th>
             <th
-              class="sc-icnseD hgeqAh"
+              class="sc-icnseD hMjDHl"
             >
               Hành động
             </th>
@@ -183,42 +183,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         <tbody>
           <tr>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               1
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               AB12CDEF
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               Nguyen Van A
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               0123456789
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               Nam
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               1990
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               15/01/2023
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               <div
                 class="sc-cXawGu eBPonH"
@@ -238,42 +238,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           </tr>
           <tr>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               2
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               XY34WXYZ
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               Tran Thi B
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               0987654321
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               Nữ
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               1995
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               20/06/2023
             </td>
             <td
-              class="sc-jMsorb jiKWAU"
+              class="sc-jMsorb iVRIIU"
             >
               <div
                 class="sc-cXawGu eBPonH"

@@ -27,7 +27,7 @@ const SidebarContainer = styled.div`
   color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 1rem;
   z-index: 1000;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
@@ -51,15 +51,15 @@ const SidebarContainer = styled.div`
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0.25rem;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 `;
 
 const Avatar = styled.img`
-  width: 60px;
-  height: 60px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   margin-right: 1rem;
   border: 2px solid #10b981;
@@ -72,7 +72,7 @@ const ProfileInfo = styled.div`
 
 const Name = styled.span`
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.05rem;
 `;
 
 const Role = styled.span`
@@ -87,12 +87,12 @@ const Menu = styled.div`
 const MenuItem = styled(NavLink)`
   display: flex;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding: 0.58rem 0.82rem;
   color: #cbd5e1;
   text-decoration: none;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  margin-bottom: 0.34rem;
+  font-size: 0.95rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
 
   &.active {
@@ -120,8 +120,8 @@ const SubMenu = styled.div`
 `;
 
 const LogoutButton = styled.div`
-  margin-top: auto;
-  padding: 0.8rem 1rem;
+  margin-top: 0.55rem;
+  padding: 0.68rem 0.85rem;
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #fff;
   text-align: center;
@@ -156,8 +156,7 @@ export const normalizeRole = (role) => {
   if (normalizedRole === 'admin') return ROLE_KEYS.ADMIN;
   if (
     normalizedRole === 'sales' ||
-    normalizedRole === 'nhân viên bán hàng' ||
-    normalizedRole === 'nhã¢n viãªn bã¡n hã ng'
+    normalizedRole === 'nhân viên bán hàng'
   ) {
     return ROLE_KEYS.SALES;
   }
@@ -165,7 +164,7 @@ export const normalizeRole = (role) => {
     normalizedRole === 'product_manager' ||
     normalizedRole === 'product manager' ||
     normalizedRole === 'nhân viên quản lý sản phẩm' ||
-    normalizedRole === 'nhã¢n viãªn quáº£n lã½ sáº£n pháº©m'
+    normalizedRole === 'nhân viên quản lí sản phẩm'
   ) {
     return ROLE_KEYS.PRODUCT_MANAGER;
   }

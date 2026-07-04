@@ -57,10 +57,10 @@ const addFirstMedicineToCart = async (quantity = '1') => {
 
 const fillInvoiceForm = ({ status = 'Paid', phoneNumber = '0123456789' } = {}) => {
   fireEvent.change(screen.getByPlaceholderText('Tên khách hàng'), { target: { value: 'Nguyen Van A' } });
-  fireEvent.change(screen.getByPlaceholderText('Số điện thoại'), { target: { value: phoneNumber } });
+  fireEvent.change(screen.getByRole('textbox', { name: 'Số điện thoại' }), { target: { value: phoneNumber } });
   fireEvent.change(screen.getByRole('combobox', { name: 'Chọn giới tính' }), { target: { value: 'Male' } });
   fireEvent.change(screen.getByPlaceholderText('Địa chỉ'), { target: { value: '123 Ha Noi' } });
-  fireEvent.change(screen.getAllByRole('combobox')[2], { target: { value: status } });
+  fireEvent.change(screen.getByRole('combobox', { name: 'Chọn trạng thái hóa đơn' }), { target: { value: status } });
 };
 
 describe('CreateInvoice component', () => {
@@ -133,6 +133,8 @@ describe('CreateInvoice component', () => {
     expect(screen.getByText('Giỏ hàng')).toBeInTheDocument();
     expect(screen.getByText('Thông tin hóa đơn')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Tên khách hàng')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Chọn mã quốc gia' })).toHaveValue('VN');
+    expect(screen.getByRole('textbox', { name: 'Số điện thoại' })).toBeInTheDocument();
     expect(screen.getByText('Ibuprofen')).toBeInTheDocument();
   });
 
@@ -207,7 +209,7 @@ describe('CreateInvoice component', () => {
         `${API_BASE}/api/sales/checkout/`,
         {
           customerName: 'Nguyen Van A',
-          phoneNumber: '0123456789',
+          phoneNumber: '+84123456789',
           address: '123 Ha Noi',
           gender: 'Male',
           paymentMethod: 'Cash',
@@ -223,7 +225,7 @@ describe('CreateInvoice component', () => {
     expect(within(receipt).getByText('Hóa đơn thanh toán')).toBeInTheDocument();
     expect(within(receipt).getByText('INV001')).toBeInTheDocument();
     expect(within(receipt).getByText('Nguyen Van A')).toBeInTheDocument();
-    expect(within(receipt).getByText('0123456789')).toBeInTheDocument();
+    expect(within(receipt).getByText('+84123456789')).toBeInTheDocument();
     expect(within(receipt).getByText('123 Ha Noi')).toBeInTheDocument();
     expect(within(receipt).getByText('Tiền mặt')).toBeInTheDocument();
     expect(within(receipt).getByText('Chưa thanh toán')).toBeInTheDocument();
@@ -259,14 +261,14 @@ describe('CreateInvoice component', () => {
     const imagePreview = screen.getByAltText('Ảnh hóa đơn INV001');
     expect(imagePreview).toHaveAttribute('src', 'data:image/png;base64,invoice-image');
     expect(screen.getByText(/^Tên file:/)).toHaveTextContent(
-      /^Tên file: hoa-don_INV001_Nguyen-Van-A_0123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
+      /^Tên file: hoa-don_INV001_Nguyen-Van-A_84123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Tải về' }));
 
     expect(downloadedHref).toBe('data:image/png;base64,invoice-image');
     expect(downloadedFileName).toMatch(
-      /^hoa-don_INV001_Nguyen-Van-A_0123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
+      /^hoa-don_INV001_Nguyen-Van-A_84123456789_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.png$/
     );
   });
 });

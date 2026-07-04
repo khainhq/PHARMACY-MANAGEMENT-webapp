@@ -72,57 +72,57 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
         <thead>
           <tr>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               STT
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Mã thuốc
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Tên thuốc
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Thành phần
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Danh mục
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Xuất xứ
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Đơn vị tính
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Số lượng
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Đơn giá
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Hạn sử dụng
             </th>
             <th
-              class="sc-iQQCXo cdgGSi"
+              class="sc-iQQCXo gYXfIx"
             >
               Hành động
             </th>
@@ -131,58 +131,58 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
         <tbody>
           <tr>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               1
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               MED001
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Paracetamol
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Paracetamol 500mg
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Thuốc kê đơn
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Việt Nam
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Viên
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               100
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               5.000
                VND
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               31/12/2025
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               <button
                 class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"
@@ -198,58 +198,58 @@ exports[`Medicines component snapshot cá»§a giao diá»‡n Medicines 1`] = `
           </tr>
           <tr>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               2
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               MED002
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Amoxicillin
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Amoxicillin 250mg
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Thuốc không kê đơn
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Nhật Bản
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               Hộp
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               50
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               10.000
                VND
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               30/06/2025
             </td>
             <td
-              class="sc-gDpztx izLaYp"
+              class="sc-gDpztx ihtQlA"
             >
               <button
                 class="sc-fWnslK sc-cUiCeM cGWGOW fWOitJ"

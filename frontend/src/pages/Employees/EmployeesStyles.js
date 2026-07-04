@@ -103,6 +103,11 @@ export const TableHeader = styled.th`
   vertical-align: top;
   overflow-wrap: break-word;
   word-break: normal;
+
+  &:first-child {
+    text-align: center;
+    white-space: nowrap;
+  }
 `;
 
 export const TableCell = styled.td`
@@ -114,6 +119,11 @@ export const TableCell = styled.td`
   vertical-align: top;
   overflow-wrap: break-word;
   word-break: normal;
+
+  &:first-child {
+    text-align: center;
+    white-space: nowrap;
+  }
 
   &:hover {
     background-color: #f9fafb;

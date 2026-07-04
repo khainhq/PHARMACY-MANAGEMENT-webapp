@@ -252,6 +252,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
           value=""
         />
         <select
+          aria-label="Chọn quyền"
           class="sc-cXawGu dhLZyz"
           required=""
         >
@@ -271,12 +272,33 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
             Nhân viên quản lý sản phẩm
           </option>
         </select>
-        <input
-          class="sc-jMsorb hoHyT"
-          placeholder="Nhân viên (ID)"
-          type="text"
-          value=""
-        />
+        <select
+          aria-label="Chọn nhân viên"
+          class="sc-cXawGu dhLZyz"
+        >
+          <option
+            value=""
+          >
+            Không gắn nhân viên
+          </option>
+          <option
+            disabled=""
+            value="emp1"
+          >
+            emp1 - Nguyen Van A (đã có tài khoản)
+          </option>
+          <option
+            disabled=""
+            value="emp2"
+          >
+            emp2 - Tran Thi B (đã có tài khoản)
+          </option>
+          <option
+            value="emp3"
+          >
+            emp3 - Le Thi C
+          </option>
+        </select>
         <div
           style="display: flex; gap: 1rem;"
         >
@@ -334,7 +356,104 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
             </th>
           </tr>
         </thead>
-        <tbody />
+        <tbody>
+          <tr>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              user1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              emp1
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Nhân viên bán hàng
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Hoạt động
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              <button
+                class="sc-fWnslK csgtCp"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Xóa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Vô hiệu hóa
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              user2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              emp2
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Nhân viên quản lí sản phẩm
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              Vô hiệu
+            </td>
+            <td
+              class="sc-kpOvIu kAAbCD"
+            >
+              <button
+                class="sc-fWnslK csgtCp"
+              >
+                Sửa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Xóa
+              </button>
+              <button
+                class="sc-fWnslK csgtCp"
+                style="margin-left: 0.25rem;"
+              >
+                Kích hoạt
+              </button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
