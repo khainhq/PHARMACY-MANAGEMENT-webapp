@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
+exports[`Reports component snapshot của giao diện Reports 1`] = `
 <div>
   <div
     class="sc-Qotzb kLXhXJ"
@@ -9,17 +9,17 @@ exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw djaEeJ"
+      class="sc-fYsHOw dZnbbE"
     >
       <div
-        class="sc-kpOvIu jnhHuP"
+        class="sc-cXawGu bRLcWV"
       >
         <h1>
           Báo Cáo
         </h1>
         <div>
           <button
-            class="sc-icnseD ctywJC"
+            class="sc-jJAtPt gMbApZ"
           >
             <svg
               fill="currentColor"
@@ -38,7 +38,7 @@ exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
             Tải xuống Excel
           </button>
           <button
-            class="sc-icnseD ctywJC"
+            class="sc-jJAtPt gMbApZ"
           >
             <svg
               fill="currentColor"
@@ -62,14 +62,59 @@ exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
         id="report-sections"
       >
         <div
-          class="sc-dKREkF hPqSyY"
+          class="sc-fWnslK eDmYdh"
         >
           <div
-            class="sc-fWnslK cGlcYR"
-            style="grid-column: 1 / 2; grid-row: 1 / 2;"
+            class="sc-dIMoHT gdJMdO"
+          >
+            <span>
+              Tổng doanh thu
+            </span>
+            <strong>
+              450.000
+               VND
+            </strong>
+          </div>
+          <div
+            class="sc-dIMoHT gdJMdO"
+          >
+            <span>
+              Số hóa đơn
+            </span>
+            <strong>
+              3
+            </strong>
+          </div>
+          <div
+            class="sc-dIMoHT gdJMdO"
+          >
+            <span>
+              Thuốc đã bán
+            </span>
+            <strong>
+              9
+            </strong>
+          </div>
+          <div
+            class="sc-dIMoHT gdJMdO"
+          >
+            <span>
+              Trung bình hóa đơn
+            </span>
+            <strong>
+              150.000
+               VND
+            </strong>
+          </div>
+        </div>
+        <div
+          class="sc-dKREkF efIfYf"
+        >
+          <div
+            class="sc-iQQCXo jHGWaL"
           >
             <h3>
-              Sales Made
+              Doanh thu theo ngày
             </h3>
             <div
               data-testid="responsive-container"
@@ -96,11 +141,10 @@ exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-fWnslK cGlcYR"
-            style="grid-column: 1 / 2; grid-row: 2 / 3;"
+            class="sc-iQQCXo jHGWaL"
           >
             <h3>
-              Customer Statistics
+              Khách hàng theo số hóa đơn
             </h3>
             <div
               data-testid="responsive-container"
@@ -127,64 +171,136 @@ exports[`Reports component snapshot cá»§a giao diá»‡n Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-fWnslK cGlcYR"
-            style="grid-column: 2 / 3; grid-row: 1 / 3;"
+            class="sc-iQQCXo jHGWaL"
           >
             <h3>
-              Order Details
+              Thuốc đã bán
+            </h3>
+            <div
+              data-testid="responsive-container"
+            >
+              <div
+                data-testid="bar-chart"
+              >
+                <div>
+                  CartesianGrid
+                </div>
+                <div>
+                  XAxis
+                </div>
+                <div>
+                  YAxis
+                </div>
+                <div>
+                  Tooltip
+                </div>
+                <div>
+                  Bar
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="sc-iQQCXo jHGWaL"
+          >
+            <h3>
+              Chi tiết hóa đơn
             </h3>
             <table
-              class="sc-dIMoHT jlMlVp"
+              class="sc-gDpztx VxetT"
             >
               <thead>
                 <tr>
                   <th
-                    class="sc-iQQCXo hOGzlM"
+                    class="sc-kpOvIu kgNMAj"
                   >
-                    Order ID
+                    Mã hóa đơn
                   </th>
                   <th
-                    class="sc-iQQCXo hOGzlM"
+                    class="sc-kpOvIu kgNMAj"
                   >
-                    Date & Time
+                    Thời gian
+                  </th>
+                  <th
+                    class="sc-kpOvIu kgNMAj"
+                  >
+                    Khách hàng
+                  </th>
+                  <th
+                    class="sc-kpOvIu kgNMAj"
+                  >
+                    Tổng tiền
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
-                    ORD001
+                    INV003
                   </td>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
-                    01/05/2025 17:00:00
+                    02/05/2025 21:00:00
+                  </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    Tran Thi B
+                  </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    150.000
+                     VND
                   </td>
                 </tr>
                 <tr>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
-                    ORD002
+                    INV002
                   </td>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
                     02/05/2025 19:00:00
                   </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    Nguyen Van A
+                  </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    200.000
+                     VND
+                  </td>
                 </tr>
                 <tr>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
-                    ORD003
+                    INV001
                   </td>
                   <td
-                    class="sc-gDpztx jQvnLD"
+                    class="sc-icnseD fkqbyh"
                   >
-                    02/05/2025 21:00:00
+                    01/05/2025 17:00:00
+                  </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    Nguyen Van A
+                  </td>
+                  <td
+                    class="sc-icnseD fkqbyh"
+                  >
+                    100.000
+                     VND
                   </td>
                 </tr>
               </tbody>

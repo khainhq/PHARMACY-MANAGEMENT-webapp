@@ -7,11 +7,13 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   flex: 1;
-  margin-left: 250px;
-  padding: 2rem;
+  min-width: 0;
+  margin-left: 260px;
+  padding: clamp(1rem, 1.5vw, 2rem);
   background-color: #ffffff; /* Màu nền trắng */
   min-height: 100vh;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  overflow-x: hidden;
 `;
 
 export const StatsGrid = styled.div`
@@ -77,17 +79,48 @@ export const StatValue = styled.p`
 `;
 
 export const RecentSection = styled.div`
-  margin-top: 3rem; /* Tăng khoảng cách trên */
+  margin-top: 1.5rem;
   padding: 1.5rem;
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin: 0 0 1rem;
+    color: #0f172a;
+  }
+`;
+
+export const SectionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const ChartGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const ResponsiveTableWrap = styled.div`
+  width: 100%;
+  overflow-x: auto;
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  table-layout: fixed;
 `;
 
 export const TableHeader = styled.th`
@@ -96,12 +129,30 @@ export const TableHeader = styled.th`
   padding: 0.8rem; /* Tăng padding */
   text-align: left;
   font-size: 1rem; /* Tăng kích thước chữ */
+  line-height: 1.35;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #ddd;
   padding: 0.8rem; /* Tăng padding */
   font-size: 0.9rem; /* Giảm kích thước chữ */
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+
+  &:first-child,
+  &:nth-child(3),
+  &:nth-child(4) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+`;
+
+export const EmptyState = styled.td`
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
 `;
 
 export const ChartContainer = styled.div`

@@ -9,7 +9,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw hZiLdl"
+      class="sc-fYsHOw gxYQNO"
     >
       <h1>
         Dashboard
@@ -22,7 +22,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           href="/invoices/list"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -41,17 +41,18 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           <h3
             class="sc-dIMoHT cUACZf"
           >
-            Tổng thu nhập
+            Tổng doanh thu
           </h3>
           <p
             class="sc-iQQCXo kuuxoU"
           >
+            30.000
              VND
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            View Detailed Report »
+            Xem chi tiết hóa đơn »
           </p>
         </a>
         <a
@@ -59,7 +60,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           href="/employees"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -83,12 +84,12 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           <p
             class="sc-iQQCXo kuuxoU"
           >
-            0
+            2
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            View Detailed Employees »
+            Xem nhân viên »
           </p>
         </a>
         <a
@@ -96,7 +97,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           href="/medicines"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -123,9 +124,9 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
             0
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            Resolve Now »
+            Xử lý ngay »
           </p>
         </a>
         <a
@@ -133,7 +134,7 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           href="/medicines"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -156,16 +157,18 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
           </h3>
           <p
             class="sc-iQQCXo kuuxoU"
-          />
-          <p
-            class="sc-cUiCeM hJYuc"
           >
-            Visit Inventory »
+            2
+          </p>
+          <p
+            class="sc-cZSric hRNKWu"
+          >
+            Xem kho thuốc »
           </p>
         </a>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <h2>
           Chi phí nhập thuốc theo thời gian
@@ -179,87 +182,183 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
         </div>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <div
-          style="display: flex; gap: 2rem;"
+          class="sc-kpOvIu jycqxI"
         >
-          <div
-            style="flex: 1;"
-          >
+          <div>
             <h2>
               Hóa đơn gần đây
             </h2>
-            <table
-              class="sc-kpOvIu zsiyg"
+            <div
+              class="sc-jMsorb dEtsTO"
             >
-              <thead>
-                <tr>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Mã hóa đơn
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Thời gian
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Khách hàng
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Tổng tiền
-                  </th>
-                </tr>
-              </thead>
-              <tbody />
-            </table>
+              <table
+                class="sc-cXawGu dihwAl"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Mã hóa đơn
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Thời gian
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Khách hàng
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Tổng tiền
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      INV001
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      04/05/2025 17:00:00
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      Nguyen Van A
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      20.000
+                       VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      INV002
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      03/05/2025 21:00:00
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      Tran Thi B
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      10.000
+                       VND
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div
-            style="flex: 1;"
-          >
+          <div>
             <h2>
               Thuốc gần hết hạn
             </h2>
-            <table
-              class="sc-kpOvIu zsiyg"
+            <div
+              class="sc-jMsorb dEtsTO"
             >
-              <thead>
-                <tr>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Mã thuốc
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Tên thuốc
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Hạn sử dụng
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Số lượng
-                  </th>
-                </tr>
-              </thead>
-              <tbody />
-            </table>
+              <table
+                class="sc-cXawGu dihwAl"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Mã thuốc
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Tên thuốc
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Hạn sử dụng
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Số lượng
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      MED001
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      Paracetamol
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      01/06/2099
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      50
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      MED002
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      Ibuprofen
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      02/06/2099
+                    </td>
+                    <td
+                      class="sc-cUiCeM zDAvc"
+                    >
+                      30
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <h2>
           Top thuốc bán chạy nhất
@@ -269,6 +368,38 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
             data-testid="mocked-barchart"
           >
             Mocked BarChart
+          </div>
+        </div>
+      </div>
+      <div
+        class="sc-icnseD kupQig"
+      >
+        <div
+          class="sc-gDpztx lbsXLv"
+        >
+          <h2>
+            Tồn kho so với đã bán
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-scatterchart"
+            >
+              Mocked ScatterChart
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-gDpztx lbsXLv"
+        >
+          <h2>
+            Số lượng tồn, nhập, bán
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-barchart"
+            >
+              Mocked BarChart
+            </div>
           </div>
         </div>
       </div>
@@ -286,7 +417,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw hZiLdl"
+      class="sc-fYsHOw gxYQNO"
     >
       <h1>
         Dashboard
@@ -299,7 +430,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           href="/invoices/list"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -318,17 +449,18 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           <h3
             class="sc-dIMoHT cUACZf"
           >
-            Tổng thu nhập
+            Tổng doanh thu
           </h3>
           <p
             class="sc-iQQCXo kuuxoU"
           >
+            0
              VND
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            View Detailed Report »
+            Xem chi tiết hóa đơn »
           </p>
         </a>
         <a
@@ -336,7 +468,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           href="/employees"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -363,9 +495,9 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
             0
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            View Detailed Employees »
+            Xem nhân viên »
           </p>
         </a>
         <a
@@ -373,7 +505,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           href="/medicines"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -400,9 +532,9 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
             0
           </p>
           <p
-            class="sc-cUiCeM hJYuc"
+            class="sc-cZSric hRNKWu"
           >
-            Resolve Now »
+            Xử lý ngay »
           </p>
         </a>
         <a
@@ -410,7 +542,7 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           href="/medicines"
         >
           <div
-            class="sc-jJAtPt bWWKlC"
+            class="sc-jPkiSJ kvRxMa"
           >
             <svg
               fill="currentColor"
@@ -433,16 +565,18 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
           </h3>
           <p
             class="sc-iQQCXo kuuxoU"
-          />
-          <p
-            class="sc-cUiCeM hJYuc"
           >
-            Visit Inventory »
+            0
+          </p>
+          <p
+            class="sc-cZSric hRNKWu"
+          >
+            Xem kho thuốc »
           </p>
         </a>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <h2>
           Chi phí nhập thuốc theo thời gian
@@ -456,96 +590,148 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
         </div>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <div
-          style="display: flex; gap: 2rem;"
+          class="sc-kpOvIu jycqxI"
         >
-          <div
-            style="flex: 1;"
-          >
+          <div>
             <h2>
               Hóa đơn gần đây
             </h2>
-            <table
-              class="sc-kpOvIu zsiyg"
+            <div
+              class="sc-jMsorb dEtsTO"
             >
-              <thead>
-                <tr>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Mã hóa đơn
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Thời gian
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Khách hàng
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Tổng tiền
-                  </th>
-                </tr>
-              </thead>
-              <tbody />
-            </table>
+              <table
+                class="sc-cXawGu dihwAl"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Mã hóa đơn
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Thời gian
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Khách hàng
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Tổng tiền
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="sc-jScdur rOXso"
+                      colspan="4"
+                    >
+                      Chưa có hóa đơn gần đây.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div
-            style="flex: 1;"
-          >
+          <div>
             <h2>
               Thuốc gần hết hạn
             </h2>
-            <table
-              class="sc-kpOvIu zsiyg"
+            <div
+              class="sc-jMsorb dEtsTO"
             >
-              <thead>
-                <tr>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Mã thuốc
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Tên thuốc
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Hạn sử dụng
-                  </th>
-                  <th
-                    class="sc-icnseD ySQFZ"
-                  >
-                    Số lượng
-                  </th>
-                </tr>
-              </thead>
-              <tbody />
-            </table>
+              <table
+                class="sc-cXawGu dihwAl"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Mã thuốc
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Tên thuốc
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Hạn sử dụng
+                    </th>
+                    <th
+                      class="sc-jJAtPt jPBnTc"
+                    >
+                      Số lượng
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="sc-jScdur rOXso"
+                      colspan="4"
+                    >
+                      Chưa có thuốc gần hết hạn.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
       <div
-        class="sc-gDpztx cZWidb"
+        class="sc-gDpztx lbsXLv"
       >
         <h2>
           Top thuốc bán chạy nhất
         </h2>
-        <div>
-          <div
-            data-testid="mocked-barchart"
-          >
-            Mocked BarChart
+        <p
+          class="sc-jScdur rOXso"
+        >
+          Chưa có dữ liệu thuốc đã bán.
+        </p>
+      </div>
+      <div
+        class="sc-icnseD kupQig"
+      >
+        <div
+          class="sc-gDpztx lbsXLv"
+        >
+          <h2>
+            Tồn kho so với đã bán
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-scatterchart"
+            >
+              Mocked ScatterChart
+            </div>
+          </div>
+        </div>
+        <div
+          class="sc-gDpztx lbsXLv"
+        >
+          <h2>
+            Số lượng tồn, nhập, bán
+          </h2>
+          <div>
+            <div
+              data-testid="mocked-barchart"
+            >
+              Mocked BarChart
+            </div>
           </div>
         </div>
       </div>

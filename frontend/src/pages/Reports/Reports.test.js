@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -8,7 +8,6 @@ import html2canvas from 'html2canvas';
 import Reports from './Reports';
 import { ToastProvider } from '../../components/ToastProvider';
 
-// Mock dependencies
 jest.mock('axios');
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 jest.mock('xlsx', () => ({
@@ -32,8 +31,6 @@ jest.mock('jspdf', () => {
 });
 jest.mock('html2canvas', () => jest.fn());
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
-
-// Mock recharts components
 jest.mock('recharts', () => ({
   LineChart: ({ children }) => <div data-testid="line-chart">{children}</div>,
   Line: () => <div>Line</div>,
@@ -46,8 +43,42 @@ jest.mock('recharts', () => ({
   ResponsiveContainer: ({ children }) => <div data-testid="responsive-container">{children}</div>,
 }));
 
-// TÄƒng timeout toÃ n cá»¥c
 jest.setTimeout(30000);
+
+const mockInvoices = [
+  {
+    invoiceID: 'INV001',
+    invoiceTime: '2025-05-01T10:00:00Z',
+    customerName: 'Nguyen Van A',
+    status: 'Paid',
+    totalAmount: 100000,
+  },
+  {
+    invoiceID: 'INV002',
+    invoiceTime: '2025-05-02T12:00:00Z',
+    customerName: 'Nguyen Van A',
+    status: 'Paid',
+    totalAmount: 200000,
+  },
+  {
+    invoiceID: 'INV003',
+    invoiceTime: '2025-05-02T14:00:00Z',
+    customerName: 'Tran Thi B',
+    status: 'Pending',
+    totalAmount: 150000,
+  },
+];
+
+const mockInvoiceDetails = [
+  { invoice: 'INV001', medicine: 'MED001', quantity: 2, unitPrice: 50000 },
+  { invoice: 'INV002', medicine: 'MED002', quantity: 4, unitPrice: 50000 },
+  { invoice: 'INV003', medicine: 'MED001', quantity: 3, unitPrice: 50000 },
+];
+
+const mockMedicines = [
+  { medicineID: 'MED001', medicineName: 'Paracetamol' },
+  { medicineID: 'MED002', medicineName: 'Ibuprofen' },
+];
 
 const renderReports = () => render(
   <ToastProvider>
@@ -56,11 +87,9 @@ const renderReports = () => render(
 );
 
 describe('Reports component', () => {
-  let mockOrders;
   let consoleErrorSpy;
 
   beforeEach(() => {
-    // Reset mocks
     axios.get.mockReset();
     saveAs.mockReset();
     XLSX.utils.json_to_sheet.mockReset();
@@ -69,63 +98,35 @@ describe('Reports component', () => {
     XLSX.write.mockReset();
     html2canvas.mockReset();
 
-    // Reset jsPDF methods
     const mockJsPDF = require('jspdf');
     if (mockJsPDF.prototype.addImage) mockJsPDF.prototype.addImage.mockReset();
     if (mockJsPDF.prototype.save) mockJsPDF.prototype.save.mockReset();
 
-    // Set up mock data (Ä‘iá»u chá»‰nh thá»i gian Ä‘á»ƒ khá»›p mÃºi giá» UTC+7)
-    mockOrders = [
-      {
-        orderID: 'ORD001',
-        orderTime: '2025-05-01T10:00:00Z',
-        totalAmount: 100000,
-        customer: 'CUS001',
-      },
-      {
-        orderID: 'ORD002',
-        orderTime: '2025-05-02T12:00:00Z',
-        totalAmount: 200000,
-        customer: 'CUS001',
-      },
-      {
-        orderID: 'ORD003',
-        orderTime: '2025-05-02T14:00:00Z',
-        totalAmount: 150000,
-        customer: 'CUS002',
-      },
-    ];
-
-    // Set up token in sessionStorage
     sessionStorage.setItem('token', 'dummyToken');
 
-    // Mock API responses
     axios.get.mockImplementation((url) => {
-      if (url === 'http://localhost:8000/api/sales/orders/') {
-        console.log('Mock API /api/sales/orders/ called, returning:', mockOrders);
-        return Promise.resolve({ data: mockOrders });
+      if (url === 'http://127.0.0.1:8000/api/sales/invoices/') {
+        return Promise.resolve({ data: mockInvoices });
       }
-      console.log('Unexpected API call:', url);
-      return Promise.resolve({ data: null });
+      if (url === 'http://127.0.0.1:8000/api/sales/invoice-details/') {
+        return Promise.resolve({ data: mockInvoiceDetails });
+      }
+      if (url === 'http://127.0.0.1:8000/api/medicines/medicines/') {
+        return Promise.resolve({ data: mockMedicines });
+      }
+      return Promise.resolve({ data: [] });
     });
 
-    // Mock html2canvas
     html2canvas.mockResolvedValue({
       toDataURL: jest.fn(() => 'data:image/png;base64,mockImage'),
       width: 800,
       height: 600,
     });
 
-    // Mock XLSX
     XLSX.utils.json_to_sheet.mockReturnValue('mockWorksheet');
     XLSX.utils.book_new.mockReturnValue('mockWorkbook');
     XLSX.utils.book_append_sheet.mockReturnValue(undefined);
     XLSX.write.mockReturnValue('mockExcelBuffer');
-
-    // Mock window.alert
-    window.alert = jest.fn();
-
-    // Mock console.error
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -135,115 +136,95 @@ describe('Reports component', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  test('hiá»ƒn thá»‹ Sidebar, tiÃªu Ä‘á» vÃ  cÃ¡c thÃ nh pháº§n bÃ¡o cÃ¡o', async () => {
+  test('hiển thị Sidebar, tiêu đề và các phần báo cáo hóa đơn', async () => {
     renderReports();
 
     await waitFor(() => {
       expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
       expect(screen.getByText(/Báo Cáo/i)).toBeInTheDocument();
-      expect(screen.getByText(/Sales Made/i)).toBeInTheDocument();
-      expect(screen.getByText(/Customer Statistics/i)).toBeInTheDocument();
-      expect(screen.getByText(/Order Details/i)).toBeInTheDocument();
+      expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
+      expect(screen.getByText(/Doanh thu theo ngày/i)).toBeInTheDocument();
+      expect(screen.getByText(/Khách hàng theo số hóa đơn/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Thuốc đã bán/i).length).toBeGreaterThanOrEqual(2);
+      expect(screen.getByText(/Chi tiết hóa đơn/i)).toBeInTheDocument();
     }, { timeout: 5000 });
 
     expect(screen.getByText(/Tải xuống Excel/i)).toBeInTheDocument();
     expect(screen.getByText(/Tải xuống PDF/i)).toBeInTheDocument();
-
     expect(screen.getByTestId('line-chart')).toBeInTheDocument();
-    expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
+    expect(screen.getAllByTestId('bar-chart')).toHaveLength(2);
 
     const table = screen.getByRole('table');
-    expect(within(table).getByText(/Order ID/i)).toBeInTheDocument();
-    expect(within(table).getByText(/Date & Time/i)).toBeInTheDocument();
-
-    await waitFor(() => {
-      console.log('Checking table data for ORD001');
-      const row1 = within(table).getByText('ORD001').closest('tr');
-      const cells1 = within(row1).getAllByRole('cell');
-      console.log('Cells for ORD001:', cells1.map(cell => cell.textContent));
-      expect(cells1[0]).toHaveTextContent('ORD001');
-      expect(cells1[1]).toHaveTextContent('01/05/2025 17:00:00');
-    }, { timeout: 5000 });
+    expect(within(table).getByText(/Mã hóa đơn/i)).toBeInTheDocument();
+    expect(within(table).getByText(/Thời gian/i)).toBeInTheDocument();
   });
 
-  test('hiá»ƒn thá»‹ dá»¯ liá»‡u bÃ¡o cÃ¡o tá»« API', async () => {
+  test('hiển thị dữ liệu báo cáo từ API hóa đơn', async () => {
     renderReports();
 
     await waitFor(() => {
-      console.log('Checking API call');
       expect(axios.get).toHaveBeenCalledWith(
-        'http://localhost:8000/api/sales/orders/',
+        'http://127.0.0.1:8000/api/sales/invoices/',
+        expect.any(Object)
+      );
+      expect(axios.get).toHaveBeenCalledWith(
+        'http://127.0.0.1:8000/api/sales/invoice-details/',
         expect.any(Object)
       );
     }, { timeout: 5000 });
 
     const table = screen.getByRole('table');
     await waitFor(() => {
-      console.log('Checking table rows');
-      const row1 = within(table).getByText('ORD001').closest('tr');
-      const cells1 = within(row1).getAllByRole('cell');
-      console.log('Cells for ORD001:', cells1.map(cell => cell.textContent));
-      expect(cells1[0]).toHaveTextContent('ORD001');
-      expect(cells1[1]).toHaveTextContent('01/05/2025 17:00:00');
+      const row1 = within(table).getByText('INV001').closest('tr');
+      const row2 = within(table).getByText('INV002').closest('tr');
+      const row3 = within(table).getByText('INV003').closest('tr');
 
-      const row2 = within(table).getByText('ORD002').closest('tr');
-      const cells2 = within(row2).getAllByRole('cell');
-      console.log('Cells for ORD002:', cells2.map(cell => cell.textContent));
-      expect(cells2[0]).toHaveTextContent('ORD002');
-      expect(cells2[1]).toHaveTextContent('02/05/2025 19:00:00');
-
-      const row3 = within(table).getByText('ORD003').closest('tr');
-      const cells3 = within(row3).getAllByRole('cell');
-      console.log('Cells for ORD003:', cells3.map(cell => cell.textContent));
-      expect(cells3[0]).toHaveTextContent('ORD003');
-      expect(cells3[1]).toHaveTextContent('02/05/2025 21:00:00');
+      expect(within(row1).getAllByRole('cell')[0]).toHaveTextContent('INV001');
+      expect(within(row2).getAllByRole('cell')[0]).toHaveTextContent('INV002');
+      expect(within(row3).getAllByRole('cell')[0]).toHaveTextContent('INV003');
+      expect(screen.getByText('450.000 VND')).toBeInTheDocument();
+      expect(screen.getByText('9')).toBeInTheDocument();
     }, { timeout: 5000 });
-
-    expect(screen.getByTestId('line-chart')).toBeInTheDocument();
-    expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
   });
 
-  test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng Excel', async () => {
+  test('xuất báo cáo dưới dạng Excel', async () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    const excelButton = screen.getByText(/Tải xuống Excel/i);
     await act(async () => {
-      console.log('Clicking Excel button');
-      fireEvent.click(excelButton);
+      fireEvent.click(screen.getByText(/Tải xuống Excel/i));
     });
 
     await waitFor(() => {
-      expect(XLSX.utils.json_to_sheet).toHaveBeenCalledWith(mockOrders);
-      expect(XLSX.utils.book_new).toHaveBeenCalled();
-      expect(XLSX.utils.book_append_sheet).toHaveBeenCalledWith('mockWorkbook', 'mockWorksheet', 'Orders');
-      expect(XLSX.write).toHaveBeenCalledWith('mockWorkbook', { bookType: 'xlsx', type: 'array' });
-      expect(saveAs).toHaveBeenCalledWith(
-        expect.any(Blob),
-        'Orders_Report.xlsx'
+      expect(XLSX.utils.json_to_sheet).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ invoiceID: 'INV001', totalAmount: 100000 }),
+          expect.objectContaining({ invoiceID: 'INV002', totalAmount: 200000 }),
+          expect.objectContaining({ invoiceID: 'INV003', totalAmount: 150000 }),
+        ])
       );
+      expect(XLSX.utils.book_new).toHaveBeenCalled();
+      expect(XLSX.utils.book_append_sheet).toHaveBeenCalledWith('mockWorkbook', 'mockWorksheet', 'Invoices');
+      expect(XLSX.write).toHaveBeenCalledWith('mockWorkbook', { bookType: 'xlsx', type: 'array' });
+      expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'Invoices_Report.xlsx');
     }, { timeout: 5000 });
   });
 
-  test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng PDF', async () => {
+  test('xuất báo cáo dưới dạng PDF', async () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    const pdfButton = screen.getByText(/Tải xuống PDF/i);
     await act(async () => {
-      console.log('Clicking PDF button');
-      fireEvent.click(pdfButton);
+      fireEvent.click(screen.getByText(/Tải xuống PDF/i));
     });
 
     await waitFor(() => {
-      console.log('Checking PDF generation');
-      console.log('html2canvas calls:', html2canvas.mock.calls);
       expect(html2canvas).toHaveBeenCalledWith(expect.any(HTMLElement), { scale: 2 });
       const pdfInstance = new jsPDF('landscape', 'mm', 'a4');
       expect(pdfInstance.addImage).toHaveBeenCalledWith(
@@ -258,13 +239,12 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('xá»­ lÃ½ lá»—i khi láº¥y dá»¯ liá»‡u bÃ¡o cÃ¡o', async () => {
+  test('xử lý lỗi khi lấy dữ liệu báo cáo', async () => {
     axios.get.mockImplementation(() => Promise.reject(new Error('Network error')));
 
     renderReports();
 
     await waitFor(() => {
-      console.log('Checking error handling for API');
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Error fetching report data:'),
         expect.anything()
@@ -272,10 +252,10 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
 
     const table = screen.getByRole('table');
-    expect(within(table).queryByText('ORD001')).not.toBeInTheDocument();
+    expect(within(table).queryByText('INV001')).not.toBeInTheDocument();
   });
 
-  test('xá»­ lÃ½ lá»—i khi xuáº¥t Excel', async () => {
+  test('xử lý lỗi khi xuất Excel', async () => {
     XLSX.write.mockImplementation(() => {
       throw new Error('Excel generation error');
     });
@@ -283,13 +263,11 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    const excelButton = screen.getByText(/Tải xuống Excel/i);
     await act(async () => {
-      console.log('Clicking Excel button for error case');
-      fireEvent.click(excelButton);
+      fireEvent.click(screen.getByText(/Tải xuống Excel/i));
     });
 
     await waitFor(() => {
@@ -301,19 +279,17 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('xá»­ lÃ½ lá»—i khi xuáº¥t PDF', async () => {
+  test('xử lý lỗi khi xuất PDF', async () => {
     html2canvas.mockRejectedValue(new Error('Canvas error'));
 
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    const pdfButton = screen.getByText(/Tải xuống PDF/i);
     await act(async () => {
-      console.log('Clicking PDF button for error case');
-      fireEvent.click(pdfButton);
+      fireEvent.click(screen.getByText(/Tải xuống PDF/i));
     });
 
     await waitFor(() => {
@@ -325,19 +301,18 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
   });
 
-  test('snapshot cá»§a giao diá»‡n Reports', async () => {
+  test('snapshot của giao diện Reports', async () => {
     const { container } = renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    console.log('Generating snapshot');
     expect(container).toMatchSnapshot();
   });
 
-  test('xá»­ lÃ½ lá»—i khi report-sections khÃ´ng tá»“n táº¡i', async () => {
-    jest.spyOn(document, 'getElementById').mockImplementation((id) => {
+  test('xử lý lỗi khi report-sections không tồn tại', async () => {
+    const getElementSpy = jest.spyOn(document, 'getElementById').mockImplementation((id) => {
       if (id === 'report-sections') return null;
       return document.createElement('div');
     });
@@ -345,13 +320,11 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('ORD001')).toBeInTheDocument();
+      expect(screen.getByText('INV001')).toBeInTheDocument();
     }, { timeout: 5000 });
 
-    const pdfButton = screen.getByText(/Tải xuống PDF/i);
     await act(async () => {
-      console.log('Clicking PDF button with missing report-sections');
-      fireEvent.click(pdfButton);
+      fireEvent.click(screen.getByText(/Tải xuống PDF/i));
     });
 
     await waitFor(() => {
@@ -362,6 +335,6 @@ describe('Reports component', () => {
       expect(screen.getByRole('alert')).toHaveTextContent('Đã xảy ra lỗi khi tạo file PDF.');
     }, { timeout: 5000 });
 
-    document.getElementById.mockRestore();
+    getElementSpy.mockRestore();
   });
 });

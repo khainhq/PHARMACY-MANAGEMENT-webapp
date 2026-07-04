@@ -6,7 +6,6 @@ import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import Dashboard from './Dashboard';
 
-// Mock các module cần thiết
 jest.mock('axios');
 jest.mock('file-saver');
 jest.mock('xlsx');
@@ -21,7 +20,17 @@ jest.mock('recharts', () => ({
   ResponsiveContainer: ({ children }) => <div>{children}</div>,
   LineChart: () => <div data-testid="mocked-linechart">Mocked LineChart</div>,
   Line: () => null,
+  ScatterChart: () => <div data-testid="mocked-scatterchart">Mocked ScatterChart</div>,
+  Scatter: () => null,
+  ZAxis: () => null,
+  Legend: () => null,
 }));
+
+const renderDashboard = () => render(
+  <MemoryRouter>
+    <Dashboard />
+  </MemoryRouter>
+);
 
 describe('Dashboard component', () => {
   beforeEach(() => {
@@ -50,8 +59,8 @@ describe('Dashboard component', () => {
       if (url.includes('/api/sales/invoices/')) {
         return Promise.resolve({
           data: [
-            { invoiceID: 'INV001', invoiceTime: '2025-05-04T10:00:00Z', customer: 'Nguyen Van A' },
-            { invoiceID: 'INV002', invoiceTime: '2025-05-03T14:00:00Z', customer: 'Tran Thi B' },
+            { invoiceID: 'INV001', invoiceTime: '2025-05-04T10:00:00Z', customerName: 'Nguyen Van A' },
+            { invoiceID: 'INV002', invoiceTime: '2025-05-03T14:00:00Z', customerName: 'Tran Thi B' },
           ],
         });
       }
@@ -70,7 +79,7 @@ describe('Dashboard component', () => {
         return Promise.resolve({ data: [{ paymentID: 'PAY001', paymentTime: '2025-05-01T12:00:00Z' }] });
       }
       if (url.includes('/api/medicines/payment-details/')) {
-        return Promise.resolve({ data: [{ payment: 'PAY001', quantity: 10, unitPrice: '5000' }] });
+        return Promise.resolve({ data: [{ payment: 'PAY001', medicine: 'MED001', quantity: 10, unitPrice: '5000' }] });
       }
       return Promise.reject(new Error('not found'));
     });
@@ -82,17 +91,13 @@ describe('Dashboard component', () => {
   });
 
   test('hiển thị Sidebar và tiêu đề Dashboard', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText(/Tổng thu nhập/i)).toBeInTheDocument();
+      expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
       expect(screen.getByText(/Số nhân viên/i)).toBeInTheDocument();
       expect(screen.getByText(/Thuốc đã hết hạn/i)).toBeInTheDocument();
       expect(screen.getByText(/Số loại thuốc/i)).toBeInTheDocument();
@@ -100,14 +105,10 @@ describe('Dashboard component', () => {
   });
 
   test('hiển thị các thẻ thống kê với dữ liệu đúng', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     await waitFor(() => {
-      const revenueCard = screen.getByText(/Tổng thu nhập/i).closest('a');
+      const revenueCard = screen.getByText(/Tổng doanh thu/i).closest('a');
       const employeeCard = screen.getByText(/Số nhân viên/i).closest('a');
       const expiredCard = screen.getByText(/Thuốc đã hết hạn/i).closest('a');
       const medicinesCard = screen.getByText(/Số loại thuốc/i).closest('a');
@@ -120,25 +121,17 @@ describe('Dashboard component', () => {
   });
 
   test('snapshot của giao diện Dashboard', async () => {
-    const { container } = render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    const { container } = renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Tổng thu nhập/i)).toBeInTheDocument();
+      expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
     }, { timeout: 2000 });
 
     expect(container).toMatchSnapshot();
   });
 
   test('hiển thị biểu đồ chi phí nhập thuốc', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     await waitFor(() => {
       expect(screen.getByText(/Chi phí nhập thuốc theo thời gian/i)).toBeInTheDocument();
@@ -147,11 +140,7 @@ describe('Dashboard component', () => {
   });
 
   test('hiển thị bảng hóa đơn gần đây', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     await waitFor(() => {
       expect(screen.getByText(/Hóa đơn gần đây/i)).toBeInTheDocument();
@@ -165,11 +154,7 @@ describe('Dashboard component', () => {
   });
 
   test('hiển thị bảng thuốc gần hết hạn', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     await waitFor(() => {
       expect(screen.getByText(/Thuốc gần hết hạn/i)).toBeInTheDocument();
@@ -184,55 +169,39 @@ describe('Dashboard component', () => {
     }, { timeout: 2000 });
   });
 
-  test('hiển thị biểu đồ top thuốc bán chạy', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+  test('hiển thị các biểu đồ thuốc đã bán và tồn kho', async () => {
+    renderDashboard();
 
     await waitFor(() => {
       expect(screen.getByText(/Top thuốc bán chạy nhất/i)).toBeInTheDocument();
-      expect(screen.getByTestId('mocked-barchart')).toBeInTheDocument();
+      expect(screen.getByText(/Tồn kho so với đã bán/i)).toBeInTheDocument();
+      expect(screen.getByText(/Số lượng tồn, nhập, bán/i)).toBeInTheDocument();
+      expect(screen.getAllByTestId('mocked-barchart')).toHaveLength(2);
+      expect(screen.getByTestId('mocked-scatterchart')).toBeInTheDocument();
     }, { timeout: 2000 });
   });
 
   test('kiểm tra điều hướng khi click vào StatCard', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Tổng thu nhập/i)).toBeInTheDocument();
+      expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
     }, { timeout: 2000 });
 
-    const totalRevenueLink = screen.getByText(/Tổng thu nhập/i).closest('a');
-    expect(totalRevenueLink).toHaveAttribute('href', '/invoices/list');
-
-    const employeeLink = screen.getByText(/Số nhân viên/i).closest('a');
-    expect(employeeLink).toHaveAttribute('href', '/employees');
-
-    const expiredLink = screen.getByText(/Thuốc đã hết hạn/i).closest('a');
-    expect(expiredLink).toHaveAttribute('href', '/medicines');
-
-    const medicinesLink = screen.getByText(/Số loại thuốc/i).closest('a');
-    expect(medicinesLink).toHaveAttribute('href', '/medicines');
+    expect(screen.getByText(/Tổng doanh thu/i).closest('a')).toHaveAttribute('href', '/invoices/list');
+    expect(screen.getByText(/Số nhân viên/i).closest('a')).toHaveAttribute('href', '/employees');
+    expect(screen.getByText(/Thuốc đã hết hạn/i).closest('a')).toHaveAttribute('href', '/medicines');
+    expect(screen.getByText(/Số loại thuốc/i).closest('a')).toHaveAttribute('href', '/medicines');
   });
 
   test('kiểm tra giao diện responsive trên màn hình nhỏ', async () => {
     global.innerWidth = 500;
     global.dispatchEvent(new Event('resize'));
 
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
+    const { container } = renderDashboard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Tổng thu nhập/i)).toBeInTheDocument();
+      expect(screen.getByText(/Tổng doanh thu/i)).toBeInTheDocument();
       expect(screen.getByText(/Số nhân viên/i)).toBeInTheDocument();
       expect(screen.getByText(/Thuốc đã hết hạn/i)).toBeInTheDocument();
       expect(screen.getByText(/Số loại thuốc/i)).toBeInTheDocument();
@@ -241,11 +210,6 @@ describe('Dashboard component', () => {
       expect(screen.getByText(/Top thuốc bán chạy nhất/i)).toBeInTheDocument();
     }, { timeout: 2000 });
 
-    const { container } = render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
     expect(container).toMatchSnapshot();
   });
 });
