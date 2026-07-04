@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import axios from 'axios';
 import Employees from './Employees';
+import { ToastProvider } from '../../components/ToastProvider';
 
 // Mock các module cần thiết
 jest.mock('axios');
@@ -10,6 +11,12 @@ jest.mock('react-icons/fa', () => ({
   FaUserPlus: () => <span>FaUserPlus</span>,
   FaSearch: () => <span>FaSearch</span>,
 }));
+
+const renderEmployees = () => render(
+  <ToastProvider>
+    <Employees />
+  </ToastProvider>
+);
 
 describe('Employees component', () => {
   beforeEach(() => {
@@ -54,7 +61,7 @@ describe('Employees component', () => {
   });
 
   test('hiển thị Sidebar, tiêu đề và bảng nhân viên', async () => {
-    render(<Employees />);
+    renderEmployees();
 
     await waitFor(() => {
       expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
@@ -73,7 +80,7 @@ describe('Employees component', () => {
   });
 
   test('tìm kiếm nhân viên theo từ khóa', async () => {
-    render(<Employees />);
+    renderEmployees();
 
     await waitFor(() => {
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();
@@ -88,7 +95,7 @@ describe('Employees component', () => {
   });
 
   test('hiển thị form khi nhấn nút "Thêm Nhân viên"', async () => {
-    render(<Employees />);
+    renderEmployees();
 
     const addButton = screen.getByRole('button', { name: /Thêm Nhân viên/i });
     fireEvent.click(addButton);
@@ -105,7 +112,7 @@ describe('Employees component', () => {
   test('thêm nhân viên mới', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
-    render(<Employees />);
+    renderEmployees();
 
     const addButton = screen.getByRole('button', { name: /Thêm Nhân viên/i });
     fireEvent.click(addButton);
@@ -146,7 +153,7 @@ describe('Employees component', () => {
   test('không thêm nhân viên khi số điện thoại, năm sinh và ngày vào làm không hợp lệ', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
-    render(<Employees />);
+    renderEmployees();
 
     const addButton = screen.getByRole('button', { name: /Thêm Nhân viên/i });
     fireEvent.click(addButton);
@@ -175,7 +182,7 @@ describe('Employees component', () => {
   test('chỉnh sửa thông tin nhân viên', async () => {
     axios.put.mockResolvedValue({ data: {} });
 
-    render(<Employees />);
+    renderEmployees();
 
     await waitFor(() => {
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();
@@ -213,7 +220,7 @@ describe('Employees component', () => {
   test('xóa nhân viên', async () => {
     axios.delete.mockResolvedValue({ data: {} });
 
-    render(<Employees />);
+    renderEmployees();
 
     await waitFor(() => {
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();
@@ -234,7 +241,7 @@ describe('Employees component', () => {
   });
 
   test('snapshot của giao diện Employees', async () => {
-    const { container } = render(<Employees />);
+    const { container } = renderEmployees();
 
     await waitFor(() => {
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();

@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import Reports from './Reports';
+import { ToastProvider } from '../../components/ToastProvider';
 
 // Mock dependencies
 jest.mock('axios');
@@ -47,6 +48,12 @@ jest.mock('recharts', () => ({
 
 // TÄƒng timeout toÃ n cá»¥c
 jest.setTimeout(30000);
+
+const renderReports = () => render(
+  <ToastProvider>
+    <Reports />
+  </ToastProvider>
+);
 
 describe('Reports component', () => {
   let mockOrders;
@@ -129,7 +136,7 @@ describe('Reports component', () => {
   });
 
   test('hiá»ƒn thá»‹ Sidebar, tiÃªu Ä‘á» vÃ  cÃ¡c thÃ nh pháº§n bÃ¡o cÃ¡o', async () => {
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
@@ -160,7 +167,7 @@ describe('Reports component', () => {
   });
 
   test('hiá»ƒn thá»‹ dá»¯ liá»‡u bÃ¡o cÃ¡o tá»« API', async () => {
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       console.log('Checking API call');
@@ -197,7 +204,7 @@ describe('Reports component', () => {
   });
 
   test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng Excel', async () => {
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -222,7 +229,7 @@ describe('Reports component', () => {
   });
 
   test('xuáº¥t bÃ¡o cÃ¡o dÆ°á»›i dáº¡ng PDF', async () => {
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -254,7 +261,7 @@ describe('Reports component', () => {
   test('xá»­ lÃ½ lá»—i khi láº¥y dá»¯ liá»‡u bÃ¡o cÃ¡o', async () => {
     axios.get.mockImplementation(() => Promise.reject(new Error('Network error')));
 
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       console.log('Checking error handling for API');
@@ -273,7 +280,7 @@ describe('Reports component', () => {
       throw new Error('Excel generation error');
     });
 
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -290,14 +297,14 @@ describe('Reports component', () => {
         expect.stringContaining('Error generating Excel file:'),
         expect.anything()
       );
-      expect(window.alert).toHaveBeenCalledWith('Đã xảy ra lỗi khi tạo file Excel.');
+      expect(screen.getByRole('alert')).toHaveTextContent('Đã xảy ra lỗi khi tạo file Excel.');
     }, { timeout: 5000 });
   });
 
   test('xá»­ lÃ½ lá»—i khi xuáº¥t PDF', async () => {
     html2canvas.mockRejectedValue(new Error('Canvas error'));
 
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -314,12 +321,12 @@ describe('Reports component', () => {
         expect.stringContaining('Error generating PDF:'),
         expect.anything()
       );
-      expect(window.alert).toHaveBeenCalledWith('Đã xảy ra lỗi khi tạo file PDF.');
+      expect(screen.getByRole('alert')).toHaveTextContent('Đã xảy ra lỗi khi tạo file PDF.');
     }, { timeout: 5000 });
   });
 
   test('snapshot cá»§a giao diá»‡n Reports', async () => {
-    const { container } = render(<Reports />);
+    const { container } = renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -335,7 +342,7 @@ describe('Reports component', () => {
       return document.createElement('div');
     });
 
-    render(<Reports />);
+    renderReports();
 
     await waitFor(() => {
       expect(screen.getByText('ORD001')).toBeInTheDocument();
@@ -352,7 +359,7 @@ describe('Reports component', () => {
         expect.stringContaining('Error generating PDF:'),
         expect.any(Error)
       );
-      expect(window.alert).toHaveBeenCalledWith('Đã xảy ra lỗi khi tạo file PDF.');
+      expect(screen.getByRole('alert')).toHaveTextContent('Đã xảy ra lỗi khi tạo file PDF.');
     }, { timeout: 5000 });
 
     document.getElementById.mockRestore();

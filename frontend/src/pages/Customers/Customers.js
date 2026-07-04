@@ -1,9 +1,10 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus, FaDownload } from 'react-icons/fa';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -27,6 +28,7 @@ import {
   formatDateInputValue,
   formatVietnamDate,
 } from '../../utils/listFilters';
+import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
 
 const API_BASE = 'http://localhost:8000';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', joinDate: '' };
@@ -52,6 +54,8 @@ const Customers = () => {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [editingCustomerID, setEditingCustomerID] = useState(null);
+  const [phoneError, setPhoneError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const filteredCustomers = useMemo(
     () =>
@@ -77,7 +81,7 @@ const Customers = () => {
     [customers, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
   );
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
 
@@ -86,18 +90,26 @@ const Customers = () => {
       setCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
+      showError('Không tải được danh sách khách hàng. Vui lòng thử lại.');
     }
-  };
+  }, [showError]);
 
   const handleAddOrUpdateCustomer = async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
+    const trimmedPhoneNumber = form.phoneNumber.trim();
+
+    if (!isValidVietnamPhoneNumber(trimmedPhoneNumber)) {
+      setPhoneError(PHONE_FORMAT_ERROR);
+      showError(PHONE_FORMAT_ERROR);
+      return;
+    }
 
     try {
       const payload = {
         fullName: form.fullName.trim(),
-        phoneNumber: form.phoneNumber.trim(),
+        phoneNumber: trimmedPhoneNumber,
         gender: form.gender,
         joinDate: form.joinDate || new Date().toISOString().split('T')[0],
       };
@@ -105,17 +117,21 @@ const Customers = () => {
       if (editingCustomerID) {
         payload.customerID = editingCustomerID;
         await axios.put(`${API_BASE}/api/sales/customers/${editingCustomerID}/`, payload, { headers });
+        showSuccess('Cập nhật khách hàng thành công.');
       } else {
         const customerID = generateCustomerID();
         await axios.post(`${API_BASE}/api/sales/customers/`, { ...payload, customerID }, { headers });
+        showSuccess('Thêm khách hàng thành công.');
       }
 
       setForm(emptyForm);
       setShowForm(false);
       setEditingCustomerID(null);
+      setPhoneError('');
       fetchCustomers();
     } catch (error) {
       console.error('Error saving customer:', error.response?.data || error.message);
+      showError(error.response?.data?.error || 'Không lưu được khách hàng. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
@@ -128,6 +144,7 @@ const Customers = () => {
   };
 
   const handleEditCustomer = (customer) => {
+    setPhoneError('');
     setForm({
       fullName: customer.fullName,
       phoneNumber: customer.phoneNumber,
@@ -147,19 +164,26 @@ const Customers = () => {
 
     try {
       await axios.delete(`${API_BASE}/api/sales/customers/${customerID}/`, { headers });
+      showSuccess('Xóa khách hàng thành công.');
       fetchCustomers();
     } catch (error) {
       console.error('Error deleting customer:', error.response?.data || error.message);
+      showError('Không xóa được khách hàng. Vui lòng thử lại.');
     }
   };
 
   const handleDownloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredCustomers);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
-    saveAs(data, 'Customers.xlsx');
+    try {
+      const worksheet = XLSX.utils.json_to_sheet(filteredCustomers);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(data, 'Customers.xlsx');
+      showSuccess('Tải danh sách khách hàng thành công.');
+    } catch (error) {
+      showError('Không tải được danh sách khách hàng. Vui lòng thử lại.');
+    }
   };
 
   const clearFilters = () => {
@@ -172,14 +196,14 @@ const Customers = () => {
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [fetchCustomers]);
 
   return (
     <Container>
       <Sidebar />
       <Content>
         <Toolbar>
-          <Button onClick={() => { setShowForm(!showForm); setEditingCustomerID(null); }}>
+          <Button onClick={() => { setShowForm(!showForm); setEditingCustomerID(null); setPhoneError(''); }}>
             <FaPlus /> THÊM
           </Button>
           <ToolbarSide>
@@ -247,8 +271,12 @@ const Customers = () => {
               type="text"
               placeholder="Số điện thoại"
               value={form.phoneNumber}
-              onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })}
+              onChange={(e) => {
+                setForm({ ...form, phoneNumber: e.target.value });
+                if (phoneError) setPhoneError('');
+              }}
               required
+              aria-invalid={phoneError === PHONE_FORMAT_ERROR}
             />
             <Select
               value={form.gender}
@@ -274,6 +302,7 @@ const Customers = () => {
                   setShowForm(false);
                   setForm(emptyForm);
                   setEditingCustomerID(null);
+                  setPhoneError('');
                 }}
               >
                 Hủy

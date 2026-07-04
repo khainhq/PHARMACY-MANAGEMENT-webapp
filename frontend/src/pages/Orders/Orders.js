@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -28,6 +29,7 @@ const Orders = () => {
   });
   const [showForm, setShowForm] = useState(false);
   const [editingOrderID, setEditingOrderID] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   const fetchOrders = async () => {
     const token = sessionStorage.getItem('token');
@@ -39,6 +41,7 @@ const Orders = () => {
       setFilteredOrders(response.data);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      showError('Không tải được danh sách đơn hàng. Vui lòng thử lại.');
     }
   };
 
@@ -51,6 +54,7 @@ const Orders = () => {
       setEmployees(response.data);
     } catch (error) {
       console.error('Error fetching employees:', error);
+      showError('Không tải được danh sách nhân viên. Vui lòng thử lại.');
     }
   };
 
@@ -63,6 +67,7 @@ const Orders = () => {
       setCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
+      showError('Không tải được danh sách khách hàng. Vui lòng thử lại.');
     }
   };
 
@@ -104,10 +109,12 @@ const Orders = () => {
           payload,
           { headers }
         );
+        showSuccess('Cập nhật đơn hàng thành công.');
       } else {
         // Add new order
         payload.orderID = generateOrderID();
         await axios.post('http://localhost:8000/api/sales/orders/', payload, { headers });
+        showSuccess('Thêm đơn hàng thành công.');
       }
 
       setForm({ employee: '', customer: '', totalAmount: '' });
@@ -116,6 +123,7 @@ const Orders = () => {
       fetchOrders();
     } catch (error) {
       console.error('Error saving order:', error.response?.data || error.message);
+      showError(error.response?.data?.error || 'Không lưu được đơn hàng. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
@@ -138,9 +146,11 @@ const Orders = () => {
 
     try {
       await axios.delete(`http://localhost:8000/api/sales/orders/${orderID}/`, { headers });
+      showSuccess('Xóa đơn hàng thành công.');
       fetchOrders();
     } catch (error) {
       console.error('Error deleting order:', error.response?.data || error.message);
+      showError('Không xóa được đơn hàng. Vui lòng thử lại.');
     }
   };
 

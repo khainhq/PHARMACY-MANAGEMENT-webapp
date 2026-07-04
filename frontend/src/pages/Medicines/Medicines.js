@@ -4,6 +4,7 @@ import { saveAs } from 'file-saver';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus, FaDownload } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -44,7 +45,7 @@ const Medicines = () => {
   const [imageFile, setImageFile] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingMedicineID, setEditingMedicineID] = useState(null);
-  const [error, setError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
@@ -54,9 +55,9 @@ const Medicines = () => {
       setMedicines(response.data);
       setFilteredMedicines(response.data);
     } catch (fetchError) {
-      setError('Không tải được danh sách thuốc.');
+      showError('Không tải được danh sách thuốc.');
     }
-  }, [authHeaders]);
+  }, [authHeaders, showError]);
 
   useEffect(() => {
     fetchMedicines();
@@ -109,17 +110,18 @@ const Medicines = () => {
 
   const handleAddOrUpdateMedicine = async (e) => {
     e.preventDefault();
-    setError('');
     try {
       if (editingMedicineID) {
         await axios.put(`${API_BASE}/api/medicines/medicines/${editingMedicineID}/`, buildPayload(editingMedicineID), { headers: authHeaders() });
+        showSuccess('Cập nhật thuốc thành công.');
       } else {
         await axios.post(`${API_BASE}/api/medicines/medicines/`, buildPayload(generateMedicineID()), { headers: authHeaders() });
+        showSuccess('Thêm thuốc thành công.');
       }
       resetForm();
       await fetchMedicines();
     } catch (saveError) {
-      setError(saveError.response?.data?.error || 'Không lưu được thông tin thuốc. Vui lòng kiểm tra lại dữ liệu.');
+      showError(saveError.response?.data?.error || 'Không lưu được thông tin thuốc. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
@@ -144,9 +146,10 @@ const Medicines = () => {
     if (!confirmDelete) return;
     try {
       await axios.delete(`${API_BASE}/api/medicines/medicines/${medicineID}/`, { headers: authHeaders() });
+      showSuccess('Xóa thuốc thành công.');
       await fetchMedicines();
     } catch (deleteError) {
-      setError('Không xóa được thuốc này vì có thể thuốc đang được dùng trong hóa đơn hoặc phiếu nhập.');
+      showError('Không xóa được thuốc này vì có thể thuốc đang được dùng trong hóa đơn hoặc phiếu nhập.');
     }
   };
 
@@ -168,9 +171,6 @@ const Medicines = () => {
             </Button>
           </div>
         </Toolbar>
-
-        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
-
         {showForm && (
           <Form onSubmit={handleAddOrUpdateMedicine}>
             <Input type="text" placeholder="Tên thuốc" value={form.medicineName} onChange={(e) => setForm({ ...form, medicineName: e.target.value })} required />

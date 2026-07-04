@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import CreatePayment from './CreatePayment';
+import { ToastProvider } from '../../components/ToastProvider';
 
 jest.mock('axios');
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
@@ -77,7 +78,11 @@ describe('CreatePayment component', () => {
   });
 
   const renderPayment = async () => {
-    render(<CreatePayment />);
+    render(
+      <ToastProvider>
+        <CreatePayment />
+      </ToastProvider>
+    );
     await screen.findByText('MED001');
   };
 
@@ -115,7 +120,7 @@ describe('CreatePayment component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Tạo Phiếu Nhập' }));
 
-    expect(window.alert).toHaveBeenCalledWith('Vui lòng thêm ít nhất một sản phẩm');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Vui lòng thêm ít nhất một sản phẩm.');
     expect(axios.post).not.toHaveBeenCalled();
   });
 

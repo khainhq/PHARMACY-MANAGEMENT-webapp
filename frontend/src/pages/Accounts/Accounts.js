@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus } from 'react-icons/fa';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -29,8 +30,7 @@ const Accounts = () => {
     employee: '',
   });
   const [editingAccountID, setEditingAccountID] = useState(null);
-  // Thêm trạng thái formError để hiển thị thông báo lỗi khi form không hợp lệ (khắc phục lỗi kiểm thử)
-  const [formError, setFormError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const accountRoleID = (account) => {
     if (typeof account.role === 'object' && account.role !== null) return String(account.role.roleID || '');
@@ -55,7 +55,7 @@ const Accounts = () => {
 
   const apiErrorMessage = (error) => error.response?.data?.error || 'Có lỗi xảy ra khi lưu tài khoản.';
 
-  const fetchAccounts = async () => {
+  const fetchAccounts = useCallback(async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
 
@@ -65,8 +65,9 @@ const Accounts = () => {
       setFilteredAccounts(response.data);
     } catch (error) {
       console.error('Error fetching accounts:', error);
+      showError('Không tải được danh sách tài khoản. Vui lòng thử lại.');
     }
-  };
+  }, [showError]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
@@ -90,11 +91,11 @@ const Accounts = () => {
 
     // Kiểm tra tính hợp lệ của form trước khi gọi API (khắc phục lỗi kiểm thử)
     if (!editingAccountID && (!form.username.trim() || !form.password.trim() || !form.role)) {
-      setFormError('Vui lòng điền đầy đủ tên tài khoản, mật khẩu và quyền.');
+      showError('Vui lòng điền đầy đủ tên tài khoản, mật khẩu và quyền.');
       return; // Thoát nếu thiếu dữ liệu khi thêm tài khoản
     }
     if (editingAccountID && (!form.username.trim() || !form.role)) {
-      setFormError('Vui lòng điền đầy đủ tên tài khoản và quyền.');
+      showError('Vui lòng điền đầy đủ tên tài khoản và quyền.');
       return; // Thoát nếu thiếu dữ liệu khi sửa tài khoản
     }
 
@@ -110,19 +111,18 @@ const Accounts = () => {
       }
       if (editingAccountID) {
         await axios.patch(`http://localhost:8000/api/auth/accounts/${editingAccountID}/`, payload, { headers });
+        showSuccess('Cập nhật tài khoản thành công.');
       } else {
         await axios.post('http://localhost:8000/api/auth/accounts/', payload, { headers });
+        showSuccess('Tạo tài khoản thành công.');
       }
       setForm({ username: '', password: '', role: '', employee: '' });
       setShowForm(false);
       setEditingAccountID(null);
-      // Xóa thông báo lỗi sau khi lưu thành công
-      setFormError('');
       fetchAccounts();
     } catch (error) {
       console.error('Error saving account:', error.response?.data || error.message);
-      // Hiển thị lỗi API trong giao diện
-      setFormError(apiErrorMessage(error));
+      showError(apiErrorMessage(error));
     }
   };
 
@@ -135,8 +135,6 @@ const Accounts = () => {
     });
     setShowForm(true);
     setEditingAccountID(account.accountID);
-    // Xóa thông báo lỗi khi mở form sửa
-    setFormError('');
   };
 
   const handleDeleteAccount = async (accountID) => {
@@ -148,9 +146,11 @@ const Accounts = () => {
 
     try {
       await axios.delete(`http://localhost:8000/api/auth/accounts/${accountID}/`, { headers });
+      showSuccess('Xóa tài khoản thành công.');
       fetchAccounts();
     } catch (error) {
       console.error('Error deleting account:', error.response?.data || error.message);
+      showError('Không xóa được tài khoản. Vui lòng thử lại.');
     }
   };
 
@@ -160,15 +160,17 @@ const Accounts = () => {
 
     try {
       await axios.patch(`http://localhost:8000/api/auth/accounts/${accountID}/`, { is_active: !currentStatus }, { headers });
+      showSuccess(currentStatus ? 'Vô hiệu hóa tài khoản thành công.' : 'Kích hoạt tài khoản thành công.');
       fetchAccounts();
     } catch (error) {
       console.error('Error toggling account status:', error.response?.data || error.message);
+      showError('Không cập nhật được trạng thái tài khoản. Vui lòng thử lại.');
     }
   };
 
   useEffect(() => {
     fetchAccounts();
-  }, []);
+  }, [fetchAccounts]);
 
   return (
     <Container>
@@ -179,8 +181,6 @@ const Accounts = () => {
             <Button onClick={() => {
               setShowForm(!showForm);
               setEditingAccountID(null);
-              // Xóa thông báo lỗi khi mở form thêm
-              setFormError('');
             }}>
               <FaPlus /> THÊM
             </Button>
@@ -197,8 +197,6 @@ const Accounts = () => {
 
         {showForm && (
           <Form onSubmit={handleAddOrUpdateAccount}>
-            {/* Hiển thị thông báo lỗi nếu form không hợp lệ hoặc API thất bại */}
-            {formError && <div role="alert" style={{ color: 'red', marginBottom: '1rem' }}>{formError}</div>}
             <Input
               type="text"
               placeholder="Tên tài khoản"
@@ -236,8 +234,6 @@ const Accounts = () => {
                   setShowForm(false);
                   setForm({ username: '', password: '', role: '', employee: '' });
                   setEditingAccountID(null);
-                  // Xóa thông báo lỗi khi hủy form
-                  setFormError('');
                 }}
               >
                 Hủy

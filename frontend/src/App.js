@@ -18,6 +18,7 @@ import CreatePayment from './pages/Payments/CreatePayment';
 import ListPayments from './pages/Payments/ListPayments';
 import Customers from './pages/Customers/Customers';
 import Chatbot from './components/Chatbot';
+import { ToastProvider } from './components/ToastProvider';
 
 function AppRoutes() {
   const location = useLocation();
@@ -54,7 +55,9 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <ToastProvider>
+        <AppRoutes />
+      </ToastProvider>
     </Router>
   );
 }

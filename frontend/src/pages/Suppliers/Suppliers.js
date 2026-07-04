@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaPlus, FaDownload } from 'react-icons/fa';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import { useToast } from '../../components/ToastProvider';
 import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
 import {
   Container,
@@ -29,9 +30,10 @@ const Suppliers = () => {
     address: '',
   });
   const [editingSupplierID, setEditingSupplierID] = useState(null);
-  const [error, setError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const { showSuccess, showError } = useToast();
 
-  const fetchSuppliers = async () => {
+  const fetchSuppliers = useCallback(async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
 
@@ -41,8 +43,9 @@ const Suppliers = () => {
       setFilteredSuppliers(response.data);
     } catch (error) {
       console.error('Error fetching suppliers:', error);
+      showError('Không tải được danh sách nhà cung cấp. Vui lòng thử lại.');
     }
-  };
+  }, [showError]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
@@ -74,7 +77,7 @@ const Suppliers = () => {
 
   const handleAddOrUpdateSupplier = async (e) => {
     e.preventDefault();
-    setError('');
+    setPhoneError('');
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
     const trimmedForm = {
@@ -84,7 +87,8 @@ const Suppliers = () => {
     };
 
     if (!isValidVietnamPhoneNumber(trimmedForm.phoneNumber)) {
-      setError(PHONE_FORMAT_ERROR);
+      setPhoneError(PHONE_FORMAT_ERROR);
+      showError(PHONE_FORMAT_ERROR);
       return;
     }
 
@@ -95,6 +99,7 @@ const Suppliers = () => {
           { ...trimmedForm, supplierID: editingSupplierID },
           { headers }
         );
+        showSuccess('Cập nhật nhà cung cấp thành công.');
       } else {
         const newSupplierID = generateSupplierID();
         await axios.post(
@@ -102,6 +107,7 @@ const Suppliers = () => {
           { ...trimmedForm, supplierID: newSupplierID },
           { headers }
         );
+        showSuccess('Thêm nhà cung cấp thành công.');
       }
       setForm({ supplierName: '', phoneNumber: '', address: '' });
       setShowForm(false);
@@ -109,12 +115,12 @@ const Suppliers = () => {
       fetchSuppliers();
     } catch (error) {
       console.error('Error saving supplier:', error.response?.data || error.message);
-      setError(error.response?.data?.error || 'Không lưu được nhà cung cấp. Vui lòng kiểm tra lại dữ liệu.');
+      showError(error.response?.data?.error || 'Không lưu được nhà cung cấp. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
   const handleEditSupplier = (supplier) => {
-    setError('');
+    setPhoneError('');
     setForm({
       supplierName: supplier.supplierName,
       phoneNumber: supplier.phoneNumber,
@@ -133,15 +139,17 @@ const Suppliers = () => {
 
     try {
       await axios.delete(`http://localhost:8000/api/medicines/suppliers/${supplierID}/`, { headers });
+      showSuccess('Xóa nhà cung cấp thành công.');
       fetchSuppliers();
     } catch (error) {
       console.error('Error deleting supplier:', error.response?.data || error.message);
+      showError('Không xóa được nhà cung cấp. Vui lòng thử lại.');
     }
   };
 
   useEffect(() => {
     fetchSuppliers();
-  }, []);
+  }, [fetchSuppliers]);
 
   return (
     <Container>
@@ -149,7 +157,7 @@ const Suppliers = () => {
       <Content>
         <Toolbar>
           <div>
-            <Button onClick={() => { setShowForm(!showForm); setEditingSupplierID(null); setError(''); }}>
+            <Button onClick={() => { setShowForm(!showForm); setEditingSupplierID(null); setPhoneError(''); }}>
               <FaPlus style={{ marginRight: '0.5rem' }} /> THÊM
             </Button>
           </div>
@@ -182,13 +190,12 @@ const Suppliers = () => {
               value={form.phoneNumber}
               onChange={(e) => {
                 setForm({ ...form, phoneNumber: e.target.value });
-                if (error) setError('');
+                if (phoneError) setPhoneError('');
               }}
               required
               data-testid="phone-input"
-              aria-invalid={error === PHONE_FORMAT_ERROR}
+              aria-invalid={phoneError === PHONE_FORMAT_ERROR}
             />
-            {error && <div role="alert" style={{ color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
             <Input
               type="text"
               placeholder="Địa chỉ"
@@ -205,7 +212,7 @@ const Suppliers = () => {
                   setShowForm(false);
                   setForm({ supplierName: '', phoneNumber: '', address: '' });
                   setEditingSupplierID(null);
-                  setError('');
+                  setPhoneError('');
                 }}
               >
                 Hủy

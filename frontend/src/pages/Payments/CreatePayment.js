@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   LeftSection,
@@ -216,6 +217,7 @@ const CreatePayment = () => {
   const [paymentReceiptData, setPaymentReceiptData] = useState(null);
   const [showPaymentReceipt, setShowPaymentReceipt] = useState(false);
   const [isSavingPayment, setIsSavingPayment] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   const getHeaders = () => {
     const token = sessionStorage.getItem('token');
@@ -245,12 +247,12 @@ const CreatePayment = () => {
         setMedicines(medicinesRes.data);
         setFilteredMedicines(medicinesRes.data);
       } catch (error) {
-        alert(getErrorMessage(error, 'Không thể tải dữ liệu tạo phiếu nhập.'));
+        showError(getErrorMessage(error, 'Không thể tải dữ liệu tạo phiếu nhập.'));
       }
     };
 
     fetchInitialData();
-  }, []);
+  }, [showError]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
@@ -266,18 +268,18 @@ const CreatePayment = () => {
 
   const handleAddMedicine = () => {
     if (!selectedMedicine) {
-      alert('Vui lòng chọn thuốc cần nhập.');
+      showError('Vui lòng chọn thuốc cần nhập.');
       return;
     }
 
     const quantity = Number(selectedMedicine.quantity || 1);
     if (!Number.isInteger(quantity) || quantity <= 0) {
-      alert('Số lượng nhập phải lớn hơn 0.');
+      showError('Số lượng nhập phải lớn hơn 0.');
       return;
     }
 
     if (paymentDetails.some((item) => item.medicine === selectedMedicine.medicineID)) {
-      alert('Thuốc này đã được thêm vào phiếu nhập.');
+      showError('Thuốc này đã được thêm vào phiếu nhập.');
       return;
     }
 
@@ -334,12 +336,12 @@ const CreatePayment = () => {
     e?.preventDefault?.();
 
     if (!form.employee || !form.supplier) {
-      alert('Vui lòng chọn nhân viên và nhà cung cấp.');
+      showError('Vui lòng chọn nhân viên và nhà cung cấp.');
       return;
     }
 
     if (paymentDetails.length === 0) {
-      alert('Vui lòng thêm ít nhất một sản phẩm');
+      showError('Vui lòng thêm ít nhất một sản phẩm.');
       return;
     }
 
@@ -379,8 +381,9 @@ const CreatePayment = () => {
       window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
       setPaymentDetails([]);
       setForm({ employee: '', supplier: '', status: 'Paid' });
+      showSuccess('Tạo phiếu nhập thành công.');
     } catch (error) {
-      alert(getErrorMessage(error, 'Không thể tạo phiếu nhập.'));
+      showError(getErrorMessage(error, 'Không thể tạo phiếu nhập.'));
     } finally {
       setIsSavingPayment(false);
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
 import {
   Container,
@@ -250,8 +251,8 @@ const CreateInvoice = () => {
   const [isGeneratingInvoiceImage, setIsGeneratingInvoiceImage] = useState(false);
   const [isSavingInvoiceImage, setIsSavingInvoiceImage] = useState(false);
   const [invoiceImagePreview, setInvoiceImagePreview] = useState(null);
-  const [error, setError] = useState('');
   const savedInvoiceImageIds = useRef(new Set());
+  const { showSuccess, showError } = useToast();
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
@@ -261,9 +262,9 @@ const CreateInvoice = () => {
       setMedicines(response.data);
       setFilteredMedicines(response.data);
     } catch (fetchError) {
-      setError('Không tải được danh sách thuốc. Vui lòng thử lại.');
+      showError('Không tải được danh sách thuốc. Vui lòng thử lại.');
     }
-  }, [authHeaders]);
+  }, [authHeaders, showError]);
 
   useEffect(() => {
     fetchMedicines();
@@ -281,12 +282,11 @@ const CreateInvoice = () => {
   };
 
   const handleAddToCart = () => {
-    setError('');
     if (!selectedMedicine || quantity <= 0) return;
 
     const currentQuantity = cart.find((item) => item.medicineID === selectedMedicine.medicineID)?.quantity || 0;
     if (currentQuantity + quantity > selectedMedicine.stockQuantity) {
-      setError(`Thuốc ${selectedMedicine.medicineName} chỉ còn ${selectedMedicine.stockQuantity} trong kho.`);
+      showError(`Thuốc ${selectedMedicine.medicineName} chỉ còn ${selectedMedicine.stockQuantity} trong kho.`);
       return;
     }
 
@@ -346,11 +346,10 @@ const CreateInvoice = () => {
   const handleCheckout = () => {
     const validationError = validateCheckout();
     if (validationError) {
-      setError(validationError);
+      showError(validationError);
       return;
     }
 
-    setError('');
     setInvoiceData(null);
     setShowInvoiceModal(false);
     setReviewInvoiceData(createInvoiceSnapshot());
@@ -365,7 +364,6 @@ const CreateInvoice = () => {
     if (!reviewInvoiceData) return;
 
     setIsSavingInvoice(true);
-    setError('');
 
     try {
       const response = await axios.post(
@@ -389,9 +387,10 @@ const CreateInvoice = () => {
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
       setCart([]);
       setForm({ customerName: '', phoneNumber: '', address: '', paymentMethod: 'Cash', status: 'Paid', gender: '' });
+      showSuccess('Tạo hóa đơn thành công.');
       await fetchMedicines();
     } catch (checkoutError) {
-      setError(checkoutError.response?.data?.error || 'Không tạo được hóa đơn. Vui lòng thử lại.');
+      showError(checkoutError.response?.data?.error || 'Không tạo được hóa đơn. Vui lòng thử lại.');
     } finally {
       setIsSavingInvoice(false);
     }
@@ -443,7 +442,6 @@ const CreateInvoice = () => {
     if (!invoiceData) return;
 
     setIsGeneratingInvoiceImage(true);
-    setError('');
 
     try {
       const preview = invoiceData.receiptImage
@@ -459,7 +457,7 @@ const CreateInvoice = () => {
         await saveInvoiceImage(preview, invoiceData);
       }
     } catch (downloadError) {
-      setError('Không tạo được ảnh hóa đơn. Vui lòng thử lại.');
+      showError('Không tạo được ảnh hóa đơn. Vui lòng thử lại.');
     } finally {
       setIsGeneratingInvoiceImage(false);
     }
@@ -477,8 +475,9 @@ const CreateInvoice = () => {
       downloadLink.click();
       document.body.removeChild(downloadLink);
       setInvoiceImagePreview((current) => current ? { ...current, fileName } : current);
+      showSuccess('Tải ảnh hóa đơn thành công.');
     } catch (downloadError) {
-      setError('Không tải được ảnh hóa đơn. Vui lòng thử lại.');
+      showError('Không tải được ảnh hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -496,7 +495,7 @@ const CreateInvoice = () => {
         }
       } catch (imageError) {
         if (!cancelled) {
-          setError('Hóa đơn đã lưu nhưng chưa lưu được ảnh hóa đơn. Bạn vẫn có thể bấm In hóa đơn để tạo lại.');
+          showError('Hóa đơn đã lưu nhưng chưa lưu được ảnh hóa đơn. Bạn vẫn có thể bấm In hóa đơn để tạo lại.');
         }
       } finally {
         if (!cancelled) setIsSavingInvoiceImage(false);
@@ -507,7 +506,7 @@ const CreateInvoice = () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [showInvoiceModal, invoiceData, buildInvoiceImagePreview, saveInvoiceImage]);
+  }, [showInvoiceModal, invoiceData, buildInvoiceImagePreview, saveInvoiceImage, showError]);
 
   const renderInvoiceReceipt = (data, { isReview = false } = {}) => (
     <div
@@ -599,8 +598,6 @@ const CreateInvoice = () => {
     <Container>
       <Sidebar />
       <LeftSection>
-        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
-
         {selectedMedicine && (
           <MedicineDetails>
             <h2>THÔNG TIN THUỐC</h2>

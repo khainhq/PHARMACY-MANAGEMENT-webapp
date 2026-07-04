@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { FaUserPlus, FaSearch } from 'react-icons/fa';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -41,7 +42,8 @@ const Employees = () => {
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployeeID, setEditingEmployeeID] = useState(null);
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const authHeaders = useCallback(() => ({ Authorization: `Token ${sessionStorage.getItem('token')}` }), []);
 
@@ -74,9 +76,9 @@ const Employees = () => {
       const response = await axios.get(`${API_BASE}/api/auth/employees/`, { headers: authHeaders() });
       setEmployees(response.data);
     } catch (fetchError) {
-      setError('Không tải được danh sách nhân viên.');
+      showError('Không tải được danh sách nhân viên.');
     }
-  }, [authHeaders]);
+  }, [authHeaders, showError]);
 
   useEffect(() => {
     fetchEmployees();
@@ -122,27 +124,31 @@ const Employees = () => {
     setForm(emptyForm);
     setShowForm(false);
     setEditingEmployeeID(null);
+    setFormError('');
   };
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
-    setError('');
+    setFormError('');
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      setFormError(validationError);
+      showError(validationError);
       return;
     }
 
     try {
       await axios.post(`${API_BASE}/api/auth/employees/`, buildPayload(generateEmployeeID()), { headers: authHeaders() });
       resetForm();
+      showSuccess('Thêm nhân viên thành công.');
       await fetchEmployees();
     } catch (addError) {
-      setError(addError.response?.data?.error || 'Không thêm được nhân viên. Vui lòng kiểm tra số điện thoại hoặc dữ liệu nhập.');
+      showError(addError.response?.data?.error || 'Không thêm được nhân viên. Vui lòng kiểm tra số điện thoại hoặc dữ liệu nhập.');
     }
   };
 
   const handleEditEmployee = (employee) => {
+    setFormError('');
     setForm({
       fullName: employee.fullName,
       phoneNumber: employee.phoneNumber,
@@ -156,31 +162,34 @@ const Employees = () => {
 
   const handleUpdateEmployee = async (e) => {
     e.preventDefault();
-    setError('');
+    setFormError('');
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      setFormError(validationError);
+      showError(validationError);
       return;
     }
 
     try {
       await axios.put(`${API_BASE}/api/auth/employees/${editingEmployeeID}/`, buildPayload(editingEmployeeID), { headers: authHeaders() });
       resetForm();
+      showSuccess('Cập nhật nhân viên thành công.');
       await fetchEmployees();
     } catch (updateError) {
-      setError(updateError.response?.data?.error || 'Không cập nhật được nhân viên. Vui lòng kiểm tra lại dữ liệu.');
+      showError(updateError.response?.data?.error || 'Không cập nhật được nhân viên. Vui lòng kiểm tra lại dữ liệu.');
     }
   };
 
   const handleDeleteEmployee = async (employeeID) => {
     const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa nhân viên này?');
     if (!confirmDelete) return;
-    setError('');
+    setFormError('');
     try {
       await axios.delete(`${API_BASE}/api/auth/employees/${employeeID}/`, { headers: authHeaders() });
+      showSuccess('Xóa nhân viên thành công.');
       await fetchEmployees();
     } catch (deleteError) {
-      setError('Không xóa được nhân viên này vì có thể đang liên kết với tài khoản hoặc chứng từ.');
+      showError('Không xóa được nhân viên này vì có thể đang liên kết với tài khoản hoặc chứng từ.');
     }
   };
 
@@ -190,7 +199,7 @@ const Employees = () => {
       <Content>
         <Toolbar>
           <div>
-            <Button onClick={() => { setShowForm(!showForm); setEditingEmployeeID(null); }}>
+            <Button onClick={() => { setShowForm(!showForm); setEditingEmployeeID(null); setFormError(''); }}>
               <FaUserPlus /> Thêm nhân viên
             </Button>
           </div>
@@ -239,20 +248,18 @@ const Employees = () => {
           <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
         </FilterBar>
 
-        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
-
         {showForm && (
           <Form onSubmit={editingEmployeeID ? handleUpdateEmployee : handleAddEmployee}>
             <Input type="text" placeholder="Họ tên" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
-            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} required aria-invalid={error.includes(PHONE_FORMAT_ERROR)} />
+            <Input type="text" placeholder="Số điện thoại" value={form.phoneNumber} onChange={(e) => { setForm({ ...form, phoneNumber: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(PHONE_FORMAT_ERROR)} />
             <Select aria-label="Chọn giới tính" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} required>
               <option value="">Chọn giới tính</option>
               <option value="Male">Nam</option>
               <option value="Female">Nữ</option>
               <option value="Other">Khác</option>
             </Select>
-            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => setForm({ ...form, yearOfBirth: e.target.value })} required aria-invalid={error.includes(EMPLOYEE_DATE_ERROR)} />
-            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => setForm({ ...form, hireDate: e.target.value })} required aria-invalid={error.includes(EMPLOYEE_DATE_ERROR)} />
+            <Input type="number" placeholder="Năm sinh" value={form.yearOfBirth} onChange={(e) => { setForm({ ...form, yearOfBirth: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
+            <Input type="date" placeholder="Ngày vào làm" value={form.hireDate} onChange={(e) => { setForm({ ...form, hireDate: e.target.value }); if (formError) setFormError(''); }} required aria-invalid={formError.includes(EMPLOYEE_DATE_ERROR)} />
             <div style={{ display: 'flex', gap: '1rem' }}>
               <Button type="submit">{editingEmployeeID ? 'Cập nhật' : 'Thêm nhân viên'}</Button>
               <Button type="button" onClick={resetForm}>Hủy</Button>

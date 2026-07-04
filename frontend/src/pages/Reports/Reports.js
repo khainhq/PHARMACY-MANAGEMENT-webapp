@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { saveAs } from 'file-saver';
@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import { FaFileExcel, FaFilePdf } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -24,8 +25,9 @@ const Reports = () => {
   const [salesData, setSalesData] = useState([]);
   const [orders, setOrders] = useState([]);
   const [customerStats, setCustomerStats] = useState([]);
+  const { showSuccess, showError } = useToast();
 
-  const fetchReportData = async () => {
+  const fetchReportData = useCallback(async () => {
     const token = sessionStorage.getItem('token');
     const headers = { Authorization: `Token ${token}` };
 
@@ -62,8 +64,9 @@ const Reports = () => {
       setCustomerStats(customerData);
     } catch (error) {
       console.error('Error fetching report data:', error.response?.data || error.message);
+      showError('Không tải được dữ liệu báo cáo. Vui lòng thử lại.');
     }
-  };
+  }, [showError]);
 
   const handleDownloadExcel = () => {
     try {
@@ -73,9 +76,10 @@ const Reports = () => {
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       const data = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(data, 'Orders_Report.xlsx');
+      showSuccess('Tải báo cáo Excel thành công.');
     } catch (error) {
       console.error('Error generating Excel file:', error);
-      alert('Đã xảy ra lỗi khi tạo file Excel.');
+      showError('Đã xảy ra lỗi khi tạo file Excel.');
     }
   };
 
@@ -94,15 +98,16 @@ const Reports = () => {
   
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save('Report.pdf');
+      showSuccess('Tải báo cáo PDF thành công.');
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Đã xảy ra lỗi khi tạo file PDF.');
+      showError('Đã xảy ra lỗi khi tạo file PDF.');
     }
   };
 
   useEffect(() => {
     fetchReportData();
-  }, []);
+  }, [fetchReportData]);
 
   return (
     <Container>

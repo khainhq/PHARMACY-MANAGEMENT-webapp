@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Content,
@@ -41,7 +42,7 @@ const ListPayments = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
-  const [error, setError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const fetchPayments = useCallback(async () => {
     try {
@@ -49,11 +50,10 @@ const ListPayments = () => {
         headers: authHeaders(),
       });
       setPayments(response.data);
-      setError('');
     } catch (fetchError) {
-      setError('Không tải được danh sách phiếu nhập. Vui lòng thử lại.');
+      showError('Không tải được danh sách phiếu nhập. Vui lòng thử lại.');
     }
-  }, []);
+  }, [showError]);
 
   const filteredPayments = useMemo(
     () =>
@@ -90,8 +90,9 @@ const ListPayments = () => {
       window.localStorage.setItem(PAYMENTS_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
       await fetchPayments();
+      showSuccess('Xóa phiếu nhập thành công.');
     } catch (deleteError) {
-      setError('Không xóa được phiếu nhập. Vui lòng thử lại.');
+      showError('Không xóa được phiếu nhập. Vui lòng thử lại.');
     }
   };
 
@@ -105,8 +106,9 @@ const ListPayments = () => {
       window.localStorage.setItem(PAYMENTS_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(PAYMENTS_UPDATED_EVENT));
       await fetchPayments();
+      showSuccess('Cập nhật trạng thái phiếu nhập thành công.');
     } catch (updateError) {
-      setError('Không cập nhật được trạng thái phiếu nhập. Vui lòng thử lại.');
+      showError('Không cập nhật được trạng thái phiếu nhập. Vui lòng thử lại.');
     }
   };
 
@@ -203,7 +205,6 @@ const ListPayments = () => {
         </FilterBar>
 
         <h2>DANH SÁCH PHIẾU NHẬP</h2>
-        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
         <TableViewport>
           <Table>
             <colgroup>

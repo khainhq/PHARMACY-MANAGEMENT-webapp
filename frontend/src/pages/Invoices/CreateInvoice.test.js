@@ -3,6 +3,7 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import axios from 'axios';
 import html2canvas from 'html2canvas';
 import CreateInvoice, { buildInvoiceImageFileName } from './CreateInvoice';
+import { ToastProvider } from '../../components/ToastProvider';
 
 jest.mock('axios');
 jest.mock('html2canvas', () => jest.fn());
@@ -35,7 +36,11 @@ const medicines = [
 ];
 
 const renderInvoice = async () => {
-  render(<CreateInvoice />);
+  render(
+    <ToastProvider>
+      <CreateInvoice />
+    </ToastProvider>
+  );
   await screen.findByText('Paracetamol');
 };
 

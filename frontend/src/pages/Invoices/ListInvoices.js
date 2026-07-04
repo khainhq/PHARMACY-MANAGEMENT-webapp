@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
+import { useToast } from '../../components/ToastProvider';
 import {
   Container,
   Table,
@@ -51,7 +52,7 @@ const ListInvoices = () => {
   const [toDate, setToDate] = useState('');
   const [selectedInvoiceDetails, setSelectedInvoiceDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [error, setError] = useState('');
+  const { showSuccess, showError } = useToast();
 
   const fetchInvoices = useCallback(async () => {
     try {
@@ -59,11 +60,10 @@ const ListInvoices = () => {
         headers: authHeaders(),
       });
       setInvoices(response.data);
-      setError('');
     } catch (fetchError) {
-      setError('Không tải được danh sách hóa đơn. Vui lòng thử lại.');
+      showError('Không tải được danh sách hóa đơn. Vui lòng thử lại.');
     }
-  }, []);
+  }, [showError]);
 
   const filteredInvoices = useMemo(
     () =>
@@ -137,9 +137,8 @@ const ListInvoices = () => {
         totalAmount,
       });
       setIsModalOpen(true);
-      setError('');
     } catch (fetchError) {
-      setError('Không tải được chi tiết hóa đơn. Vui lòng thử lại.');
+      showError('Không tải được chi tiết hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -148,7 +147,7 @@ const ListInvoices = () => {
 
     const printWindow = window.open('', '_blank', 'width=480,height=720');
     if (!printWindow) {
-      setError('Không mở được cửa sổ in ảnh hóa đơn. Vui lòng cho phép popup và thử lại.');
+      showError('Không mở được cửa sổ in ảnh hóa đơn. Vui lòng cho phép popup và thử lại.');
       return;
     }
 
@@ -184,6 +183,7 @@ const ListInvoices = () => {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+    showSuccess('Tải ảnh hóa đơn thành công.');
   };
 
   const handleSearch = (e) => {
@@ -208,8 +208,9 @@ const ListInvoices = () => {
       window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
       await fetchInvoices();
+      showSuccess('Cập nhật trạng thái hóa đơn thành công.');
     } catch (updateError) {
-      setError('Không cập nhật được trạng thái hóa đơn. Vui lòng thử lại.');
+      showError('Không cập nhật được trạng thái hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -224,8 +225,9 @@ const ListInvoices = () => {
       window.localStorage.setItem(INVOICES_UPDATED_EVENT, String(Date.now()));
       window.dispatchEvent(new Event(INVOICES_UPDATED_EVENT));
       await fetchInvoices();
+      showSuccess('Xóa hóa đơn thành công.');
     } catch (deleteError) {
-      setError('Không xóa được hóa đơn. Vui lòng thử lại.');
+      showError('Không xóa được hóa đơn. Vui lòng thử lại.');
     }
   };
 
@@ -308,9 +310,6 @@ const ListInvoices = () => {
           </FilterField>
           <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
         </FilterBar>
-
-        {error && <div role="alert" style={{ marginBottom: '1rem', color: '#b91c1c', fontWeight: 700 }}>{error}</div>}
-
         <TableViewport>
           <Table data-testid="invoices-table">
             <colgroup>

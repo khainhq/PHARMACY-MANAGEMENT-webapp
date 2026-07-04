@@ -4,6 +4,7 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import Suppliers from './Suppliers';
+import { ToastProvider } from '../../components/ToastProvider';
 
 // Mock dependencies
 jest.mock('axios');
@@ -21,6 +22,12 @@ jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
 // Mock window.confirm
 const mockConfirm = jest.fn();
 window.confirm = mockConfirm;
+
+const renderSuppliers = () => render(
+  <ToastProvider>
+    <Suppliers />
+  </ToastProvider>
+);
 
 // Tăng timeout toàn cục
 jest.setTimeout(30000);
@@ -86,7 +93,7 @@ describe('Suppliers component', () => {
   });
 
   test('hiển thị Sidebar, tiêu đề, bảng và các nút', async () => {
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText(/Mocked Sidebar/i)).toBeInTheDocument();
@@ -114,7 +121,7 @@ describe('Suppliers component', () => {
   });
 
   test('hiển thị dữ liệu nhà cung cấp từ API', async () => {
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith(
@@ -140,7 +147,7 @@ describe('Suppliers component', () => {
   });
 
   test('tìm kiếm nhà cung cấp theo tên', async () => {
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText('Supplier A')).toBeInTheDocument();
@@ -160,7 +167,7 @@ describe('Suppliers component', () => {
   test('thêm nhà cung cấp mới', async () => {
     axios.post.mockResolvedValue({ data: {} });
 
-    render(<Suppliers />);
+    renderSuppliers();
 
     const addButton = screen.getByText(/THÊM/i);
     fireEvent.click(addButton);
@@ -210,7 +217,7 @@ describe('Suppliers component', () => {
   });
 
   test('không lưu nhà cung cấp khi số điện thoại sai định dạng', async () => {
-    render(<Suppliers />);
+    renderSuppliers();
 
     fireEvent.click(screen.getByText(/THÊM/i));
 
@@ -233,7 +240,7 @@ describe('Suppliers component', () => {
   test('sửa nhà cung cấp', async () => {
     axios.put.mockResolvedValue({ data: {} });
 
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText('Supplier A')).toBeInTheDocument();
@@ -272,7 +279,7 @@ describe('Suppliers component', () => {
   test('xóa nhà cung cấp', async () => {
     axios.delete.mockResolvedValue({ data: {} });
 
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText('Supplier A')).toBeInTheDocument();
@@ -295,7 +302,7 @@ describe('Suppliers component', () => {
   });
 
   test('xuất danh sách nhà cung cấp dưới dạng Excel', async () => {
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText('Supplier A')).toBeInTheDocument();
@@ -318,7 +325,7 @@ describe('Suppliers component', () => {
   test('xử lý lỗi khi lấy dữ liệu nhà cung cấp', async () => {
     axios.get.mockRejectedValue(new Error('Network error'));
 
-    render(<Suppliers />);
+    renderSuppliers();
 
     await waitFor(() => {
       expect(console.error).toHaveBeenCalledWith(
@@ -334,7 +341,7 @@ describe('Suppliers component', () => {
   test('xử lý lỗi khi thêm nhà cung cấp', async () => {
     axios.post.mockRejectedValue(new Error('API error'));
 
-    render(<Suppliers />);
+    renderSuppliers();
 
     const addButton = screen.getByText(/THÊM/i);
     fireEvent.click(addButton);
@@ -377,7 +384,7 @@ describe('Suppliers component', () => {
   });
 
   test('snapshot của giao diện Suppliers', async () => {
-    const { container } = render(<Suppliers />);
+    const { container } = renderSuppliers();
 
     await waitFor(() => {
       expect(screen.getByText('Supplier A')).toBeInTheDocument();
