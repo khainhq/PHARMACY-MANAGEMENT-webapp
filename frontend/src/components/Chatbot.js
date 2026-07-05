@@ -12,18 +12,18 @@ const borderColor = '#d0d7de';
 
 const ChatbotToggle = styled.button`
   position: fixed;
-  bottom: ${({ $withContactDock }) => ($withContactDock ? '8.55rem' : '5.25rem')};
-  right: 1.35rem;
+  bottom: ${({ $withContactDock }) => ($withContactDock ? '8.55rem' : '0.35rem')};
+  right: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : '0.25rem')};
   background-color: ${primaryBlue};
   color: white;
   border: none;
   border-radius: 50%;
-  width: 54px;
-  height: 54px;
-  font-size: 25px;
+  width: ${({ $withContactDock }) => ($withContactDock ? '54px' : '38px')};
+  height: ${({ $withContactDock }) => ($withContactDock ? '54px' : '38px')};
+  font-size: ${({ $withContactDock }) => ($withContactDock ? '25px' : '18px')};
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(3, 105, 161, 0.3);
-  z-index: 1000;
+  z-index: 850;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,18 +36,18 @@ const ChatbotToggle = styled.button`
 `;
 
 const ChatbotContainer = styled.div`
-  --chat-bottom: ${({ $withContactDock }) => ($withContactDock ? '12.6rem' : '9.45rem')};
+  --chat-bottom: ${({ $withContactDock }) => ($withContactDock ? '12.6rem' : '3.1rem')};
   position: fixed;
   bottom: var(--chat-bottom);
-  right: 1.35rem;
-  width: min(340px, calc(100vw - 1.5rem));
-  height: min(430px, calc(100svh - var(--chat-bottom) - 1rem));
+  right: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : '0.35rem')};
+  width: min(300px, calc(100vw - 1rem));
+  height: min(360px, calc(100svh - var(--chat-bottom) - 0.75rem));
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
+  z-index: 850;
   overflow: hidden;
   opacity: ${props => props.$isOpen ? 1 : 0};
   transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(20px)'};

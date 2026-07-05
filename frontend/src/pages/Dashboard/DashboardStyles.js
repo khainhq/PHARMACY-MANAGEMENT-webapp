@@ -120,6 +120,92 @@ export const ChartGrid = styled.div`
   }
 `;
 
+export const InventoryInsightGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 1.25rem;
+  align-items: stretch;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const BuyerMapCard = styled.div`
+  display: flex;
+  min-height: 320px;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+
+  h3 {
+    margin: 0 0 0.35rem;
+    color: #0f172a;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+`;
+
+export const WorldMapFrame = styled.div`
+  position: relative;
+  flex: 1;
+  min-height: 210px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.15), transparent 28%),
+    linear-gradient(180deg, #e0f2fe 0%, #f8fafc 100%);
+`;
+
+export const MarketDot = styled.button`
+  position: absolute;
+  left: ${({ $x }) => `${$x}%`};
+  top: ${({ $y }) => `${$y}%`};
+  width: ${({ $active }) => ($active ? '18px' : '14px')};
+  height: ${({ $active }) => ($active ? '18px' : '14px')};
+  border: 3px solid #ffffff;
+  border-radius: 999px;
+  background: ${({ $active }) => ($active ? '#f97316' : '#2563eb')};
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+`;
+
+export const MarketTooltip = styled.div`
+  position: absolute;
+  left: ${({ $x }) => `${$x}%`};
+  top: ${({ $y }) => `${$y}%`};
+  min-width: 150px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+  transform: translate(-50%, calc(-100% - 0.7rem));
+  pointer-events: none;
+
+  strong {
+    display: block;
+    font-size: 0.9rem;
+  }
+
+  span {
+    color: #0369a1;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+`;
+
 export const ResponsiveTableWrap = styled.div`
   width: 100%;
   overflow-x: hidden;

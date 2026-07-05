@@ -338,7 +338,7 @@ const Reports = () => {
               </ResponsiveContainer>
             </StatCard>
 
-            <StatCard>
+            <StatCard $wide>
               <h3>Chi tiết hóa đơn</h3>
               <TableScroll>
                 <Table>

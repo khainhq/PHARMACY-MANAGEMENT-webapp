@@ -33,6 +33,20 @@ export const Toolbar = styled.div`
   margin-bottom: 1rem;
 `;
 
+export const SearchBox = styled.div`
+  position: relative;
+  width: min(360px, 100%);
+
+  svg {
+    position: absolute;
+    top: 50%;
+    right: 0.9rem;
+    transform: translateY(-50%);
+    color: #64748b;
+    pointer-events: none;
+  }
+`;
+
 export const Button = styled.button`
   display: inline-flex;
   align-items: center;
@@ -57,10 +71,10 @@ export const Button = styled.button`
 `;
 
 export const SearchInput = styled.input`
-  padding: 0.75rem;
+  padding: 0.75rem 2.6rem 0.75rem 0.9rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  width: min(320px, 100%);
+  width: 100%;
   font-size: 0.9rem;
 `;
 
@@ -222,7 +236,8 @@ export const StatusBadge = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.28rem 0.55rem;
+  min-width: 86px;
+  padding: 0.28rem 0.6rem;
   border-radius: 999px;
   background: ${({ $active }) => ($active ? '#dcfce7' : '#fee2e2')};
   color: ${({ $active }) => ($active ? '#166534' : '#991b1b')};

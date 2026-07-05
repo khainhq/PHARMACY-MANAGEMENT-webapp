@@ -30,6 +30,20 @@ export const Container = styled.div`
   }
 `;
 
+export const ListPageContainer = styled.div`
+  display: flex;
+  box-sizing: border-box;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  font-family: 'Roboto', sans-serif;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+`;
+
 export const LeftSection = styled.div`
   min-width: 0;
   min-height: 0;
@@ -111,13 +125,13 @@ export const PaymentDetailsTable = styled.div`
   min-height: 130px;
   max-height: 34vh;
   margin-bottom: 0.9rem;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: auto;
 
   table {
-    min-width: 0;
+    min-width: 640px;
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
   }
 `;
 
@@ -161,8 +175,8 @@ export const TableHeader = styled.th`
   font-size: 0.92rem;
   line-height: 1.35;
   vertical-align: top;
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
 `;
 
 export const TableCell = styled.td`
@@ -220,7 +234,7 @@ export const Content = styled.div`
   flex: 1;
   min-width: 0;
   padding: clamp(0.5rem, 1vw, 1rem);
-  margin-left: 0;
+  margin-left: 220px;
   background-color: #ffffff;
   min-height: 100vh;
 `;
@@ -234,8 +248,8 @@ export const Toolbar = styled.div`
   margin-bottom: 1rem;
 
   ${Input} {
-    width: min(720px, calc(100vw - 320px));
-    min-width: min(420px, 100%);
+    width: min(920px, calc(100vw - 320px));
+    min-width: min(520px, 100%);
     margin-bottom: 0;
   }
 `;
@@ -273,7 +287,11 @@ export const CenteredButton = styled(Button)`
 export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
+
+  ${Table} {
+    min-width: 1060px;
+  }
 `;
 
 export const ActionGroup = styled.div`

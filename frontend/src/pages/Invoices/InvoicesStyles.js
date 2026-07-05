@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(420px, 0.85fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(360px, 0.78fr);
   align-items: stretch;
   box-sizing: border-box;
   width: calc(100% - 220px);
@@ -70,7 +70,7 @@ export const RightSection = styled.div`
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: clamp(0.75rem, 1vw, 1rem);
+  padding: clamp(0.65rem, 0.9vw, 0.9rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -128,10 +128,10 @@ export const MedicineList = styled.div`
 `;
 
 export const Cart = styled.div`
-  flex: 0 0 min(36%, 250px);
-  min-height: 150px;
-  margin-bottom: 0.85rem;
-  overflow-x: hidden;
+  flex: 0 0 min(30%, 210px);
+  min-height: 120px;
+  margin-bottom: 0.65rem;
+  overflow-x: auto;
   overflow-y: auto;
 
   h2 {
@@ -139,9 +139,9 @@ export const Cart = styled.div`
   }
 
   table {
-    min-width: 0;
+    min-width: 540px;
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
   }
 `;
 
@@ -152,16 +152,17 @@ export const InvoiceInfo = styled.div`
   min-height: 0;
   margin-top: 0;
   overflow-y: auto;
-  padding-right: 0.15rem;
+  padding-right: 0.25rem;
 
   h2 {
-    margin: 0 0 0.45rem;
-    font-size: clamp(1.2rem, 1.65vw, 1.55rem);
+    margin: 0 0 0.35rem;
+    font-size: clamp(1.05rem, 1.35vw, 1.32rem);
     line-height: 1.2;
   }
 
   h3 {
-    margin: 0.5rem 0;
+    margin: 0.36rem 0;
+    font-size: 0.98rem;
   }
 `;
 
@@ -179,9 +180,9 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: rgb(6, 150, 102);
   color: #ffffff;
-  padding: 0.65rem 0.7rem;
+  padding: 0.56rem 0.62rem;
   text-align: left;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   line-height: 1.35;
   vertical-align: top;
   overflow-wrap: break-word;
@@ -190,8 +191,8 @@ export const TableHeader = styled.th`
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 0.65rem 0.7rem;
-  font-size: 0.88rem;
+  padding: 0.56rem 0.62rem;
+  font-size: 0.84rem;
   line-height: 1.4;
   color: #374151;
   vertical-align: top;
@@ -223,8 +224,8 @@ export const Button = styled.button`
 
 export const Input = styled.input`
   width: 100%;
-  padding: 0.62rem 0.7rem;
-  margin-bottom: 0.65rem;
+  padding: 0.52rem 0.62rem;
+  margin-bottom: 0.52rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -250,8 +251,8 @@ export const Input = styled.input`
 export const Field = styled.label`
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 0.55rem;
+  gap: 0.2rem;
+  margin-bottom: 0.42rem;
   color: #334155;
   font-size: 0.83rem;
   font-weight: 700;
@@ -276,16 +277,23 @@ export const CountryPicker = styled.div`
 export const CountryButton = styled.button`
   display: flex;
   width: 100%;
-  min-height: 40px;
+  min-height: 38px;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.56rem 0.65rem;
+  padding: 0.48rem 0.58rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #ffffff;
   color: #111827;
   font-size: 0.9rem;
   cursor: pointer;
+
+  span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &:focus {
     border-color: #111827;
@@ -298,10 +306,11 @@ export const CountryMenu = styled.div`
   position: absolute;
   top: calc(100% + 0.35rem);
   left: 0;
-  right: 0;
+  right: auto;
   z-index: 20;
+  width: min(280px, 72vw);
   max-height: 260px;
-  overflow-y: auto;
+  overflow: auto;
   padding: 0.35rem;
   border: 1px solid #d1d5db;
   border-radius: 10px;
@@ -322,6 +331,13 @@ export const CountryOption = styled.button`
   font-size: 0.88rem;
   text-align: left;
   cursor: pointer;
+  white-space: nowrap;
+
+  span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   &:hover {
     background: #f1f5f9;
@@ -341,7 +357,7 @@ export const FlagMark = styled.img`
 
 export const PhoneInputGroup = styled.div`
   display: grid;
-  grid-template-columns: minmax(132px, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: minmax(168px, 0.42fr) minmax(0, 1fr);
   gap: 0.55rem;
 
   @media (max-width: 560px) {
@@ -354,8 +370,8 @@ export const InvoiceActions = styled.div`
   bottom: 0;
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  padding-top: 0.75rem;
+  gap: 0.65rem;
+  padding-top: 0.45rem;
   padding-bottom: 0.1rem;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), #ffffff 28%);
 `;

@@ -109,7 +109,11 @@ export const TableCell = styled.td`
 
 export const TableScroll = styled.div`
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
+
+  ${Table} {
+    min-width: 760px;
+  }
 `;
 
 export const EmptyCell = styled.td`

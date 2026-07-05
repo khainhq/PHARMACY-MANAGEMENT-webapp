@@ -7,6 +7,7 @@ import {
   Container,
   Content,
   Toolbar,
+  SearchBox,
   FilterBar,
   FilterField,
   Button,
@@ -229,10 +230,10 @@ const Employees = () => {
               <FaUserPlus /> Thêm nhân viên
             </Button>
           </div>
-          <div>
+          <SearchBox>
             <SearchInput type="text" placeholder="Tìm kiếm nhân viên..." value={searchKeyword} onChange={handleSearch} />
-            <FaSearch style={{ marginLeft: '0.5rem', color: '#374151' }} />
-          </div>
+            <FaSearch />
+          </SearchBox>
         </Toolbar>
 
         <FilterBar>

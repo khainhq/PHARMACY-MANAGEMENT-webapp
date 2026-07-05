@@ -28,6 +28,11 @@ import {
   RecentSection,
   SectionGrid,
   ChartGrid,
+  InventoryInsightGrid,
+  BuyerMapCard,
+  WorldMapFrame,
+  MarketDot,
+  MarketTooltip,
   ResponsiveTableWrap,
   Table,
   TableHeader,
@@ -44,6 +49,14 @@ const REFRESH_INTERVAL_MS = 5000;
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
 const PIE_COLORS = ['#2563eb', '#16a34a', '#f97316', '#dc2626'];
+const MARKET_DATA = [
+  { country: 'Việt Nam', buyers: 1280, x: 73, y: 54 },
+  { country: 'Nhật Bản', buyers: 420, x: 81, y: 39 },
+  { country: 'Hàn Quốc', buyers: 365, x: 78, y: 42 },
+  { country: 'Thái Lan', buyers: 290, x: 70, y: 58 },
+  { country: 'Hoa Kỳ', buyers: 215, x: 21, y: 43 },
+  { country: 'Pháp', buyers: 150, x: 48, y: 39 },
+];
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const toNumber = (value) => Number(value || 0);
@@ -81,6 +94,7 @@ const Dashboard = () => {
   const [invoiceStatusData, setInvoiceStatusData] = useState([]);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [inventoryMovement, setInventoryMovement] = useState([]);
+  const [hoveredMarket, setHoveredMarket] = useState(MARKET_DATA[0]);
 
   const fetchStats = useCallback(async () => {
     const token = sessionStorage.getItem('token');
@@ -417,18 +431,54 @@ const Dashboard = () => {
         <ChartGrid>
           <RecentSection $wide>
             <h2>Số lượng tồn, nhập, bán</h2>
-            <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" allowDecimals={false} />
-                <YAxis dataKey="chartLabel" type="category" width={88} interval={0} />
-                <Tooltip labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''} />
-                <Legend verticalAlign="bottom" height={36} />
-                <Bar dataKey="stockQuantity" name="Tồn kho" fill="#16a34a" />
-                <Bar dataKey="importedQuantity" name="Đã nhập" fill="#0ea5e9" />
-                <Bar dataKey="soldQuantity" name="Đã bán" fill="#f97316" />
-              </BarChart>
-            </ResponsiveContainer>
+            <InventoryInsightGrid>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" allowDecimals={false} />
+                  <YAxis dataKey="chartLabel" type="category" width={88} interval={0} />
+                  <Tooltip labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''} />
+                  <Legend verticalAlign="bottom" height={36} />
+                  <Bar dataKey="stockQuantity" name="Tồn kho" fill="#16a34a" />
+                  <Bar dataKey="importedQuantity" name="Đã nhập" fill="#0ea5e9" />
+                  <Bar dataKey="soldQuantity" name="Đã bán" fill="#f97316" />
+                </BarChart>
+              </ResponsiveContainer>
+              <BuyerMapCard>
+                <h3>Bản đồ người mua minh họa</h3>
+                <p>Di chuột lên từng điểm để xem lượng người mua theo quốc gia.</p>
+                <WorldMapFrame>
+                  <svg viewBox="0 0 640 300" role="img" aria-label="Bản đồ thế giới minh họa" width="100%" height="100%" preserveAspectRatio="none">
+                    <g fill="#bae6fd" stroke="#7dd3fc" strokeWidth="2" opacity="0.95">
+                      <path d="M64 92 126 58 188 76 196 124 158 150 94 138Z" />
+                      <path d="M174 168 214 158 246 198 220 250 176 232Z" />
+                      <path d="M286 82 372 54 460 78 450 132 382 146 318 126Z" />
+                      <path d="M354 150 438 146 478 202 434 248 368 224Z" />
+                      <path d="M466 118 548 104 588 148 548 192 482 172Z" />
+                      <path d="M494 222 562 218 590 252 540 274Z" />
+                    </g>
+                  </svg>
+                  {MARKET_DATA.map((market) => (
+                    <MarketDot
+                      key={market.country}
+                      type="button"
+                      $x={market.x}
+                      $y={market.y}
+                      $active={hoveredMarket.country === market.country}
+                      aria-label={`${market.country}: ${market.buyers.toLocaleString('vi-VN')} người mua`}
+                      onMouseEnter={() => setHoveredMarket(market)}
+                      onFocus={() => setHoveredMarket(market)}
+                    />
+                  ))}
+                  {hoveredMarket && (
+                    <MarketTooltip $x={hoveredMarket.x} $y={hoveredMarket.y}>
+                      <strong>{hoveredMarket.country}</strong>
+                      <span>{hoveredMarket.buyers.toLocaleString('vi-VN')} người mua</span>
+                    </MarketTooltip>
+                  )}
+                </WorldMapFrame>
+              </BuyerMapCard>
+            </InventoryInsightGrid>
           </RecentSection>
         </ChartGrid>
       </Content>

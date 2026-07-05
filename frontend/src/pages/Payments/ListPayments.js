@@ -3,7 +3,7 @@ import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { useToast } from '../../components/ToastProvider';
 import {
-  Container,
+  ListPageContainer,
   Content,
   Toolbar,
   Table,
@@ -151,7 +151,7 @@ const ListPayments = () => {
   }, [fetchPayments]);
 
   return (
-    <Container>
+    <ListPageContainer>
       <Sidebar />
       <Content>
         <Toolbar>
@@ -270,7 +270,7 @@ const ListPayments = () => {
           </Table>
         </TableViewport>
       </Content>
-    </Container>
+    </ListPageContainer>
   );
 };
 
