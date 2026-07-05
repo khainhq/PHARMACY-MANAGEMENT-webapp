@@ -192,30 +192,30 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
               Hóa đơn gần đây
             </h2>
             <div
-              class="sc-jMsorb dEtsTO"
+              class="sc-jMsorb gnKPKP"
             >
               <table
-                class="sc-cXawGu egbndy"
+                class="sc-cXawGu bDAtgb"
               >
                 <thead>
                   <tr>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Mã hóa đơn
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Thời gian
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Khách hàng
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Tổng tiền
                     </th>
@@ -224,22 +224,22 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
                 <tbody>
                   <tr>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       INV001
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       04/05/2025 17:00:00
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       Nguyen Van A
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       20.000
                        VND
@@ -247,22 +247,22 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
                   </tr>
                   <tr>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       INV002
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       03/05/2025 21:00:00
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       Tran Thi B
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       10.000
                        VND
@@ -277,30 +277,30 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
               Thuốc gần hết hạn
             </h2>
             <div
-              class="sc-jMsorb dEtsTO"
+              class="sc-jMsorb gnKPKP"
             >
               <table
-                class="sc-cXawGu egbndy"
+                class="sc-cXawGu bDAtgb"
               >
                 <thead>
                   <tr>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Mã thuốc
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Tên thuốc
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Hạn sử dụng
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Số lượng
                     </th>
@@ -309,44 +309,44 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
                 <tbody>
                   <tr>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       MED001
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       Paracetamol
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       01/06/2099
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       50
                     </td>
                   </tr>
                   <tr>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       MED002
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       Ibuprofen
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       02/06/2099
                     </td>
                     <td
-                      class="sc-cUiCeM zDAvc"
+                      class="sc-cUiCeM iaOETq"
                     >
                       30
                     </td>
@@ -392,20 +392,6 @@ exports[`Dashboard component kiểm tra giao diện responsive trên màn hình 
       <div
         class="sc-icnseD fopAsC"
       >
-        <div
-          class="sc-gDpztx ftAIaS"
-        >
-          <h2>
-            Tồn kho so với đã bán
-          </h2>
-          <div>
-            <div
-              data-testid="mocked-scatterchart"
-            >
-              Mocked ScatterChart
-            </div>
-          </div>
-        </div>
         <div
           class="sc-gDpztx ftAIaS"
         >
@@ -618,30 +604,30 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
               Hóa đơn gần đây
             </h2>
             <div
-              class="sc-jMsorb dEtsTO"
+              class="sc-jMsorb gnKPKP"
             >
               <table
-                class="sc-cXawGu egbndy"
+                class="sc-cXawGu bDAtgb"
               >
                 <thead>
                   <tr>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Mã hóa đơn
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Thời gian
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Khách hàng
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Tổng tiền
                     </th>
@@ -665,30 +651,30 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
               Thuốc gần hết hạn
             </h2>
             <div
-              class="sc-jMsorb dEtsTO"
+              class="sc-jMsorb gnKPKP"
             >
               <table
-                class="sc-cXawGu egbndy"
+                class="sc-cXawGu bDAtgb"
               >
                 <thead>
                   <tr>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Mã thuốc
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Tên thuốc
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Hạn sử dụng
                     </th>
                     <th
-                      class="sc-jJAtPt jPBnTc"
+                      class="sc-jJAtPt hYmWqB"
                     >
                       Số lượng
                     </th>
@@ -740,20 +726,6 @@ exports[`Dashboard component snapshot của giao diện Dashboard 1`] = `
       <div
         class="sc-icnseD fopAsC"
       >
-        <div
-          class="sc-gDpztx ftAIaS"
-        >
-          <h2>
-            Tồn kho so với đã bán
-          </h2>
-          <div>
-            <div
-              data-testid="mocked-scatterchart"
-            >
-              Mocked ScatterChart
-            </div>
-          </div>
-        </div>
         <div
           class="sc-gDpztx ftAIaS"
         >

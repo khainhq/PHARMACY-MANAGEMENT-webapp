@@ -12,9 +12,6 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-  ScatterChart,
-  Scatter,
-  ZAxis,
   Legend,
   PieChart,
   Pie,
@@ -398,8 +395,10 @@ const Dashboard = () => {
                     data={invoiceStatusData}
                     dataKey="value"
                     nameKey="name"
-                    outerRadius={100}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    innerRadius={48}
+                    outerRadius={92}
+                    labelLine={false}
+                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                   >
                     {invoiceStatusData.map((entry, index) => (
                       <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
@@ -416,25 +415,7 @@ const Dashboard = () => {
         </ChartGrid>
 
         <ChartGrid>
-          <RecentSection>
-            <h2>Tồn kho so với đã bán</h2>
-            <ResponsiveContainer width="100%" height={320}>
-              <ScatterChart margin={{ top: 20, right: 36, bottom: 36, left: 44 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" dataKey="soldQuantity" name="Đã bán" allowDecimals={false} />
-                <YAxis width={56} type="number" dataKey="stockQuantity" name="Tồn kho" allowDecimals={false} />
-                <ZAxis type="number" dataKey="importedQuantity" range={[70, 260]} name="Đã nhập" />
-                <Tooltip
-                  cursor={{ strokeDasharray: '3 3' }}
-                  formatter={(value, name) => [value, name]}
-                  labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''}
-                />
-                <Scatter name="Thuốc" data={inventoryMovement} fill="#0ea5e9" />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </RecentSection>
-
-          <RecentSection>
+          <RecentSection $wide>
             <h2>Số lượng tồn, nhập, bán</h2>
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>

@@ -313,15 +313,15 @@ const Employees = () => {
         <TableViewport>
           <Table>
             <colgroup>
-              <col style={{ width: '56px' }} />
-              <col style={{ width: '130px' }} />
-              <col style={{ width: '210px' }} />
-              <col style={{ width: '150px' }} />
-              <col style={{ width: '100px' }} />
-              <col style={{ width: '135px' }} />
-              <col style={{ width: '135px' }} />
-              <col style={{ width: '120px' }} />
-              <col style={{ width: '150px' }} />
+              <col style={{ width: '5%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '12%' }} />
             </colgroup>
             <thead>
               <tr>
@@ -368,15 +368,15 @@ const Employees = () => {
         <TableViewport>
           <Table>
             <colgroup>
-              <col style={{ width: '56px' }} />
-              <col style={{ width: '130px' }} />
-              <col style={{ width: '220px' }} />
-              <col style={{ width: '150px' }} />
-              <col style={{ width: '105px' }} />
-              <col style={{ width: '135px' }} />
-              <col style={{ width: '135px' }} />
-              <col style={{ width: '135px' }} />
-              <col style={{ width: '120px' }} />
+              <col style={{ width: '5%' }} />
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '19%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '8%' }} />
             </colgroup>
             <thead>
               <tr>

@@ -65,7 +65,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
           class="sc-fWnslK eDmYdh"
         >
           <div
-            class="sc-dIMoHT gdJMdO"
+            class="sc-dIMoHT gAaFAs"
           >
             <span>
               Tổng doanh thu
@@ -76,7 +76,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </strong>
           </div>
           <div
-            class="sc-dIMoHT gdJMdO"
+            class="sc-dIMoHT gAaFAs"
           >
             <span>
               Số hóa đơn
@@ -86,7 +86,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </strong>
           </div>
           <div
-            class="sc-dIMoHT gdJMdO"
+            class="sc-dIMoHT gAaFAs"
           >
             <span>
               Thuốc đã bán
@@ -96,7 +96,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </strong>
           </div>
           <div
-            class="sc-dIMoHT gdJMdO"
+            class="sc-dIMoHT gAaFAs"
           >
             <span>
               Trung bình hóa đơn
@@ -111,7 +111,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
           class="sc-dKREkF efIfYf"
         >
           <div
-            class="sc-iQQCXo dEtvbO"
+            class="sc-iQQCXo bbwvZo"
           >
             <h3>
               Doanh thu theo ngày
@@ -141,7 +141,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo dEtvbO"
+            class="sc-iQQCXo gXORbt"
           >
             <h3>
               Khách hàng theo số hóa đơn
@@ -171,7 +171,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo dEtvbO"
+            class="sc-iQQCXo bbwvZo"
           >
             <h3>
               Cơ cấu trạng thái hóa đơn
@@ -201,7 +201,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo dEtvbO"
+            class="sc-iQQCXo bbwvZo"
           >
             <h3>
               Thuốc đã bán
@@ -231,16 +231,16 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
             </div>
           </div>
           <div
-            class="sc-iQQCXo dEtvbO"
+            class="sc-iQQCXo bbwvZo"
           >
             <h3>
               Chi tiết hóa đơn
             </h3>
             <div
-              class="sc-jMsorb dEtsTO"
+              class="sc-jMsorb gnKPKP"
             >
               <table
-                class="sc-gDpztx gthBYI"
+                class="sc-gDpztx dmGWbF"
               >
                 <thead>
                   <tr>

@@ -110,84 +110,84 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         DANH SÁCH THÔNG TIN NHÂN VIÊN
       </h2>
       <div
-        class="sc-icnseD zmpJf"
+        class="sc-icnseD gTcccS"
       >
         <table
-          class="sc-kpOvIu ixlBDG"
+          class="sc-kpOvIu krkAuT"
         >
           <colgroup>
             <col
-              style="width: 56px;"
+              style="width: 5%;"
             />
             <col
-              style="width: 130px;"
+              style="width: 11%;"
             />
             <col
-              style="width: 210px;"
+              style="width: 18%;"
             />
             <col
-              style="width: 150px;"
+              style="width: 13%;"
             />
             <col
-              style="width: 100px;"
+              style="width: 8%;"
             />
             <col
-              style="width: 135px;"
+              style="width: 12%;"
             />
             <col
-              style="width: 135px;"
+              style="width: 12%;"
             />
             <col
-              style="width: 120px;"
+              style="width: 9%;"
             />
             <col
-              style="width: 150px;"
+              style="width: 12%;"
             />
           </colgroup>
           <thead>
             <tr>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 STT
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Mã nhân viên
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Họ tên
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Số điện thoại
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Giới tính
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Ngày sinh
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Ngày vào làm
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Trạng thái
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Hành động
               </th>
@@ -196,42 +196,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           <tbody>
             <tr>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 1
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 AB12CDEF
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 Nguyen Van A
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 0123456789
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 Nam
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 10/02/1990
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 15/01/2023
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 <span
                   class="sc-dFaThA jTBZye"
@@ -240,7 +240,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
                 </span>
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 <div
                   class="sc-jJAtPt kykyyR"
@@ -260,42 +260,42 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
             </tr>
             <tr>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 2
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 XY34WXYZ
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 Tran Thi B
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 0987654321
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 Nữ
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 21/07/1995
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 20/06/2023
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 <span
                   class="sc-dFaThA jTBZye"
@@ -304,7 +304,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
                 </span>
               </td>
               <td
-                class="sc-cXawGu Pybno"
+                class="sc-cXawGu jifcTt"
               >
                 <div
                   class="sc-jJAtPt kykyyR"
@@ -331,84 +331,84 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
         NHÂN VIÊN ĐÃ NGHỈ VIỆC
       </h2>
       <div
-        class="sc-icnseD zmpJf"
+        class="sc-icnseD gTcccS"
       >
         <table
-          class="sc-kpOvIu ixlBDG"
+          class="sc-kpOvIu krkAuT"
         >
           <colgroup>
             <col
-              style="width: 56px;"
+              style="width: 5%;"
             />
             <col
-              style="width: 130px;"
+              style="width: 11%;"
             />
             <col
-              style="width: 220px;"
+              style="width: 19%;"
             />
             <col
-              style="width: 150px;"
+              style="width: 13%;"
             />
             <col
-              style="width: 105px;"
+              style="width: 8%;"
             />
             <col
-              style="width: 135px;"
+              style="width: 12%;"
             />
             <col
-              style="width: 135px;"
+              style="width: 12%;"
             />
             <col
-              style="width: 135px;"
+              style="width: 12%;"
             />
             <col
-              style="width: 120px;"
+              style="width: 8%;"
             />
           </colgroup>
           <thead>
             <tr>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 STT
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Mã nhân viên
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Họ tên
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Số điện thoại
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Giới tính
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Ngày sinh
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Ngày vào làm
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Ngày nghỉ việc
               </th>
               <th
-                class="sc-jMsorb bmPOoA"
+                class="sc-jMsorb hhETyh"
               >
                 Trạng thái
               </th>

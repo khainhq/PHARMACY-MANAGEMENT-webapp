@@ -83,7 +83,7 @@ export const FilterField = styled.label`
 
 export const Table = styled.table`
   width: 100%;
-  min-width: 980px;
+  min-width: 0;
   table-layout: fixed;
   border-collapse: collapse;
   margin-top: 1.5rem;
@@ -95,7 +95,7 @@ export const Table = styled.table`
 
 export const TableViewport = styled.div`
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 export const TableHeader = styled.th`
@@ -103,7 +103,7 @@ export const TableHeader = styled.th`
   color: #ffffff;
   padding: 0.75rem 0.85rem;
   text-align: left;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   line-height: 1.35;
   vertical-align: top;
   overflow-wrap: break-word;
@@ -118,7 +118,7 @@ export const TableHeader = styled.th`
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
   padding: 0.7rem 0.85rem;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   line-height: 1.35;
   color: #374151;
   vertical-align: top;

@@ -38,7 +38,6 @@ export const SummaryCard = styled.div`
   padding: 1.1rem 1.25rem;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-left: 4px solid #0ea5e9;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
 
@@ -55,6 +54,7 @@ export const SummaryCard = styled.div`
 `;
 
 export const StatCard = styled.div`
+  grid-column: ${({ $wide }) => ($wide ? '1 / -1' : 'auto')};
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -84,7 +84,7 @@ export const StatCard = styled.div`
 
 export const Table = styled.table`
   width: 100%;
-  min-width: 760px;
+  min-width: 0;
   border-collapse: collapse;
   margin-top: 1rem;
   table-layout: fixed;
@@ -109,7 +109,7 @@ export const TableCell = styled.td`
 
 export const TableScroll = styled.div`
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 export const EmptyCell = styled.td`

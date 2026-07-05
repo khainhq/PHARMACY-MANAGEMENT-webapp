@@ -177,10 +177,10 @@ describe('Dashboard component', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Top thuốc bán chạy nhất/i)).toBeInTheDocument();
-      expect(screen.getByText(/Tồn kho so với đã bán/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Tồn kho so với đã bán/i)).not.toBeInTheDocument();
       expect(screen.getByText(/Số lượng tồn, nhập, bán/i)).toBeInTheDocument();
       expect(screen.getAllByTestId('mocked-barchart')).toHaveLength(2);
-      expect(screen.getByTestId('mocked-scatterchart')).toBeInTheDocument();
+      expect(screen.queryByTestId('mocked-scatterchart')).not.toBeInTheDocument();
     }, { timeout: 2000 });
   });
 

@@ -123,7 +123,7 @@ const Reports = () => {
       }, {});
 
       const customerData = Object.entries(groupedCustomers)
-        .map(([customer, totalInvoices]) => ({ customer, customerLabel: shortenLabel(customer), totalInvoices }))
+        .map(([customer, totalInvoices]) => ({ customer, customerLabel: shortenLabel(customer, 22), totalInvoices }))
         .sort((left, right) => right.totalInvoices - left.totalInvoices)
         .slice(0, 8);
 
@@ -285,13 +285,13 @@ const Reports = () => {
               </ResponsiveContainer>
             </StatCard>
 
-            <StatCard>
+            <StatCard $wide>
               <h3>Khách hàng theo số hóa đơn</h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={customerStats} layout="vertical" margin={{ top: 12, right: 28, bottom: 18, left: 18 }}>
+                <BarChart data={customerStats} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 8 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" allowDecimals={false} />
-                  <YAxis dataKey="customerLabel" type="category" width={130} interval={0} />
+                  <YAxis dataKey="customerLabel" type="category" width={190} interval={0} tick={{ fontSize: 12 }} />
                   <Tooltip labelFormatter={(_, payload) => payload?.[0]?.payload?.customer || ''} />
                   <Bar dataKey="totalInvoices" name="Số hóa đơn" fill="#0ea5e9" />
                 </BarChart>
@@ -307,8 +307,10 @@ const Reports = () => {
                       data={statusStats}
                       dataKey="value"
                       nameKey="name"
+                      innerRadius={44}
                       outerRadius={90}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                     >
                       {statusStats.map((entry, index) => (
                         <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />

@@ -122,12 +122,12 @@ export const ChartGrid = styled.div`
 
 export const ResponsiveTableWrap = styled.div`
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 export const Table = styled.table`
   width: 100%;
-  min-width: 720px;
+  min-width: 0;
   border-collapse: collapse;
   margin-top: 1rem;
   table-layout: fixed;
@@ -136,24 +136,25 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: #0f172a;
   color: #fff;
-  padding: 0.8rem; /* Tăng padding */
+  padding: 0.65rem;
   text-align: left;
-  font-size: 1rem; /* Tăng kích thước chữ */
+  font-size: 0.88rem;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #ddd;
-  padding: 0.8rem; /* Tăng padding */
-  font-size: 0.9rem; /* Giảm kích thước chữ */
+  padding: 0.65rem;
+  font-size: 0.84rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
 
   &:first-child,
   &:nth-child(3),
   &:nth-child(4) {
-    white-space: nowrap;
-    overflow-wrap: normal;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 `;
 
@@ -190,3 +191,4 @@ export const ViewDetail = styled.p`
     color: #1e40af; /* Màu xanh dương đậm hơn khi hover */
   }
 `;
+
