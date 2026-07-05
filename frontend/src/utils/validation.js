@@ -19,6 +19,19 @@ export const countryDialOptions = [
 
 export const digitsOnly = (value) => String(value || '').replace(/\D/g, '');
 
+const getCountryDialDigits = (country) => digitsOnly(country?.dialCode || '');
+
+const getNationalDigits = (value, country) => {
+  const digits = digitsOnly(value);
+  const dialDigits = getCountryDialDigits(country);
+
+  if (dialDigits && digits.startsWith(dialDigits)) {
+    return digits.slice(dialDigits.length);
+  }
+
+  return digits.startsWith('0') ? digits.slice(1) : digits;
+};
+
 export const normalizeInternationalPhoneNumber = (value, country = countryDialOptions[0]) => {
   const raw = String(value || '').trim();
   if (!raw) return '';
@@ -27,9 +40,13 @@ export const normalizeInternationalPhoneNumber = (value, country = countryDialOp
     return `+${digitsOnly(raw)}`;
   }
 
-  const nationalNumber = country.code === 'VN'
-    ? digitsOnly(raw).replace(/^0/, '')
-    : digitsOnly(raw);
+  const digits = digitsOnly(raw);
+  const dialDigits = getCountryDialDigits(country);
+  if (dialDigits && digits.startsWith(dialDigits)) {
+    return `+${digits}`;
+  }
+
+  const nationalNumber = getNationalDigits(raw, country);
 
   return `${country.dialCode}${nationalNumber}`;
 };
@@ -43,11 +60,14 @@ export const isValidInternationalPhoneNumber = (value, country = countryDialOpti
   }
 
   const digits = digitsOnly(raw);
-  if (country.code === 'VN' && /^0\d{9}$/.test(digits)) return true;
+  if (!digits) return false;
 
-  const nationalLength = country.code === 'VN' && digits.startsWith('0')
-    ? digits.length - 1
-    : digits.length;
+  const dialDigits = getCountryDialDigits(country);
+  if (dialDigits && digits.startsWith(dialDigits)) {
+    return /^\+\d{7,15}$/.test(`+${digits}`);
+  }
+
+  const nationalLength = getNationalDigits(raw, country).length;
 
   return nationalLength >= country.minLength && nationalLength <= country.maxLength;
 };
