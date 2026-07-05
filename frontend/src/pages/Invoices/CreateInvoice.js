@@ -4,6 +4,25 @@ import html2canvas from 'html2canvas';
 import Sidebar from '../../components/Sidebar';
 import { useToast } from '../../components/ToastProvider';
 import {
+  FaBone,
+  FaBrain,
+  FaChevronDown,
+  FaChevronUp,
+  FaEye,
+  FaHeartbeat,
+  FaLeaf,
+  FaLungs,
+  FaMagic,
+  FaMedkit,
+  FaShieldAlt,
+  FaSmile,
+  FaStethoscope,
+  FaSyringe,
+  FaTint,
+  FaTooth,
+  FaVenusMars,
+} from 'react-icons/fa';
+import {
   countryDialOptions,
   isValidInternationalPhoneNumber,
   normalizeInternationalPhoneNumber,
@@ -14,6 +33,16 @@ import {
   RightSection,
   MedicineDetails,
   MedicineList,
+  CategoryFilter,
+  CategoryTabs,
+  CategoryTab,
+  CategoryMenu,
+  CategorySubList,
+  CategorySubButton,
+  CategoryPreview,
+  CategoryPreviewGrid,
+  CategoryPreviewCard,
+  CategoryFilterSummary,
   Cart,
   InvoiceInfo,
   Table,
@@ -45,6 +74,83 @@ const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const REQUIRED_FIELD_ERROR = 'Không được để thiếu';
 const PHONE_FIELD_ERROR = 'Vui lòng nhập đúng định dạng số điện thoại.';
 const DEFAULT_COUNTRY_CODE = 'VN';
+
+const CATEGORY_FILTERS = [
+  {
+    label: 'Thực phẩm chức năng',
+    terms: ['thực phẩm chức năng', 'vitamin', 'khoáng chất', 'miễn dịch', 'đề kháng', 'sinh lý', 'nội tiết', 'mắt', 'thị lực', 'tiêu hóa', 'thần kinh', 'làm đẹp', 'đường huyết', 'tiểu đường', 'tim mạch', 'huyết áp', 'hô hấp', 'tai mũi họng', 'cơ xương khớp', 'gan mật', 'thận', 'tiết niệu', 'sữa', 'CAT002', 'CAT004', 'CAT006'],
+    children: [
+      { label: 'Vitamin & Khoáng chất', icon: FaMedkit, terms: ['vitamin', 'khoáng chất', 'CAT004'], examples: ['Vitamin C', 'Canxi', 'Kẽm'] },
+      { label: 'Miễn dịch - Đề kháng', icon: FaShieldAlt, terms: ['miễn dịch', 'đề kháng', 'vitamin c'], examples: ['Tăng đề kháng', 'Siro miễn dịch'] },
+      { label: 'Sinh lý - Nội tiết tố', icon: FaVenusMars, terms: ['sinh lý', 'nội tiết'], examples: ['Nội tiết tố', 'Sinh lý nam nữ'] },
+      { label: 'Mắt - Thị lực', icon: FaEye, terms: ['mắt', 'thị lực'], examples: ['Bổ mắt', 'Lutein'] },
+      { label: 'Tiêu hóa', icon: FaSmile, terms: ['tiêu hóa', 'dạ dày', 'men vi sinh', 'CAT002'], examples: ['Men tiêu hóa', 'Dạ dày'] },
+      { label: 'Thần kinh não', icon: FaBrain, terms: ['thần kinh', 'não', 'ginkgo'], examples: ['Tuần hoàn não', 'Ginkgo'] },
+      { label: 'Hỗ trợ làm đẹp', icon: FaMagic, terms: ['làm đẹp', 'collagen'], examples: ['Collagen', 'Đẹp da'] },
+      { label: 'Đường huyết - Tiểu đường', icon: FaTint, terms: ['đường huyết', 'tiểu đường'], examples: ['Ổn định đường huyết'] },
+      { label: 'Tim mạch - Huyết áp', icon: FaHeartbeat, terms: ['tim mạch', 'huyết áp', 'CAT006'], examples: ['Huyết áp', 'Omega 3'] },
+      { label: 'Hô hấp - Tai mũi họng', icon: FaLungs, terms: ['hô hấp', 'tai mũi họng', 'ho', 'cảm cúm', 'CAT005'], examples: ['Xịt mũi', 'Bổ phổi'] },
+      { label: 'Cơ xương khớp', icon: FaBone, terms: ['cơ xương khớp', 'xương khớp', 'canxi'], examples: ['Glucosamine', 'Canxi'] },
+      { label: 'Gan - Mật', icon: FaLeaf, terms: ['gan', 'mật'], examples: ['Giải độc gan'] },
+      { label: 'Thận - Tiết niệu', icon: FaTint, terms: ['thận', 'tiết niệu'], examples: ['Tiết niệu', 'Bổ thận'] },
+      { label: 'Sữa', icon: FaMedkit, terms: ['sữa'], examples: ['Sữa dinh dưỡng'] },
+    ],
+  },
+  {
+    label: 'Dược mỹ phẩm',
+    terms: ['dược mỹ phẩm', 'da mặt', 'cơ thể', 'làn da', 'tóc', 'da đầu', 'trang điểm', 'vùng mắt', 'thiên nhiên', 'da liễu', 'CAT007'],
+    children: [
+      { label: 'Chăm sóc da mặt', icon: FaSmile, terms: ['da mặt', 'sữa rửa mặt', 'kem dưỡng'], examples: ['Sữa rửa mặt', 'Kem dưỡng'] },
+      { label: 'Chăm sóc cơ thể', icon: FaLeaf, terms: ['cơ thể', 'dưỡng thể'], examples: ['Dưỡng thể', 'Sữa tắm'] },
+      { label: 'Giải pháp làn da', icon: FaMedkit, terms: ['làn da', 'da liễu', 'CAT007'], examples: ['Mụn', 'Da nhạy cảm'] },
+      { label: 'Chăm sóc tóc - da đầu', icon: FaLeaf, terms: ['tóc', 'da đầu', 'dầu gội'], examples: ['Dầu gội', 'Serum tóc'] },
+      { label: 'Mỹ phẩm trang điểm', icon: FaMagic, terms: ['trang điểm', 'mỹ phẩm'], examples: ['Kem nền', 'Tẩy trang'] },
+      { label: 'Chăm sóc da vùng mắt', icon: FaEye, terms: ['vùng mắt', 'quầng thâm'], examples: ['Kem mắt'] },
+      { label: 'Sản phẩm từ thiên nhiên', icon: FaLeaf, terms: ['thiên nhiên', 'thảo dược'], examples: ['Thảo dược', 'Organic'] },
+    ],
+  },
+  {
+    label: 'Chăm sóc cá nhân',
+    terms: ['chăm sóc cá nhân', 'tình dục', 'thực phẩm', 'đồ uống', 'vệ sinh', 'răng miệng', 'gia đình', 'tinh dầu', 'làm đẹp'],
+    children: [
+      { label: 'Hỗ trợ tình dục', icon: FaVenusMars, terms: ['tình dục', 'bao cao su', 'gel bôi trơn'], examples: ['Bao cao su', 'Gel bôi trơn'] },
+      { label: 'Thực phẩm - Đồ uống', icon: FaMedkit, terms: ['thực phẩm', 'đồ uống'], examples: ['Nước bù khoáng'] },
+      { label: 'Vệ sinh cá nhân', icon: FaShieldAlt, terms: ['vệ sinh cá nhân', 'dung dịch vệ sinh'], examples: ['Dung dịch vệ sinh'] },
+      { label: 'Chăm sóc răng miệng', icon: FaTooth, terms: ['răng miệng', 'kem đánh răng'], examples: ['Kem đánh răng'] },
+      { label: 'Đồ dùng gia đình', icon: FaMedkit, terms: ['gia đình', 'đồ dùng'], examples: ['Khăn', 'Bông'] },
+      { label: 'Hàng tổng hợp', icon: FaMedkit, terms: ['tổng hợp'], examples: ['Vật tư tiêu hao'] },
+      { label: 'Tinh dầu các loại', icon: FaLeaf, terms: ['tinh dầu'], examples: ['Tinh dầu tràm'] },
+      { label: 'Thiết bị làm đẹp', icon: FaMagic, terms: ['thiết bị làm đẹp'], examples: ['Máy rửa mặt'] },
+    ],
+  },
+  {
+    label: 'Thiết bị y tế',
+    terms: ['thiết bị y tế', 'dụng cụ y tế', 'theo dõi', 'sơ cứu', 'khẩu trang'],
+    children: [
+      { label: 'Dụng cụ y tế', icon: FaSyringe, terms: ['dụng cụ y tế', 'kim', 'bơm tiêm'], examples: ['Kim các loại', 'Bơm tiêm'] },
+      { label: 'Dụng cụ theo dõi', icon: FaStethoscope, terms: ['theo dõi', 'máy đo', 'huyết áp'], examples: ['Máy đo huyết áp'] },
+      { label: 'Dụng cụ sơ cứu', icon: FaMedkit, terms: ['sơ cứu', 'băng gạc'], examples: ['Băng gạc', 'Túi chườm'] },
+      { label: 'Khẩu trang', icon: FaShieldAlt, terms: ['khẩu trang'], examples: ['Khẩu trang y tế'] },
+    ],
+  },
+];
+
+const normalizeSearchText = (value) => String(value || '').toLowerCase();
+const medicineSearchText = (medicine) => normalizeSearchText([
+  medicine.medicineID,
+  medicine.medicineName,
+  medicine.ingredients,
+  medicine.catalog,
+  medicine.unit,
+].join(' '));
+
+const medicineMatchesFilter = (medicine, keyword, categoryFilter) => {
+  const haystack = medicineSearchText(medicine);
+  const normalizedKeyword = normalizeSearchText(keyword).trim();
+  const matchesKeyword = !normalizedKeyword || haystack.includes(normalizedKeyword);
+  const matchesCategory = !categoryFilter || categoryFilter.terms.some((term) => haystack.includes(normalizeSearchText(term)));
+  return matchesKeyword && matchesCategory;
+};
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 
@@ -262,6 +368,8 @@ const CreateInvoice = () => {
     gender: '',
   });
   const [selectedCountryCode, setSelectedCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
   const [isCountryMenuOpen, setIsCountryMenuOpen] = useState(false);
@@ -307,7 +415,6 @@ const CreateInvoice = () => {
     try {
       const response = await axios.get(`${API_BASE}/api/medicines/medicines/`, { headers: authHeaders() });
       setMedicines(response.data);
-      setFilteredMedicines(response.data);
     } catch (fetchError) {
       showError('Không tải được danh sách thuốc. Vui lòng thử lại.');
     }
@@ -331,15 +438,23 @@ const CreateInvoice = () => {
     fetchMedicines();
   }, [fetchMedicines]);
 
-  const handleSearch = (e) => {
-    const keyword = e.target.value.toLowerCase();
-    setSearchKeyword(keyword);
+  useEffect(() => {
     setFilteredMedicines(
-      medicines.filter((medicine) =>
-        medicine.medicineName.toLowerCase().includes(keyword) ||
-        medicine.medicineID.toLowerCase().includes(keyword)
-      )
+      medicines.filter((medicine) => medicineMatchesFilter(medicine, searchKeyword, selectedCategoryFilter))
     );
+  }, [medicines, searchKeyword, selectedCategoryFilter]);
+
+  const handleSearch = (e) => {
+    setSearchKeyword(e.target.value);
+  };
+
+  const applyCategoryFilter = (filter) => {
+    setSelectedCategoryFilter(filter);
+    setSearchKeyword('');
+  };
+
+  const clearCategoryFilter = () => {
+    setSelectedCategoryFilter(null);
   };
 
   const handleAddToCart = () => {
@@ -714,6 +829,80 @@ const CreateInvoice = () => {
         <MedicineList>
           <h2>Danh sách thuốc</h2>
           <Input type="text" placeholder="Tìm kiếm thuốc..." value={searchKeyword} onChange={handleSearch} />
+          <CategoryFilter
+            onMouseLeave={() => setActiveCategory(null)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) {
+                setActiveCategory(null);
+              }
+            }}
+          >
+            <CategoryTabs>
+              {CATEGORY_FILTERS.map((category) => {
+                const isActive = activeCategory?.label === category.label;
+                return (
+                  <CategoryTab
+                    key={category.label}
+                    type="button"
+                    $active={isActive}
+                    onMouseEnter={() => setActiveCategory(category)}
+                    onFocus={() => setActiveCategory(category)}
+                    onClick={() => {
+                      setActiveCategory(category);
+                      applyCategoryFilter(category);
+                    }}
+                  >
+                    {category.label}
+                    {isActive ? <FaChevronUp aria-hidden="true" /> : <FaChevronDown aria-hidden="true" />}
+                  </CategoryTab>
+                );
+              })}
+            </CategoryTabs>
+
+            {activeCategory && (
+              <CategoryMenu>
+                <CategorySubList>
+                  {activeCategory.children.map((child) => {
+                    const Icon = child.icon;
+                    const isSelected = selectedCategoryFilter?.label === child.label;
+                    return (
+                      <CategorySubButton
+                        key={child.label}
+                        type="button"
+                        $active={isSelected}
+                        onClick={() => applyCategoryFilter(child)}
+                      >
+                        <Icon aria-hidden="true" />
+                        <span>{child.label}</span>
+                      </CategorySubButton>
+                    );
+                  })}
+                </CategorySubList>
+                <CategoryPreview>
+                  <CategoryPreviewGrid>
+                    {activeCategory.children.slice(0, 4).map((child) => {
+                      const Icon = child.icon;
+                      return (
+                        <CategoryPreviewCard key={child.label} type="button" onClick={() => applyCategoryFilter(child)}>
+                          <span><Icon aria-hidden="true" /></span>
+                          <span>
+                            <strong>{child.examples[0]}</strong>
+                            <small>{child.label}</small>
+                          </span>
+                        </CategoryPreviewCard>
+                      );
+                    })}
+                  </CategoryPreviewGrid>
+                </CategoryPreview>
+              </CategoryMenu>
+            )}
+          </CategoryFilter>
+          {selectedCategoryFilter && (
+            <CategoryFilterSummary>
+              <span>Đang lọc: {selectedCategoryFilter.label}</span>
+              <button type="button" onClick={clearCategoryFilter}>Bỏ lọc</button>
+            </CategoryFilterSummary>
+          )}
           <TableViewport>
             <Table>
               <thead>

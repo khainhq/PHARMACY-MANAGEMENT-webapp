@@ -57,32 +57,32 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
           <thead>
             <tr>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 STT
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Tên tài khoản
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Nhân viên
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Quyền
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Trạng thái
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Hành động
               </th>
@@ -91,32 +91,32 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
           <tbody>
             <tr>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 1
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 user1
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 emp1 - Nguyen Van A
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Nhân viên bán hàng
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Hoạt động
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 <button
                   class="sc-fWnslK csgtCp"
@@ -139,32 +139,32 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
             </tr>
             <tr>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 2
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 user2
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 emp2 - Tran Thi B
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Nhân viên quản lí sản phẩm
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Vô hiệu
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 <button
                   class="sc-fWnslK csgtCp"
@@ -239,17 +239,17 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         </div>
       </div>
       <form
-        class="sc-cXawGu ethiIo"
+        class="sc-jJAtPt fRoCkq"
       >
         <input
-          class="sc-jJAtPt fceEux"
+          class="sc-cUiCeM eJGRoA"
           placeholder="Tên tài khoản"
           required=""
           type="text"
           value=""
         />
         <input
-          class="sc-jJAtPt fceEux"
+          class="sc-cUiCeM eJGRoA"
           placeholder="Mật khẩu"
           required=""
           type="password"
@@ -257,7 +257,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         />
         <select
           aria-label="Chọn quyền"
-          class="sc-cUiCeM eJGRoA"
+          class="sc-jScdur cgBdPR"
           required=""
         >
           <option
@@ -278,7 +278,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         </select>
         <select
           aria-label="Chọn nhân viên"
-          class="sc-cUiCeM eJGRoA"
+          class="sc-jScdur cgBdPR"
         >
           <option
             value=""
@@ -332,32 +332,32 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
           <thead>
             <tr>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 STT
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Tên tài khoản
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Nhân viên
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Quyền
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Trạng thái
               </th>
               <th
-                class="sc-gDpztx jNuAI"
+                class="sc-gDpztx kPBlum"
               >
                 Hành động
               </th>
@@ -366,32 +366,32 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
           <tbody>
             <tr>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 1
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 user1
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 emp1 - Nguyen Van A
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Nhân viên bán hàng
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Hoạt động
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 <button
                   class="sc-fWnslK csgtCp"
@@ -414,32 +414,32 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
             </tr>
             <tr>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 2
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 user2
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 emp2 - Tran Thi B
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Nhân viên quản lí sản phẩm
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 Vô hiệu
               </td>
               <td
-                class="sc-kpOvIu hrNXoo"
+                class="sc-kpOvIu fgGvEI"
               >
                 <button
                   class="sc-fWnslK csgtCp"

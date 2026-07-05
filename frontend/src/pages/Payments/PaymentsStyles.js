@@ -139,6 +139,12 @@ export const PaymentDetailsTable = styled.div`
     table-layout: fixed;
     margin-top: 0.65rem;
   }
+
+  th,
+  td {
+    font-size: clamp(0.68rem, 0.78vw, 0.82rem);
+    padding: 0.42rem 0.36rem;
+  }
 `;
 
 export const PaymentInfo = styled.div`
@@ -182,8 +188,8 @@ export const TableHeader = styled.th`
   font-size: 0.84rem;
   line-height: 1.28;
   vertical-align: top;
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
 `;
 
 export const TableCell = styled.td`

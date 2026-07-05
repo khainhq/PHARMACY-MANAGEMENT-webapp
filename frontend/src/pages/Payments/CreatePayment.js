@@ -555,12 +555,12 @@ const CreatePayment = () => {
           <h2>Chi tiết phiếu nhập</h2>
           <Table>
             <colgroup>
-              <col style={{ width: '8%' }} />
+              <col style={{ width: '10%' }} />
               <col style={{ width: '18%' }} />
-              <col style={{ width: '13%' }} />
+              <col style={{ width: '16%' }} />
               <col style={{ width: '18%' }} />
-              <col style={{ width: '24%' }} />
-              <col style={{ width: '19%' }} />
+              <col style={{ width: '22%' }} />
+              <col style={{ width: '16%' }} />
             </colgroup>
             <thead>
               <tr>

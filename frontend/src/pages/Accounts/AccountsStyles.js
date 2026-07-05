@@ -69,6 +69,9 @@ export const TableHeader = styled.th`
   padding: 1rem;
   text-align: left;
   font-size: 1rem;
+  line-height: 1.3;
+  overflow-wrap: normal;
+  word-break: keep-all;
 `;
 
 export const TableCell = styled.td`
@@ -83,11 +86,45 @@ export const TableCell = styled.td`
     text-align: center;
     white-space: nowrap;
   }
+
+  &:last-child {
+    min-width: 240px;
+  }
+
+  &:last-child ${Button} {
+    min-width: 88px;
+    margin: 0.25rem;
+    padding: 0.62rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  &:last-child ${Button}:nth-of-type(3) {
+    display: block;
+    width: min(190px, calc(100% - 0.5rem));
+  }
 `;
 
 export const TableViewport = styled.div`
   width: 100%;
   overflow-x: auto;
+`;
+
+export const ActionGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(82px, 1fr));
+  gap: 0.5rem;
+  width: min(230px, 100%);
+  align-items: stretch;
+
+  ${Button} {
+    width: 100%;
+    padding: 0.62rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  ${Button}:last-child:nth-child(3) {
+    grid-column: 1 / -1;
+  }
 `;
 
 export const EmptyCell = styled.td`

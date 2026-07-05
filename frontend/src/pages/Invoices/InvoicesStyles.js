@@ -127,12 +127,192 @@ export const MedicineList = styled.div`
   }
 `;
 
+export const CategoryFilter = styled.div`
+  position: relative;
+  z-index: 5;
+  margin: 0 0 0.75rem;
+  border-bottom: 1px solid #dbeafe;
+`;
+
+export const CategoryTabs = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+`;
+
+export const CategoryTab = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  padding: 0.58rem 0.72rem;
+  border: 0;
+  border-bottom: 2px solid ${({ $active }) => ($active ? '#2563eb' : 'transparent')};
+  background: #ffffff;
+  color: ${({ $active }) => ($active ? '#1d4ed8' : '#0f172a')};
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.25;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: #1d4ed8;
+    outline: none;
+  }
+`;
+
+export const CategoryMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 1px);
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.34fr) minmax(0, 1fr);
+  min-height: 260px;
+  max-height: min(440px, 62vh);
+  overflow: hidden;
+  border: 1px solid #dbeafe;
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  background: #f1f5f9;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16);
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    position: static;
+    max-height: none;
+    margin-top: 0.35rem;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+  }
+`;
+
+export const CategorySubList = styled.div`
+  overflow-y: auto;
+  padding: 0.75rem;
+  background: #ffffff;
+`;
+
+export const CategorySubButton = styled.button`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.62rem 0.7rem;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: ${({ $active }) => ($active ? '#eef2ff' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#0f172a' : '#475569')};
+  font-size: 0.82rem;
+  font-weight: ${({ $active }) => ($active ? 800 : 650)};
+  text-align: left;
+  cursor: pointer;
+
+  svg {
+    flex: 0 0 auto;
+    color: #4f7cff;
+    font-size: 1rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: #eef2ff;
+    color: #0f172a;
+    outline: none;
+  }
+`;
+
+export const CategoryPreview = styled.div`
+  overflow-y: auto;
+  padding: 0.9rem 1rem;
+`;
+
+export const CategoryPreviewGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const CategoryPreviewCard = styled.button`
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 70px;
+  padding: 0.65rem;
+  border: 0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  text-align: left;
+  cursor: pointer;
+
+  span:first-child {
+    display: inline-flex;
+    width: 52px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 1.35rem;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 0.18rem;
+    font-size: 0.84rem;
+    line-height: 1.25;
+  }
+
+  small {
+    display: block;
+    color: #64748b;
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  &:hover,
+  &:focus-visible {
+    outline: 2px solid #bfdbfe;
+  }
+`;
+
+export const CategoryFilterSummary = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: -0.25rem 0 0.65rem;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+
+  button {
+    border: 0;
+    background: transparent;
+    color: #2563eb;
+    font: inherit;
+    cursor: pointer;
+  }
+`;
+
 export const Cart = styled.div`
   flex: 0 0 auto;
   max-height: 230px;
   min-height: 118px;
   margin-top: 0.85rem;
-  overflow: auto;
+  overflow: hidden auto;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 0.75rem;
@@ -144,22 +324,28 @@ export const Cart = styled.div`
   }
 
   > div {
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: visible;
   }
 
   table {
-    min-width: 720px;
+    min-width: 0;
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
     margin-top: 0.65rem;
   }
 
   th,
   td {
-    font-size: 0.78rem;
-    padding: 0.48rem 0.5rem;
+    font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+    padding: 0.42rem 0.38rem;
     vertical-align: middle;
+  }
+
+  button {
+    min-height: 30px;
+    padding: 0.4rem 0.52rem;
+    font-size: 0.74rem;
   }
 `;
 
@@ -203,8 +389,8 @@ export const TableHeader = styled.th`
   font-size: 0.86rem;
   line-height: 1.35;
   vertical-align: top;
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
 `;
 
 export const TableCell = styled.td`
