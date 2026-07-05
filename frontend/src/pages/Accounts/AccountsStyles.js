@@ -8,17 +8,21 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 2rem;
-  margin-left: 220px; /* Khoảng trống bằng độ rộng của sidebar */
-  background-color: #ffffff; /* Màu nền trắng */
-  border-radius: 12px; /* Bo góc mềm mại */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  min-width: 0;
+  min-height: 100vh;
+  padding: clamp(1rem, 1.6vw, 2rem);
+  margin-left: 220px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 export const Toolbar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1.5rem;
 `;
 
@@ -43,18 +47,19 @@ export const SearchInput = styled.input`
   padding: 0.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  width: 250px;
+  width: min(320px, 100%);
   font-size: 0.9rem;
 `;
 
 export const Table = styled.table`
   width: 100%;
+  min-width: 860px;
   border-collapse: collapse;
   margin-top: 1.5rem;
   background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const TableHeader = styled.th`
@@ -68,9 +73,29 @@ export const TableHeader = styled.th`
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 1rem;
+  padding: 0.9rem 1rem;
   font-size: 0.9rem;
-  color: #374151; /* Màu chữ xám đậm */
+  color: #374151;
+  vertical-align: middle;
+
+  &:first-child,
+  &:nth-child(5) {
+    text-align: center;
+    white-space: nowrap;
+  }
+`;
+
+export const TableViewport = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
+
+export const EmptyCell = styled.td`
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  text-align: center;
+  font-weight: 700;
 `;
 
 export const roleMap = {

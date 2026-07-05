@@ -187,13 +187,13 @@ describe('Reports component', () => {
 
     const table = screen.getByRole('table');
     await waitFor(() => {
-      const row1 = within(table).getByText('INV001').closest('tr');
-      const row2 = within(table).getByText('INV002').closest('tr');
-      const row3 = within(table).getByText('INV003').closest('tr');
+      const row1 = within(table).getByText('1').closest('tr');
+      const row2 = within(table).getByText('2').closest('tr');
+      const row3 = within(table).getByText('3').closest('tr');
 
-      expect(within(row1).getAllByRole('cell')[0]).toHaveTextContent('INV001');
-      expect(within(row2).getAllByRole('cell')[0]).toHaveTextContent('INV002');
-      expect(within(row3).getAllByRole('cell')[0]).toHaveTextContent('INV003');
+      expect(within(row1).getAllByRole('cell')[0]).toHaveTextContent('1');
+      expect(within(row2).getAllByRole('cell')[0]).toHaveTextContent('2');
+      expect(within(row3).getAllByRole('cell')[0]).toHaveTextContent('3');
       expect(screen.getByText('450.000 VND')).toBeInTheDocument();
       expect(screen.getByText('9')).toBeInTheDocument();
     }, { timeout: 5000 });
@@ -203,7 +203,7 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     await act(async () => {
@@ -213,9 +213,9 @@ describe('Reports component', () => {
     await waitFor(() => {
       expect(XLSX.utils.json_to_sheet).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ invoiceID: 'INV001', totalAmount: 100000 }),
-          expect.objectContaining({ invoiceID: 'INV002', totalAmount: 200000 }),
-          expect.objectContaining({ invoiceID: 'INV003', totalAmount: 150000 }),
+          expect.objectContaining({ invoiceID: 1, totalAmount: 100000 }),
+          expect.objectContaining({ invoiceID: 2, totalAmount: 200000 }),
+          expect.objectContaining({ invoiceID: 3, totalAmount: 150000 }),
         ])
       );
       expect(XLSX.utils.book_new).toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     await act(async () => {
@@ -272,7 +272,7 @@ describe('Reports component', () => {
     }, { timeout: 5000 });
 
     const table = screen.getByRole('table');
-    expect(within(table).queryByText('INV001')).not.toBeInTheDocument();
+    expect(within(table).queryByText('1')).not.toBeInTheDocument();
   });
 
   test('xử lý lỗi khi xuất Excel', async () => {
@@ -283,7 +283,7 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     await act(async () => {
@@ -305,7 +305,7 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     await act(async () => {
@@ -325,7 +325,7 @@ describe('Reports component', () => {
     const { container } = renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     expect(container).toMatchSnapshot();
@@ -340,7 +340,7 @@ describe('Reports component', () => {
     renderReports();
 
     await waitFor(() => {
-      expect(screen.getByText('INV001')).toBeInTheDocument();
+      expect(within(screen.getByRole('table')).getByText('1')).toBeInTheDocument();
     }, { timeout: 5000 });
 
     await act(async () => {

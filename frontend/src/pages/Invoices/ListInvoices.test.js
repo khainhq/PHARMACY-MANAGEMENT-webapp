@@ -97,15 +97,15 @@ describe('ListInvoices component', () => {
   test('hiển thị đúng tên khách hàng và trạng thái thanh toán trong danh sách', async () => {
     render(<ListInvoices />);
 
-    expect(await screen.findByText('1001')).toBeInTheDocument();
-    expect(screen.getByText('1002')).toBeInTheDocument();
+    const row1 = (await screen.findByTestId('view-details-1001')).closest('tr');
+    const row2 = screen.getByTestId('view-details-1002').closest('tr');
 
-    const row1 = screen.getByText('1001').closest('tr');
+    expect(within(row1).getAllByRole('cell')[0]).toHaveTextContent('1');
+    expect(within(row2).getAllByRole('cell')[0]).toHaveTextContent('2');
     expect(within(row1).getByText('Nguyen Van A')).toBeInTheDocument();
     expect(within(row1).getByText('Chưa thanh toán')).toBeInTheDocument();
     expect(within(row1).getByRole('button', { name: 'Chuyển đã thanh toán' })).toBeInTheDocument();
 
-    const row2 = screen.getByText('1002').closest('tr');
     expect(within(row2).getByText('Tran Thi B')).toBeInTheDocument();
     expect(within(row2).getByText('Đã thanh toán')).toBeInTheDocument();
     expect(within(row2).queryByRole('button', { name: 'Chuyển đã thanh toán' })).not.toBeInTheDocument();
@@ -114,17 +114,17 @@ describe('ListInvoices component', () => {
   test('tìm kiếm hóa đơn theo tên khách hàng', async () => {
     render(<ListInvoices />);
 
-    expect(await screen.findByText('1001')).toBeInTheDocument();
+    expect(await screen.findByTestId('view-details-1001')).toBeInTheDocument();
     fireEvent.change(screen.getByTestId('search-input'), { target: { value: 'Tran Thi B' } });
 
-    expect(screen.queryByText('1001')).not.toBeInTheDocument();
-    expect(screen.getByText('1002')).toBeInTheDocument();
+    expect(screen.queryByTestId('view-details-1001')).not.toBeInTheDocument();
+    expect(screen.getByTestId('view-details-1002')).toBeInTheDocument();
   });
 
   test('chuyển hóa đơn chưa thanh toán sang đã thanh toán và refresh danh sách', async () => {
     render(<ListInvoices />);
 
-    const row = (await screen.findByText('1001')).closest('tr');
+    const row = (await screen.findByTestId('view-details-1001')).closest('tr');
     await act(async () => {
       fireEvent.click(within(row).getByRole('button', { name: 'Chuyển đã thanh toán' }));
     });
@@ -135,14 +135,14 @@ describe('ListInvoices component', () => {
         { status: 'Paid' },
         expect.any(Object)
       );
-      expect(within(screen.getByText('1001').closest('tr')).getByText('Đã thanh toán')).toBeInTheDocument();
+      expect(within(screen.getByTestId('view-details-1001').closest('tr')).getByText('Đã thanh toán')).toBeInTheDocument();
     });
   });
 
   test('xem chi tiết hóa đơn dùng đúng tên khách hàng từ API danh sách', async () => {
     render(<ListInvoices />);
 
-    const row = (await screen.findByText('1001')).closest('tr');
+    const row = (await screen.findByTestId('view-details-1001')).closest('tr');
     await act(async () => {
       fireEvent.click(within(row).getByRole('button', { name: 'Xem chi tiết' }));
     });
@@ -162,7 +162,7 @@ describe('ListInvoices component', () => {
   test('xóa hóa đơn và refresh danh sách', async () => {
     render(<ListInvoices />);
 
-    const row = (await screen.findByText('1001')).closest('tr');
+    const row = (await screen.findByTestId('view-details-1001')).closest('tr');
     await act(async () => {
       fireEvent.click(within(row).getByRole('button', { name: 'Xóa' }));
     });
@@ -172,8 +172,8 @@ describe('ListInvoices component', () => {
         `${API_BASE}/api/sales/invoices/1001/`,
         expect.any(Object)
       );
-      expect(screen.queryByText('1001')).not.toBeInTheDocument();
-      expect(screen.getByText('1002')).toBeInTheDocument();
+      expect(screen.queryByTestId('view-details-1001')).not.toBeInTheDocument();
+      expect(screen.getByTestId('view-details-1002')).toBeInTheDocument();
     });
   });
 });

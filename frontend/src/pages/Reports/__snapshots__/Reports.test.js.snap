@@ -9,7 +9,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
       Mocked Sidebar
     </div>
     <div
-      class="sc-fYsHOw hwKLUp"
+      class="sc-fYsHOw fHtQcB"
     >
       <div
         class="sc-jJAtPt eNzFjD"
@@ -111,7 +111,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
           class="sc-dKREkF efIfYf"
         >
           <div
-            class="sc-iQQCXo bbwvZo"
+            class="sc-iQQCXo gXORbt"
           >
             <h3>
               Doanh thu theo ngày
@@ -271,7 +271,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      INV001
+                      1
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
@@ -294,7 +294,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      INV002
+                      2
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
@@ -317,7 +317,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      INV003
+                      3
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"

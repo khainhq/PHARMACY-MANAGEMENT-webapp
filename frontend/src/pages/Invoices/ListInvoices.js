@@ -99,7 +99,7 @@ const ListInvoices = () => {
     [invoices, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
   );
 
-  const fetchInvoiceDetails = async (invoiceID) => {
+  const fetchInvoiceDetails = async (invoiceID, displayInvoiceID = invoiceID) => {
     try {
       const headers = authHeaders();
       const [invoiceDetailsRes, invoiceRes] = await Promise.all([
@@ -134,6 +134,7 @@ const ListInvoices = () => {
 
       setSelectedInvoiceDetails({
         invoiceID,
+        displayInvoiceID,
         customerName: invoiceRes.data.customerName || invoiceRes.data.customer,
         customerPhone: invoiceRes.data.customerPhone,
         address: invoiceRes.data.address,
@@ -341,9 +342,9 @@ const ListInvoices = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredInvoices.map((invoice) => (
+              {filteredInvoices.map((invoice, index) => (
                 <tr key={invoice.invoiceID}>
-                  <TableCell>{invoice.invoiceID}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{formatVietnamDate(invoice.invoiceTime)}</TableCell>
                   <TableCell>{invoice.customerName || invoice.customer}</TableCell>
                   <TableCell>{invoice.address}</TableCell>
@@ -353,7 +354,7 @@ const ListInvoices = () => {
                     <ActionGroup>
                       <Button
                         data-testid={`view-details-${invoice.invoiceID}`}
-                        onClick={() => fetchInvoiceDetails(invoice.invoiceID)}
+                        onClick={() => fetchInvoiceDetails(invoice.invoiceID, index + 1)}
                       >
                         Xem chi tiết
                       </Button>

@@ -37,9 +37,17 @@ export const DashboardOverviewGrid = styled.div`
 
 export const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); /* Giảm kích thước thẻ */
-  gap: 0.85rem; /* Giảm khoảng cách giữa các thẻ */
-  margin-top: 0; /* Giảm khoảng cách trên */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 0;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const StatCard = styled.div`
@@ -102,6 +110,7 @@ export const RevenueReportCard = styled.div`
   display: flex;
   min-width: 0;
   flex-direction: column;
+  margin-top: 0.85rem;
   padding: 1rem;
   border: 1px solid #bae6fd;
   border-radius: 8px;
@@ -140,11 +149,11 @@ export const RevenueReportMeta = styled.div`
 
 export const RevenueReportFilters = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.55rem;
+  align-items: end;
 
   button {
-    grid-column: 1 / -1;
     min-height: 34px;
     border: 0;
     border-radius: 8px;
@@ -153,6 +162,14 @@ export const RevenueReportFilters = styled.div`
     font-size: 0.84rem;
     font-weight: 800;
     cursor: pointer;
+  }
+
+  @media (max-width: 1180px) and (min-width: 621px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    button {
+      grid-column: 1 / -1;
+    }
   }
 
   @media (max-width: 620px) {
@@ -306,4 +323,3 @@ export const ViewDetail = styled.p`
     color: #1e40af; /* Màu xanh dương đậm hơn khi hover */
   }
 `;
-

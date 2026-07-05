@@ -100,8 +100,9 @@ const Reports = () => {
 
       const rows = [...invoices]
         .sort((left, right) => toInvoiceOrder(left.invoiceID) - toInvoiceOrder(right.invoiceID))
-        .map((invoice) => ({
+        .map((invoice, index) => ({
           invoiceID: invoice.invoiceID,
+          displayInvoiceID: index + 1,
           invoiceTime: invoice.invoiceTime,
           customerName: invoice.customerName || invoice.customer || 'Khách lẻ',
           status: invoice.status,
@@ -175,7 +176,11 @@ const Reports = () => {
 
   const handleDownloadExcel = () => {
     try {
-      const worksheet = XLSX.utils.json_to_sheet(invoiceRows);
+      const exportRows = invoiceRows.map(({ displayInvoiceID, ...invoice }) => ({
+        ...invoice,
+        invoiceID: displayInvoiceID,
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(exportRows);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Invoices');
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
@@ -294,9 +299,9 @@ const Reports = () => {
           </SummaryGrid>
 
           <StatsGrid>
-            <StatCard>
+            <StatCard $wide>
               <h3>Doanh thu theo ngày</h3>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={370}>
                 <LineChart data={salesData} margin={{ top: 16, right: 28, bottom: 28, left: 82 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -375,7 +380,7 @@ const Reports = () => {
                   <tbody>
                     {invoiceRows.map((invoice) => (
                       <tr key={invoice.invoiceID}>
-                        <TableCell>{invoice.invoiceID}</TableCell>
+                        <TableCell>{invoice.displayInvoiceID}</TableCell>
                         <TableCell>{formatVietnamDateTime(invoice.invoiceTime)}</TableCell>
                         <TableCell>{invoice.customerName}</TableCell>
                         <TableCell>{formatMoney(invoice.totalAmount)} VND</TableCell>

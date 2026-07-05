@@ -149,47 +149,47 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           <thead>
             <tr>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 STT
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Mã nhân viên
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Họ tên
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Số điện thoại
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Giới tính
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Ngày sinh
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Ngày vào làm
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Trạng thái
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Hành động
               </th>
@@ -236,7 +236,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
                 class="sc-jJAtPt bTueJt"
               >
                 <span
-                  class="sc-fjUQFl cHoFJv"
+                  class="sc-fjUQFl eTWOrx"
                 >
                   Đang làm
                 </span>
@@ -300,7 +300,7 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
                 class="sc-jJAtPt bTueJt"
               >
                 <span
-                  class="sc-fjUQFl cHoFJv"
+                  class="sc-fjUQFl eTWOrx"
                 >
                   Đang làm
                 </span>
@@ -370,47 +370,47 @@ exports[`Employees component snapshot của giao diện Employees 1`] = `
           <thead>
             <tr>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 STT
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Mã nhân viên
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Họ tên
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Số điện thoại
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Giới tính
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Ngày sinh
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Ngày vào làm
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Ngày nghỉ việc
               </th>
               <th
-                class="sc-cXawGu eewusT"
+                class="sc-cXawGu eesSqH"
               >
                 Trạng thái
               </th>

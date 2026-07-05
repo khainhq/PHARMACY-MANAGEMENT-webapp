@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaMoneyBillWave, FaUserTie, FaPills, FaExclamationTriangle } from 'react-icons/fa';
+import { FaMoneyBillWave, FaUserTie, FaPills, FaExclamationTriangle, FaFileInvoiceDollar, FaChartLine } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import {
   BarChart,
@@ -21,7 +21,6 @@ import Sidebar from '../../components/Sidebar';
 import {
   Container,
   Content,
-  DashboardOverviewGrid,
   StatsGrid,
   StatCard,
   StatTitle,
@@ -53,6 +52,7 @@ const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
 const PIE_COLORS = ['#2563eb', '#16a34a', '#f97316', '#dc2626'];
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const toNumber = (value) => Number(value || 0);
+const toInvoiceOrder = (value) => Number(String(value || '').replace(/\D/g, '')) || 0;
 const invoiceStatusLabels = {
   Paid: 'Đã thanh toán',
   Pending: 'Chưa thanh toán',
@@ -78,6 +78,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalRevenue: 0,
     totalMedicines: 0,
+    totalInvoices: 0,
   });
   const [recentInvoices, setRecentInvoices] = useState([]);
   const [expiringMedicines, setExpiringMedicines] = useState([]);
@@ -130,11 +131,18 @@ const Dashboard = () => {
         return acc;
       }, {});
 
+      const invoiceDisplayMap = new Map(
+        [...invoices]
+          .sort((left, right) => toInvoiceOrder(left.invoiceID) - toInvoiceOrder(right.invoiceID))
+          .map((invoice, index) => [String(invoice.invoiceID), index + 1])
+      );
+
       const recentInvoicesWithTotal = [...invoices]
         .sort((left, right) => (toVietnamDate(right.invoiceTime)?.getTime() || 0) - (toVietnamDate(left.invoiceTime)?.getTime() || 0))
         .slice(0, 5)
         .map((invoice) => ({
           ...invoice,
+          displayInvoiceID: invoiceDisplayMap.get(String(invoice.invoiceID)) || invoice.invoiceID,
           totalAmount: toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0,
         }));
 
@@ -231,6 +239,7 @@ const Dashboard = () => {
       setStats({
         totalRevenue: Object.values(invoiceTotals).reduce((sum, total) => sum + total, 0),
         totalMedicines: medicines.length,
+        totalInvoices: invoices.length,
       });
     } catch (error) {
       console.error('Error fetching stats:', error.response?.data || error.message);
@@ -306,8 +315,7 @@ const Dashboard = () => {
       <Sidebar />
       <Content>
         <h1>Dashboard</h1>
-        <DashboardOverviewGrid>
-          <StatsGrid>
+        <StatsGrid>
             <StatCard className="success" as={Link} to="/invoices/list">
               <IconWrapper>
                 <FaMoneyBillWave />
@@ -339,6 +347,22 @@ const Dashboard = () => {
               <StatTitle>Số loại thuốc</StatTitle>
               <StatValue>{stats.totalMedicines}</StatValue>
               <ViewDetail>Xem kho thuốc &raquo;</ViewDetail>
+            </StatCard>
+            <StatCard className="info" as={Link} to="/invoices/list">
+              <IconWrapper>
+                <FaFileInvoiceDollar />
+              </IconWrapper>
+              <StatTitle>Số hóa đơn</StatTitle>
+              <StatValue>{stats.totalInvoices}</StatValue>
+              <ViewDetail>Xem danh sách hóa đơn &raquo;</ViewDetail>
+            </StatCard>
+            <StatCard className="success">
+              <IconWrapper>
+                <FaChartLine />
+              </IconWrapper>
+              <StatTitle>Doanh thu đang lọc</StatTitle>
+              <StatValue>{formatMoney(revenueReport.total)} VND</StatValue>
+              <ViewDetail>{revenueReport.invoiceCount} hóa đơn</ViewDetail>
             </StatCard>
           </StatsGrid>
 
@@ -403,7 +427,6 @@ const Dashboard = () => {
               <button type="button" onClick={clearRevenueFilter}>Bỏ lọc</button>
             </RevenueReportFilters>
           </RevenueReportCard>
-        </DashboardOverviewGrid>
         <RecentSection>
           <h2>Chi phí nhập thuốc theo thời gian</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -434,7 +457,7 @@ const Dashboard = () => {
                   <tbody>
                     {recentInvoices.map((invoice) => (
                       <tr key={invoice.invoiceID}>
-                        <TableCell>{invoice.invoiceID}</TableCell>
+                        <TableCell>{invoice.displayInvoiceID}</TableCell>
                         <TableCell>{formatVietnamDateTime(invoice.invoiceTime)}</TableCell>
                         <TableCell>{invoice.customerName || invoice.customer}</TableCell>
                         <TableCell>{formatMoney(invoice.totalAmount)} VND</TableCell>

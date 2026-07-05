@@ -131,6 +131,7 @@ export const TableHeader = styled.th`
   &:nth-child(8),
   &:nth-child(9) {
     text-align: center;
+    vertical-align: middle;
   }
 `;
 
@@ -247,6 +248,7 @@ export const StatusBadge = styled.span`
   align-items: center;
   justify-content: center;
   min-width: 70px;
+  margin: 0 auto;
   padding: 0.24rem 0.48rem;
   border-radius: 999px;
   background: ${({ $active }) => ($active ? '#dcfce7' : '#fee2e2')};

@@ -13,10 +13,14 @@ import {
   Button,
   SearchInput,
   roleMap,
+  TableViewport,
+  EmptyCell,
   Form,
   Input,
   Select,
 } from './AccountsStyles';
+
+const API_BASE = 'http://127.0.0.1:8000';
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
@@ -46,13 +50,17 @@ const Accounts = () => {
 
   const accountEmployeeName = (account) => {
     if (typeof account.employee === 'object' && account.employee !== null) return account.employee.fullName || account.employee.employeeID || 'N/A';
-    return account.employee || account.employeeID || 'N/A';
+    const employeeID = accountEmployeeID(account);
+    const employee = employees.find((item) => item.employeeID === employeeID);
+    return employee ? `${employee.employeeID} - ${employee.fullName || 'Chưa có tên'}` : employeeID || 'N/A';
   };
 
   const accountRoleName = (account) => {
     if (typeof account.role === 'object' && account.role !== null) return account.role.roleName || roleMap[account.role.roleID] || 'N/A';
-    return roleMap[account.role] || account.role || 'N/A';
+    return roleMap[account.role] || roleMap[account.roleID] || account.role || 'N/A';
   };
+
+  const isAccountActive = (account) => account.is_active ?? account.isActive ?? true;
 
   const usedEmployeeIDs = useMemo(
     () => new Set(accounts.map((account) => accountEmployeeID(account)).filter(Boolean)),
@@ -67,8 +75,8 @@ const Accounts = () => {
 
     try {
       const [accountsResponse, employeesResponse] = await Promise.all([
-        axios.get('http://localhost:8000/api/auth/accounts/', { headers }),
-        axios.get('http://localhost:8000/api/auth/employees/', { headers }),
+        axios.get(`${API_BASE}/api/auth/accounts/`, { headers }),
+        axios.get(`${API_BASE}/api/auth/employees/`, { headers }),
       ]);
       setAccounts(accountsResponse.data);
       setFilteredAccounts(accountsResponse.data);
@@ -120,10 +128,10 @@ const Accounts = () => {
         delete payload.password;
       }
       if (editingAccountID) {
-        await axios.patch(`http://localhost:8000/api/auth/accounts/${editingAccountID}/`, payload, { headers });
+        await axios.patch(`${API_BASE}/api/auth/accounts/${editingAccountID}/`, payload, { headers });
         showSuccess('Cập nhật tài khoản thành công.');
       } else {
-        await axios.post('http://localhost:8000/api/auth/accounts/', payload, { headers });
+        await axios.post(`${API_BASE}/api/auth/accounts/`, payload, { headers });
         showSuccess('Tạo tài khoản thành công.');
       }
       setForm({ username: '', password: '', role: '', employee: '' });
@@ -155,7 +163,7 @@ const Accounts = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.delete(`http://localhost:8000/api/auth/accounts/${accountID}/`, { headers });
+      await axios.delete(`${API_BASE}/api/auth/accounts/${accountID}/`, { headers });
       showSuccess('Xóa tài khoản thành công.');
       fetchAccounts();
     } catch (error) {
@@ -169,7 +177,7 @@ const Accounts = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.patch(`http://localhost:8000/api/auth/accounts/${accountID}/`, { is_active: !currentStatus }, { headers });
+      await axios.patch(`${API_BASE}/api/auth/accounts/${accountID}/`, { is_active: !currentStatus }, { headers });
       showSuccess(currentStatus ? 'Vô hiệu hóa tài khoản thành công.' : 'Kích hoạt tài khoản thành công.');
       fetchAccounts();
     } catch (error) {
@@ -266,6 +274,7 @@ const Accounts = () => {
         )}
 
         <h2>DANH SÁCH TÀI KHOẢN</h2>
+        <TableViewport>
         <Table>
           <thead>
             <tr>
@@ -284,21 +293,27 @@ const Accounts = () => {
                 <TableCell>{account.username}</TableCell>
                 <TableCell>{accountEmployeeName(account)}</TableCell>
                 <TableCell>{accountRoleName(account)}</TableCell>
-                <TableCell>{account.is_active ? 'Hoạt động' : 'Vô hiệu'}</TableCell>
+                <TableCell>{isAccountActive(account) ? 'Hoạt động' : 'Vô hiệu'}</TableCell>
                 <TableCell>
                   <Button onClick={() => handleEditAccount(account)}>Sửa</Button>
                   <Button onClick={() => handleDeleteAccount(account.accountID)} style={{ marginLeft: '0.25rem' }}>Xóa</Button>
                   <Button
-                    onClick={() => handleToggleAccountStatus(account.accountID, account.is_active)}
+                    onClick={() => handleToggleAccountStatus(account.accountID, isAccountActive(account))}
                     style={{ marginLeft: '0.25rem' }}
                   >
-                    {account.is_active ? 'Vô hiệu hóa' : 'Kích hoạt'}
+                    {isAccountActive(account) ? 'Vô hiệu hóa' : 'Kích hoạt'}
                   </Button>
                 </TableCell>
               </tr>
             ))}
+            {filteredAccounts.length === 0 && (
+              <tr>
+                <EmptyCell colSpan={6}>Chưa có tài khoản phù hợp để hiển thị.</EmptyCell>
+              </tr>
+            )}
           </tbody>
         </Table>
+        </TableViewport>
       </Content>
     </Container>
   );

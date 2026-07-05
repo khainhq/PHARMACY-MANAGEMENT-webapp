@@ -11,10 +11,10 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
       Sidebar
     </div>
     <div
-      class="sc-fYsHOw joUqRQ"
+      class="sc-fYsHOw hProzk"
     >
       <div
-        class="sc-dKREkF cbBVLp"
+        class="sc-dKREkF hByvrG"
       >
         <div>
           <button
@@ -38,7 +38,7 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
         </div>
         <div>
           <input
-            class="sc-dIMoHT kyHkWK"
+            class="sc-dIMoHT jTrrWb"
             placeholder="Tìm kiếm tài khoản..."
             type="text"
             value=""
@@ -48,142 +48,146 @@ exports[`Accounts component hiển thị Sidebar, Toolbar và bảng danh sách 
       <h2>
         DANH SÁCH TÀI KHOẢN
       </h2>
-      <table
-        class="sc-iQQCXo bGAlqu"
+      <div
+        class="sc-icnseD zmpJf"
       >
-        <thead>
-          <tr>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              STT
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Tên tài khoản
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Nhân viên
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Quyền
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Trạng thái
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              user1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              emp1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Nhân viên bán hàng
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Hoạt động
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              <button
-                class="sc-fWnslK csgtCp"
+        <table
+          class="sc-iQQCXo cnbbzt"
+        >
+          <thead>
+            <tr>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                STT
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Xóa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Tên tài khoản
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Vô hiệu hóa
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              user2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              emp2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Nhân viên quản lí sản phẩm
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Vô hiệu
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              <button
-                class="sc-fWnslK csgtCp"
+                Nhân viên
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Quyền
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Xóa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Trạng thái
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Kích hoạt
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                1
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                user1
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                emp1 - Nguyen Van A
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Nhân viên bán hàng
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Hoạt động
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                <button
+                  class="sc-fWnslK csgtCp"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Xóa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Vô hiệu hóa
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                2
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                user2
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                emp2 - Tran Thi B
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Nhân viên quản lí sản phẩm
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Vô hiệu
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                <button
+                  class="sc-fWnslK csgtCp"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Xóa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Kích hoạt
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -200,10 +204,10 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
       Sidebar
     </div>
     <div
-      class="sc-fYsHOw joUqRQ"
+      class="sc-fYsHOw hProzk"
     >
       <div
-        class="sc-dKREkF cbBVLp"
+        class="sc-dKREkF hByvrG"
       >
         <div>
           <button
@@ -227,7 +231,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         </div>
         <div>
           <input
-            class="sc-dIMoHT kyHkWK"
+            class="sc-dIMoHT jTrrWb"
             placeholder="Tìm kiếm tài khoản..."
             type="text"
             value=""
@@ -235,17 +239,17 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         </div>
       </div>
       <form
-        class="sc-icnseD dZUPxJ"
+        class="sc-cXawGu ethiIo"
       >
         <input
-          class="sc-jMsorb hoHyT"
+          class="sc-jJAtPt fceEux"
           placeholder="Tên tài khoản"
           required=""
           type="text"
           value=""
         />
         <input
-          class="sc-jMsorb hoHyT"
+          class="sc-jJAtPt fceEux"
           placeholder="Mật khẩu"
           required=""
           type="password"
@@ -253,7 +257,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         />
         <select
           aria-label="Chọn quyền"
-          class="sc-cXawGu dhLZyz"
+          class="sc-cUiCeM eJGRoA"
           required=""
         >
           <option
@@ -274,7 +278,7 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
         </select>
         <select
           aria-label="Chọn nhân viên"
-          class="sc-cXawGu dhLZyz"
+          class="sc-cUiCeM eJGRoA"
         >
           <option
             value=""
@@ -319,142 +323,146 @@ exports[`Accounts component hiển thị form khi nhấn nút THÊM và chụp s
       <h2>
         DANH SÁCH TÀI KHOẢN
       </h2>
-      <table
-        class="sc-iQQCXo bGAlqu"
+      <div
+        class="sc-icnseD zmpJf"
       >
-        <thead>
-          <tr>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              STT
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Tên tài khoản
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Nhân viên
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Quyền
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Trạng thái
-            </th>
-            <th
-              class="sc-gDpztx jNuAI"
-            >
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              user1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              emp1
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Nhân viên bán hàng
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Hoạt động
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              <button
-                class="sc-fWnslK csgtCp"
+        <table
+          class="sc-iQQCXo cnbbzt"
+        >
+          <thead>
+            <tr>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                STT
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Xóa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Tên tài khoản
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Vô hiệu hóa
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              user2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              emp2
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Nhân viên quản lí sản phẩm
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              Vô hiệu
-            </td>
-            <td
-              class="sc-kpOvIu kAAbCD"
-            >
-              <button
-                class="sc-fWnslK csgtCp"
+                Nhân viên
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Sửa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Quyền
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Xóa
-              </button>
-              <button
-                class="sc-fWnslK csgtCp"
-                style="margin-left: 0.25rem;"
+                Trạng thái
+              </th>
+              <th
+                class="sc-gDpztx jNuAI"
               >
-                Kích hoạt
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                Hành động
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                1
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                user1
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                emp1 - Nguyen Van A
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Nhân viên bán hàng
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Hoạt động
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                <button
+                  class="sc-fWnslK csgtCp"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Xóa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Vô hiệu hóa
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                2
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                user2
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                emp2 - Tran Thi B
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Nhân viên quản lí sản phẩm
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                Vô hiệu
+              </td>
+              <td
+                class="sc-kpOvIu hrNXoo"
+              >
+                <button
+                  class="sc-fWnslK csgtCp"
+                >
+                  Sửa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Xóa
+                </button>
+                <button
+                  class="sc-fWnslK csgtCp"
+                  style="margin-left: 0.25rem;"
+                >
+                  Kích hoạt
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

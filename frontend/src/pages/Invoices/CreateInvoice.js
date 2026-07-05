@@ -313,6 +313,20 @@ const CreateInvoice = () => {
     }
   }, [authHeaders, showError]);
 
+  const fetchInvoiceDisplayID = useCallback(async (actualInvoiceID) => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/sales/invoices/`, { headers: authHeaders() });
+      const sortedInvoices = [...(response.data || [])].sort((left, right) =>
+        Number(String(left.invoiceID || '').replace(/\D/g, '')) -
+        Number(String(right.invoiceID || '').replace(/\D/g, ''))
+      );
+      const displayIndex = sortedInvoices.findIndex((invoice) => Number(invoice.invoiceID) === Number(actualInvoiceID));
+      return displayIndex >= 0 ? displayIndex + 1 : actualInvoiceID;
+    } catch (error) {
+      return actualInvoiceID;
+    }
+  }, [authHeaders]);
+
   useEffect(() => {
     fetchMedicines();
   }, [fetchMedicines]);
@@ -436,9 +450,13 @@ const CreateInvoice = () => {
         { headers: authHeaders() }
       );
 
+      const actualInvoiceID = response.data.invoiceID;
+      const displayInvoiceID = await fetchInvoiceDisplayID(actualInvoiceID);
+
       setInvoiceData({
         ...reviewInvoiceData,
-        invoiceID: response.data.invoiceID,
+        invoiceID: displayInvoiceID,
+        actualInvoiceID,
         invoiceTime: response.data.invoiceTime || reviewInvoiceData.invoiceTime,
         status: response.data.status || reviewInvoiceData.status,
         receiptImage: response.data.receiptImage || '',
@@ -487,10 +505,11 @@ const CreateInvoice = () => {
   }, []);
 
   const saveInvoiceImage = useCallback(async (preview, sourceInvoice) => {
-    if (!sourceInvoice?.invoiceID || !preview?.src) return;
+    const targetInvoiceID = sourceInvoice?.actualInvoiceID || sourceInvoice?.invoiceID;
+    if (!targetInvoiceID || !preview?.src) return;
 
     await axios.patch(
-      `${API_BASE}/api/sales/invoices/${sourceInvoice.invoiceID}/`,
+      `${API_BASE}/api/sales/invoices/${targetInvoiceID}/`,
       {
         receiptImage: preview.src,
         receiptFileName: preview.fileName,
@@ -498,9 +517,9 @@ const CreateInvoice = () => {
       { headers: authHeaders() }
     );
 
-    savedInvoiceImageIds.current.add(sourceInvoice.invoiceID);
+    savedInvoiceImageIds.current.add(targetInvoiceID);
     setInvoiceData((current) =>
-      current?.invoiceID === sourceInvoice.invoiceID
+      (current?.actualInvoiceID || current?.invoiceID) === targetInvoiceID
         ? { ...current, receiptImage: preview.src, receiptFileName: preview.fileName }
         : current
     );
@@ -550,8 +569,9 @@ const CreateInvoice = () => {
   };
 
   useEffect(() => {
-    if (!showInvoiceModal || !invoiceData?.invoiceID || invoiceData.receiptImage) return;
-    if (savedInvoiceImageIds.current.has(invoiceData.invoiceID)) return;
+    const targetInvoiceID = invoiceData?.actualInvoiceID || invoiceData?.invoiceID;
+    if (!showInvoiceModal || !targetInvoiceID || invoiceData.receiptImage) return;
+    if (savedInvoiceImageIds.current.has(targetInvoiceID)) return;
 
     let cancelled = false;
     const timer = window.setTimeout(async () => {
@@ -721,9 +741,7 @@ const CreateInvoice = () => {
             </Table>
           </TableViewport>
         </MedicineList>
-      </LeftSection>
 
-      <RightSection>
         <Cart>
           <h2>Giỏ hàng</h2>
           <TableViewport>
@@ -751,7 +769,9 @@ const CreateInvoice = () => {
             </Table>
           </TableViewport>
         </Cart>
+      </LeftSection>
 
+      <RightSection>
         <InvoiceInfo>
           <h2>Thông tin hóa đơn</h2>
           <Field>

@@ -147,10 +147,10 @@ describe('Dashboard component', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Hóa đơn gần đây/i)).toBeInTheDocument();
-      expect(screen.getByText(/INV001/i)).toBeInTheDocument();
-      expect(screen.getByText(/INV002/i)).toBeInTheDocument();
       expect(screen.getByText(/Nguyen Van A/i)).toBeInTheDocument();
       expect(screen.getByText(/Tran Thi B/i)).toBeInTheDocument();
+      expect(screen.getByText(/Nguyen Van A/i).closest('tr').children[0]).toHaveTextContent('1');
+      expect(screen.getByText(/Tran Thi B/i).closest('tr').children[0]).toHaveTextContent('2');
       expect(screen.getByText(/20\.000 VND/i)).toBeInTheDocument();
       expect(screen.getByText(/10\.000 VND/i)).toBeInTheDocument();
     }, { timeout: 2000 });

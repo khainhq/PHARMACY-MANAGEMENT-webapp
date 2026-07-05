@@ -9,6 +9,7 @@ export const Content = styled.div`
   min-width: 0;
   margin-left: 220px;
   padding: clamp(1rem, 1.6vw, 2rem);
+  padding-bottom: 6rem;
   background-color: #f3f4f6; /* Màu nền sáng */
   min-height: 100vh;
   overflow-x: hidden;
