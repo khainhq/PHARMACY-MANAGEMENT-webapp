@@ -237,7 +237,7 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
               Chi tiết hóa đơn
             </h3>
             <div
-              class="sc-jMsorb PYOev"
+              class="sc-jMsorb fssZQH"
             >
               <table
                 class="sc-gDpztx dmGWbF"
@@ -271,22 +271,22 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      INV003
+                      INV001
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      02/05/2025 21:00:00
+                      01/05/2025 17:00:00
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      Tran Thi B
+                      Nguyen Van A
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      150.000
+                      100.000
                        VND
                     </td>
                   </tr>
@@ -317,22 +317,22 @@ exports[`Reports component snapshot của giao diện Reports 1`] = `
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      INV001
+                      INV003
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      01/05/2025 17:00:00
+                      02/05/2025 21:00:00
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      Nguyen Van A
+                      Tran Thi B
                     </td>
                     <td
                       class="sc-icnseD fkqbyh"
                     >
-                      100.000
+                      150.000
                        VND
                     </td>
                   </tr>

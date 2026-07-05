@@ -21,11 +21,16 @@ import Sidebar from '../../components/Sidebar';
 import {
   Container,
   Content,
+  DashboardOverviewGrid,
   StatsGrid,
   StatCard,
   StatTitle,
   StatValue,
-  RevenueBreakdown,
+  RevenueReportCard,
+  RevenueReportFilters,
+  RevenueReportField,
+  RevenueReportValue,
+  RevenueReportMeta,
   RecentSection,
   SectionGrid,
   ChartGrid,
@@ -39,7 +44,7 @@ import {
   ViewDetail,
 } from './DashboardStyles';
 import { unitMap } from '../Medicines/MedicinesStyles';
-import { formatVietnamDate, formatVietnamDateTime, toVietnamDate } from '../../utils/listFilters';
+import { formatVietnamDate, formatVietnamDateTime, getVietnamDateKey, toVietnamDate } from '../../utils/listFilters';
 
 const API_BASE = 'http://127.0.0.1:8000';
 const REFRESH_INTERVAL_MS = 5000;
@@ -82,7 +87,13 @@ const Dashboard = () => {
   const [invoiceStatusData, setInvoiceStatusData] = useState([]);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [inventoryMovement, setInventoryMovement] = useState([]);
-  const [revenueBreakdown, setRevenueBreakdown] = useState({ monthly: [], yearly: [] });
+  const [invoiceRevenueRows, setInvoiceRevenueRows] = useState([]);
+  const [revenueFilter, setRevenueFilter] = useState({
+    selectedDate: '',
+    selectedMonth: '',
+    fromDate: '',
+    toDate: '',
+  });
 
   const fetchStats = useCallback(async () => {
     const token = sessionStorage.getItem('token');
@@ -127,37 +138,12 @@ const Dashboard = () => {
           totalAmount: toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0,
         }));
 
-      const monthlyRevenue = new Map();
-      const yearlyRevenue = new Map();
-
-      invoices.forEach((invoice) => {
-        const invoiceDate = toVietnamDate(invoice.invoiceTime);
-        if (!invoiceDate) return;
-
-        const totalAmount = toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0;
-        const year = invoiceDate.getFullYear();
-        const month = invoiceDate.getMonth() + 1;
-        const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-
-        monthlyRevenue.set(monthKey, {
-          key: monthKey,
-          label: `Tháng ${String(month).padStart(2, '0')}/${year}`,
-          total: (monthlyRevenue.get(monthKey)?.total || 0) + totalAmount,
-        });
-        yearlyRevenue.set(year, {
-          key: String(year),
-          label: `Năm ${year}`,
-          total: (yearlyRevenue.get(year)?.total || 0) + totalAmount,
-        });
-      });
-
-      const revenueByMonth = Array.from(monthlyRevenue.values())
-        .sort((left, right) => right.key.localeCompare(left.key))
-        .slice(0, 3);
-
-      const revenueByYear = Array.from(yearlyRevenue.values())
-        .sort((left, right) => Number(right.key) - Number(left.key))
-        .slice(0, 3);
+      const revenueRows = invoices.map((invoice) => ({
+        invoiceID: invoice.invoiceID,
+        invoiceTime: invoice.invoiceTime,
+        dateKey: getVietnamDateKey(invoice.invoiceTime),
+        totalAmount: toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0,
+      }));
 
       const now = new Date();
       const expiredMedicines = medicines.filter((medicine) => {
@@ -241,7 +227,7 @@ const Dashboard = () => {
       setPaymentData(paymentChartData);
       setInvoiceStatusData(invoiceStatusChartData);
       setInventoryMovement(movementData.slice(0, 10));
-      setRevenueBreakdown({ monthly: revenueByMonth, yearly: revenueByYear });
+      setInvoiceRevenueRows(revenueRows);
       setStats({
         totalRevenue: Object.values(invoiceTotals).reduce((sum, total) => sum + total, 0),
         totalMedicines: medicines.length,
@@ -278,56 +264,146 @@ const Dashboard = () => {
     };
   }, [fetchStats]);
 
+  const clearRevenueFilter = () => {
+    setRevenueFilter({
+      selectedDate: '',
+      selectedMonth: '',
+      fromDate: '',
+      toDate: '',
+    });
+  };
+
+  const revenueReport = (() => {
+    const { selectedDate, selectedMonth, fromDate, toDate } = revenueFilter;
+    let label = 'Toàn bộ doanh thu';
+    let rows = invoiceRevenueRows;
+
+    if (selectedDate) {
+      rows = invoiceRevenueRows.filter((invoice) => invoice.dateKey === selectedDate);
+      label = `Ngày ${formatVietnamDate(selectedDate)}`;
+    } else if (selectedMonth) {
+      rows = invoiceRevenueRows.filter((invoice) => invoice.dateKey.startsWith(selectedMonth));
+      const [year, month] = selectedMonth.split('-');
+      label = `Tháng ${month}/${year}`;
+    } else if (fromDate || toDate) {
+      rows = invoiceRevenueRows.filter((invoice) => {
+        if (!invoice.dateKey) return false;
+        const afterStart = !fromDate || invoice.dateKey >= fromDate;
+        const beforeEnd = !toDate || invoice.dateKey <= toDate;
+        return afterStart && beforeEnd;
+      });
+      const startLabel = fromDate ? formatVietnamDate(fromDate) : 'ngày đầu';
+      const endLabel = toDate ? formatVietnamDate(toDate) : 'hiện tại';
+      label = `${startLabel} - ${endLabel}`;
+    }
+
+    const total = rows.reduce((sum, invoice) => sum + invoice.totalAmount, 0);
+    return { label, total, invoiceCount: rows.length };
+  })();
+
   return (
     <Container>
       <Sidebar />
       <Content>
         <h1>Dashboard</h1>
-        <StatsGrid>
-          <StatCard className="success" as={Link} to="/invoices/list">
-            <IconWrapper>
-              <FaMoneyBillWave />
-            </IconWrapper>
-            <StatTitle>Tổng doanh thu</StatTitle>
-            <StatValue>{formatMoney(stats.totalRevenue)} VND</StatValue>
-            <RevenueBreakdown>
-              {[...revenueBreakdown.monthly, ...revenueBreakdown.yearly].map((item) => (
-                <span key={item.key}>
-                  <strong>{item.label}:</strong> {formatMoney(item.total)} đồng
-                </span>
-              ))}
-              {revenueBreakdown.monthly.length + revenueBreakdown.yearly.length === 0 && (
-                <span>Chưa có dữ liệu theo tháng/năm</span>
-              )}
-            </RevenueBreakdown>
-            <ViewDetail>Xem chi tiết hóa đơn &raquo;</ViewDetail>
-          </StatCard>
-          <StatCard className="info" as={Link} to="/employees">
-            <IconWrapper>
-              <FaUserTie />
-            </IconWrapper>
-            <StatTitle>Số nhân viên</StatTitle>
-            <StatValue>{employeeCount}</StatValue>
-            <ViewDetail>Xem nhân viên &raquo;</ViewDetail>
-          </StatCard>
-          <StatCard className="danger" as={Link} to="/medicines">
-            <IconWrapper>
-              <FaExclamationTriangle />
-            </IconWrapper>
-            <StatTitle>Thuốc đã hết hạn</StatTitle>
-            <StatValue>{expiredMedicinesCount}</StatValue>
-            <ViewDetail>Xử lý ngay &raquo;</ViewDetail>
-          </StatCard>
-          <StatCard className="warning" as={Link} to="/medicines">
-            <IconWrapper>
-              <FaPills />
-            </IconWrapper>
-            <StatTitle>Số loại thuốc</StatTitle>
-            <StatValue>{stats.totalMedicines}</StatValue>
-            <ViewDetail>Xem kho thuốc &raquo;</ViewDetail>
-          </StatCard>
-        </StatsGrid>
+        <DashboardOverviewGrid>
+          <StatsGrid>
+            <StatCard className="success" as={Link} to="/invoices/list">
+              <IconWrapper>
+                <FaMoneyBillWave />
+              </IconWrapper>
+              <StatTitle>Tổng doanh thu</StatTitle>
+              <StatValue>{formatMoney(stats.totalRevenue)} VND</StatValue>
+              <ViewDetail>Xem chi tiết hóa đơn &raquo;</ViewDetail>
+            </StatCard>
+            <StatCard className="info" as={Link} to="/employees">
+              <IconWrapper>
+                <FaUserTie />
+              </IconWrapper>
+              <StatTitle>Số nhân viên</StatTitle>
+              <StatValue>{employeeCount}</StatValue>
+              <ViewDetail>Xem nhân viên &raquo;</ViewDetail>
+            </StatCard>
+            <StatCard className="danger" as={Link} to="/medicines">
+              <IconWrapper>
+                <FaExclamationTriangle />
+              </IconWrapper>
+              <StatTitle>Thuốc đã hết hạn</StatTitle>
+              <StatValue>{expiredMedicinesCount}</StatValue>
+              <ViewDetail>Xử lý ngay &raquo;</ViewDetail>
+            </StatCard>
+            <StatCard className="warning" as={Link} to="/medicines">
+              <IconWrapper>
+                <FaPills />
+              </IconWrapper>
+              <StatTitle>Số loại thuốc</StatTitle>
+              <StatValue>{stats.totalMedicines}</StatValue>
+              <ViewDetail>Xem kho thuốc &raquo;</ViewDetail>
+            </StatCard>
+          </StatsGrid>
 
+          <RevenueReportCard>
+            <h2>Báo cáo doanh thu</h2>
+            <RevenueReportValue>{formatMoney(revenueReport.total)} đồng</RevenueReportValue>
+            <RevenueReportMeta>
+              <span>{revenueReport.label}</span>
+              <span>{revenueReport.invoiceCount} hóa đơn</span>
+            </RevenueReportMeta>
+            <RevenueReportFilters>
+              <RevenueReportField>
+                Ngày cụ thể
+                <input
+                  type="date"
+                  value={revenueFilter.selectedDate}
+                  onChange={(event) => setRevenueFilter((current) => ({
+                    ...current,
+                    selectedDate: event.target.value,
+                    selectedMonth: event.target.value ? '' : current.selectedMonth,
+                  }))}
+                />
+              </RevenueReportField>
+              <RevenueReportField>
+                Tháng và năm
+                <input
+                  type="month"
+                  value={revenueFilter.selectedMonth}
+                  onChange={(event) => setRevenueFilter((current) => ({
+                    ...current,
+                    selectedMonth: event.target.value,
+                    selectedDate: event.target.value ? '' : current.selectedDate,
+                  }))}
+                />
+              </RevenueReportField>
+              <RevenueReportField>
+                Từ ngày
+                <input
+                  type="date"
+                  value={revenueFilter.fromDate}
+                  onChange={(event) => setRevenueFilter((current) => ({
+                    ...current,
+                    fromDate: event.target.value,
+                    selectedDate: '',
+                    selectedMonth: '',
+                  }))}
+                />
+              </RevenueReportField>
+              <RevenueReportField>
+                Đến ngày
+                <input
+                  type="date"
+                  value={revenueFilter.toDate}
+                  onChange={(event) => setRevenueFilter((current) => ({
+                    ...current,
+                    toDate: event.target.value,
+                    selectedDate: '',
+                    selectedMonth: '',
+                  }))}
+                />
+              </RevenueReportField>
+              <button type="button" onClick={clearRevenueFilter}>Bỏ lọc</button>
+            </RevenueReportFilters>
+          </RevenueReportCard>
+        </DashboardOverviewGrid>
         <RecentSection>
           <h2>Chi phí nhập thuốc theo thời gian</h2>
           <ResponsiveContainer width="100%" height={300}>

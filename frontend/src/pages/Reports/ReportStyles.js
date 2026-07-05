@@ -114,6 +114,14 @@ export const TableScroll = styled.div`
   ${Table} {
     min-width: 760px;
   }
+
+  #report-sections.pdf-exporting & {
+    overflow: visible;
+
+    ${Table} {
+      min-width: 0;
+    }
+  }
 `;
 
 export const EmptyCell = styled.td`

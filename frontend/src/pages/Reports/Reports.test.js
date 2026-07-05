@@ -20,11 +20,13 @@ jest.mock('xlsx', () => ({
 }));
 jest.mock('jspdf', () => {
   const mockAddImage = jest.fn();
+  const mockAddPage = jest.fn();
   const mockSave = jest.fn();
   function MockJsPDF(...args) {
     this.args = args;
     this.internal = { pageSize: { getWidth: jest.fn(() => 297), getHeight: jest.fn(() => 210) } };
     this.addImage = mockAddImage;
+    this.addPage = mockAddPage;
     this.save = mockSave;
   }
   return MockJsPDF;
@@ -104,6 +106,7 @@ describe('Reports component', () => {
 
     const mockJsPDF = require('jspdf');
     if (mockJsPDF.prototype.addImage) mockJsPDF.prototype.addImage.mockReset();
+    if (mockJsPDF.prototype.addPage) mockJsPDF.prototype.addPage.mockReset();
     if (mockJsPDF.prototype.save) mockJsPDF.prototype.save.mockReset();
 
     sessionStorage.setItem('token', 'dummyToken');
@@ -234,7 +237,15 @@ describe('Reports component', () => {
     });
 
     await waitFor(() => {
-      expect(html2canvas).toHaveBeenCalledWith(expect.any(HTMLElement), { scale: 2 });
+      expect(html2canvas).toHaveBeenCalledWith(
+        expect.any(HTMLElement),
+        expect.objectContaining({
+          scale: 2,
+          useCORS: true,
+          windowWidth: expect.any(Number),
+          windowHeight: expect.any(Number),
+        })
+      );
       const pdfInstance = new jsPDF('landscape', 'mm', 'a4');
       expect(pdfInstance.addImage).toHaveBeenCalledWith(
         'data:image/png;base64,mockImage',

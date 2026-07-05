@@ -23,11 +23,23 @@ export const Content = styled.div`
   }
 `;
 
+export const DashboardOverviewGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.75fr);
+  gap: 0.85rem;
+  align-items: stretch;
+  margin-top: 0.75rem;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 export const StatsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); /* Giảm kích thước thẻ */
   gap: 0.85rem; /* Giảm khoảng cách giữa các thẻ */
-  margin-top: 0.75rem; /* Giảm khoảng cách trên */
+  margin-top: 0; /* Giảm khoảng cách trên */
 `;
 
 export const StatCard = styled.div`
@@ -86,21 +98,86 @@ export const StatValue = styled.p`
   margin: 0;
 `;
 
-export const RevenueBreakdown = styled.div`
-  display: grid;
-  width: 100%;
-  gap: 0.18rem;
-  margin-top: 0.45rem;
-  color: #334155;
-  font-size: 0.74rem;
-  line-height: 1.25;
+export const RevenueReportCard = styled.div`
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
+
+  h2 {
+    margin: 0 0 0.55rem;
+    color: #0f172a;
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+`;
+
+export const RevenueReportValue = styled.strong`
+  color: #0369a1;
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
+  line-height: 1.1;
+`;
+
+export const RevenueReportMeta = styled.div`
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin: 0.45rem 0 0.7rem;
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
 
   span {
-    display: block;
+    padding: 0.24rem 0.5rem;
+    border-radius: 999px;
+    background: #e0f2fe;
+  }
+`;
+
+export const RevenueReportFilters = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+
+  button {
+    grid-column: 1 / -1;
+    min-height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: #0369a1;
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
   }
 
-  strong {
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const RevenueReportField = styled.label`
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.24rem;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 800;
+
+  input {
+    width: 100%;
+    min-height: 34px;
+    padding: 0.42rem 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
     color: #0f172a;
+    font-size: 0.84rem;
   }
 `;
 

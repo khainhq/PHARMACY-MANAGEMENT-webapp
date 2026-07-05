@@ -47,6 +47,7 @@ const PIE_COLORS = ['#2563eb', '#16a34a', '#f97316', '#dc2626'];
 
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const toNumber = (value) => Number(value || 0);
+const toInvoiceOrder = (value) => Number(String(value || '').replace(/\D/g, '')) || 0;
 const invoiceStatusLabels = {
   Paid: 'Đã thanh toán',
   Pending: 'Chưa thanh toán',
@@ -98,7 +99,7 @@ const Reports = () => {
       }, {});
 
       const rows = [...invoices]
-        .sort((left, right) => (toVietnamDate(right.invoiceTime)?.getTime() || 0) - (toVietnamDate(left.invoiceTime)?.getTime() || 0))
+        .sort((left, right) => toInvoiceOrder(left.invoiceID) - toInvoiceOrder(right.invoiceID))
         .map((invoice) => ({
           invoiceID: invoice.invoiceID,
           invoiceTime: invoice.invoiceTime,
@@ -114,7 +115,9 @@ const Reports = () => {
         return acc;
       }, {});
 
-      const chartData = Object.entries(groupedSales).map(([date, total]) => ({ date, total }));
+      const chartData = Object.entries(groupedSales)
+        .map(([date, total]) => ({ date, total }))
+        .sort((left, right) => (toVietnamDate(left.date)?.getTime() || 0) - (toVietnamDate(right.date)?.getTime() || 0));
 
       const groupedCustomers = rows.reduce((acc, invoice) => {
         const customer = invoice.customerName || 'Khách lẻ';
@@ -191,17 +194,36 @@ const Reports = () => {
       if (!reportElement) {
         throw new Error('Report sections not found');
       }
-      const canvas = await html2canvas(reportElement, { scale: 2 });
+      reportElement.classList.add('pdf-exporting');
+      const canvas = await html2canvas(reportElement, {
+        scale: 2,
+        useCORS: true,
+        windowWidth: reportElement.scrollWidth,
+        windowHeight: reportElement.scrollHeight,
+      });
       const imgData = canvas.toDataURL('image/png');
 
       const pdf = new jsPDF('landscape', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
       pdf.save('Report.pdf');
+      reportElement.classList.remove('pdf-exporting');
       showSuccess('Tải báo cáo PDF thành công.');
     } catch (error) {
+      document.getElementById('report-sections')?.classList.remove('pdf-exporting');
       console.error('Error generating PDF:', error);
       showError('Đã xảy ra lỗi khi tạo file PDF.');
     }

@@ -45,6 +45,8 @@ export const ListPageContainer = styled.div`
 `;
 
 export const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   min-height: 0;
   padding: clamp(0.85rem, 1.15vw, 1.2rem);
@@ -114,9 +116,12 @@ export const MedicineList = styled.div`
   flex-direction: column;
   min-height: 0;
   margin-top: 1rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 
   table {
-    flex: 1;
+    flex: 0 0 auto;
+    margin-top: 0.65rem;
   }
 `;
 
@@ -139,20 +144,21 @@ export const PaymentDetailsTable = styled.div`
 export const PaymentInfo = styled.div`
   flex: 0 0 auto;
   margin-top: 0;
+  font-size: 0.82rem;
 
   h2 {
-    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    font-size: clamp(1rem, 1.2vw, 1.18rem);
     font-weight: 700;
     color: #0f172a;
-    margin-bottom: 0.65rem;
+    margin: 0 0 0.45rem;
     text-align: center;
   }
 
   h3 {
-    font-size: 1.08rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: #059669;
-    margin-top: 0.65rem;
+    margin: 0.45rem 0 0;
     text-align: center;
   }
 `;
@@ -224,11 +230,11 @@ export const Input = styled.input`
 
 export const Select = styled.select`
   width: 100%;
-  padding: 0.62rem 0.7rem;
-  margin-bottom: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
 `;
 
 export const Content = styled.div`

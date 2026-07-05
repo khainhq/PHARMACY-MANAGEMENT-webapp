@@ -38,6 +38,7 @@ const invoiceStatusLabels = {
 
 const formatInvoiceStatus = (status) => invoiceStatusLabels[status] || status || '';
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
+const toInvoiceOrder = (value) => Number(String(value || '').replace(/\D/g, '')) || 0;
 const isPendingStatus = (status) => status === 'Pending' || status === 'Chưa thanh toán';
 const buildSavedInvoiceImageFileName = (invoice) => `hoa-don-${invoice?.InvoiceID || invoice?.invoiceID || 'chua-luu'}.png`;
 
@@ -66,8 +67,8 @@ const ListInvoices = () => {
   }, [showError]);
 
   const filteredInvoices = useMemo(
-    () =>
-      applyListFilters(invoices, {
+    () => {
+      const filtered = applyListFilters(invoices, {
         keyword: searchKeyword,
         sortOrder,
         selectedDate,
@@ -87,7 +88,14 @@ const ListInvoices = () => {
           ]
             .filter(Boolean)
             .join(' '),
-      }),
+      });
+
+      if (!sortOrder) {
+        return [...filtered].sort((left, right) => toInvoiceOrder(left.invoiceID) - toInvoiceOrder(right.invoiceID));
+      }
+
+      return filtered;
+    },
     [invoices, searchKeyword, sortOrder, selectedDate, fromDate, toDate]
   );
 
