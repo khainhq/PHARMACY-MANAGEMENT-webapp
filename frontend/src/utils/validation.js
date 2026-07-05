@@ -4,15 +4,17 @@ export const EMPLOYEE_DATE_ERROR = 'Ngày sinh và ngày vào làm không hợp 
 export const isValidVietnamPhoneNumber = (value) => /^(0\d{9}|\+84\d{9})$/.test(String(value || '').trim());
 
 export const countryDialOptions = [
-  { code: 'VN', flag: '🇻🇳', name: 'Việt Nam', dialCode: '+84', minLength: 9, maxLength: 10, example: '0816151762' },
-  { code: 'US', flag: '🇺🇸', name: 'Hoa Kỳ', dialCode: '+1', minLength: 10, maxLength: 10, example: '4155552671' },
-  { code: 'JP', flag: '🇯🇵', name: 'Nhật Bản', dialCode: '+81', minLength: 10, maxLength: 10, example: '9012345678' },
-  { code: 'KR', flag: '🇰🇷', name: 'Hàn Quốc', dialCode: '+82', minLength: 9, maxLength: 10, example: '1012345678' },
-  { code: 'SG', flag: '🇸🇬', name: 'Singapore', dialCode: '+65', minLength: 8, maxLength: 8, example: '81234567' },
-  { code: 'TH', flag: '🇹🇭', name: 'Thái Lan', dialCode: '+66', minLength: 9, maxLength: 9, example: '812345678' },
-  { code: 'CN', flag: '🇨🇳', name: 'Trung Quốc', dialCode: '+86', minLength: 11, maxLength: 11, example: '13800138000' },
-  { code: 'FR', flag: '🇫🇷', name: 'Pháp', dialCode: '+33', minLength: 9, maxLength: 9, example: '612345678' },
-  { code: 'DE', flag: '🇩🇪', name: 'Đức', dialCode: '+49', minLength: 10, maxLength: 11, example: '15123456789' },
+  { code: 'BN', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1e7-1f1f3.svg', name: 'Brunei', dialCode: '+673', minLength: 7, maxLength: 7, example: '7123456' },
+  { code: 'KH', flagUrl: 'https://emojigraph.org/media/apple/flag-cambodia_1f1f0-1f1ed.png', name: 'Campuchia', dialCode: '+855', minLength: 8, maxLength: 9, example: '12345678' },
+  { code: 'TL', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f9-1f1f1.svg', name: 'Timor-Leste', dialCode: '+670', minLength: 7, maxLength: 8, example: '77123456' },
+  { code: 'ID', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1ee-1f1e9.svg', name: 'Indonesia', dialCode: '+62', minLength: 9, maxLength: 12, example: '8123456789' },
+  { code: 'LA', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f1-1f1e6.svg', name: 'Lào', dialCode: '+856', minLength: 8, maxLength: 10, example: '2055123456' },
+  { code: 'MY', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f2-1f1fe.svg', name: 'Malaysia', dialCode: '+60', minLength: 9, maxLength: 10, example: '123456789' },
+  { code: 'MM', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f2-1f1f2.svg', name: 'Myanmar', dialCode: '+95', minLength: 7, maxLength: 10, example: '912345678' },
+  { code: 'PH', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f5-1f1ed.svg', name: 'Philippines', dialCode: '+63', minLength: 10, maxLength: 10, example: '9123456789' },
+  { code: 'SG', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f8-1f1ec.svg', name: 'Singapore', dialCode: '+65', minLength: 8, maxLength: 8, example: '81234567' },
+  { code: 'TH', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1f9-1f1ed.svg', name: 'Thái Lan', dialCode: '+66', minLength: 9, maxLength: 9, example: '812345678' },
+  { code: 'VN', flagUrl: 'https://images.emojiterra.com/google/noto-emoji/unicode-17.0/color/svg/1f1fb-1f1f3.svg', name: 'Việt Nam', dialCode: '+84', minLength: 9, maxLength: 10, example: '0816151762' },
 ];
 
 export const digitsOnly = (value) => String(value || '').replace(/\D/g, '');

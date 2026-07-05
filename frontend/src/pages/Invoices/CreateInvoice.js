@@ -46,27 +46,6 @@ const REQUIRED_FIELD_ERROR = 'Không được để thiếu';
 const PHONE_FIELD_ERROR = 'Vui lòng nhập đúng định dạng số điện thoại.';
 const DEFAULT_COUNTRY_CODE = 'VN';
 
-const countryFlagStyles = {
-  VN: { background: '#da251d', symbol: '★', symbolColor: '#ffde00' },
-  US: { background: 'linear-gradient(180deg, #b91c1c 0 14%, #fff 14% 28%, #b91c1c 28% 42%, #fff 42% 56%, #b91c1c 56% 70%, #fff 70% 84%, #b91c1c 84% 100%)' },
-  JP: { background: 'radial-gradient(circle at center, #bc002d 0 32%, #fff 34% 100%)' },
-  KR: { background: 'linear-gradient(135deg, #fff 0 42%, #cd2e3a 42% 50%, #0047a0 50% 58%, #fff 58% 100%)' },
-  SG: { background: 'linear-gradient(180deg, #ef3340 0 50%, #fff 50% 100%)', symbol: '✦', symbolColor: '#ffffff' },
-  TH: { background: 'linear-gradient(180deg, #a51931 0 18%, #fff 18% 32%, #2d2a4a 32% 68%, #fff 68% 82%, #a51931 82% 100%)' },
-  CN: { background: '#de2910', symbol: '★', symbolColor: '#ffde00' },
-  FR: { background: 'linear-gradient(90deg, #002654 0 33%, #fff 33% 66%, #ce1126 66% 100%)' },
-  DE: { background: 'linear-gradient(180deg, #000 0 33%, #dd0000 33% 66%, #ffce00 66% 100%)' },
-};
-
-const flagProps = (countryCode) => {
-  const style = countryFlagStyles[countryCode] || {};
-  return {
-    $background: style.background,
-    $symbol: style.symbol,
-    $symbolColor: style.symbolColor,
-  };
-};
-
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 
 const padDatePart = (value) => String(value).padStart(2, '0');
@@ -806,7 +785,7 @@ const CreateInvoice = () => {
                   aria-expanded={isCountryMenuOpen}
                   onClick={() => setIsCountryMenuOpen((open) => !open)}
                 >
-                  <FlagMark {...flagProps(selectedCountry.code)} />
+                  <FlagMark src={selectedCountry.flagUrl} alt="" />
                   <span>{selectedCountry.dialCode}</span>
                   <span>{selectedCountry.name}</span>
                 </CountryButton>
@@ -827,7 +806,7 @@ const CreateInvoice = () => {
                           }
                         }}
                       >
-                        <FlagMark {...flagProps(country.code)} />
+                        <FlagMark src={country.flagUrl} alt="" />
                         <span>{country.dialCode}</span>
                         <span>{country.name}</span>
                       </CountryOption>

@@ -311,15 +311,15 @@ const ListInvoices = () => {
           <Button type="button" onClick={clearFilters}>Bỏ lọc</Button>
         </FilterBar>
         <TableViewport>
-          <Table data-testid="invoices-table" $minWidth="1180px">
+          <Table data-testid="invoices-table">
             <colgroup>
-              <col style={{ width: '120px' }} />
-              <col style={{ width: '170px' }} />
-              <col style={{ width: '170px' }} />
-              <col style={{ width: '190px' }} />
-              <col style={{ width: '180px' }} />
-              <col style={{ width: '150px' }} />
-              <col style={{ width: '260px' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '14%' }} />
+              <col style={{ width: '15%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '15%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '17%' }} />
             </colgroup>
             <thead>
               <tr>

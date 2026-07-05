@@ -1,19 +1,20 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.85fr);
+  align-items: stretch;
   box-sizing: border-box;
   width: calc(100% - 220px);
   max-width: calc(100% - 220px);
   min-width: 0;
-  min-height: 100vh;
+  height: 100vh;
   margin-left: 220px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6; /* Màu nền tổng thể */
   font-family: 'Roboto', sans-serif; /* Phông chữ chuyên nghiệp */
-  overflow-x: hidden;
+  overflow: hidden;
 
   *,
   *::before,
@@ -21,34 +22,41 @@ export const Container = styled.div`
     box-sizing: border-box;
   }
 
-  @media (max-width: 1320px) {
-    flex-direction: column;
+  @media (max-width: 1120px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 `;
 
 export const LeftSection = styled.div`
-  flex: 1 1 58%;
   min-width: 0;
-  padding: 1.5rem;
+  min-height: 0;
+  padding: clamp(0.85rem, 1.15vw, 1.2rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
-  @media (max-width: 1320px) {
+  @media (max-width: 1120px) {
     width: 100%;
     flex: 1 1 auto;
   }
 `;
 
 export const RightSection = styled.div`
-  flex: 0 1 620px;
-  min-width: min(560px, 100%);
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(0.85rem, 1.15vw, 1.2rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
-  @media (max-width: 1320px) {
+  @media (max-width: 1120px) {
     width: 100%;
     flex: 1 1 auto;
     min-width: 0;
@@ -87,12 +95,24 @@ export const MedicineDetails = styled.div`
 `;
 
 export const MedicineList = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
   margin-top: 1rem;
+
+  table {
+    flex: 1;
+  }
 `;
 
 export const PaymentDetailsTable = styled.div`
-  margin-bottom: 2rem;
+  flex: 1 1 auto;
+  min-height: 130px;
+  max-height: 34vh;
+  margin-bottom: 0.9rem;
   overflow-x: hidden;
+  overflow-y: auto;
 
   table {
     min-width: 0;
@@ -102,21 +122,22 @@ export const PaymentDetailsTable = styled.div`
 `;
 
 export const PaymentInfo = styled.div`
-  margin-top: 2rem;
+  flex: 0 0 auto;
+  margin-top: 0;
 
   h2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
     font-weight: 700;
     color: #0f172a;
-    margin-bottom: 1rem;
+    margin-bottom: 0.65rem;
     text-align: center;
   }
 
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.08rem;
     font-weight: 600;
     color: #059669;
-    margin-top: 1rem;
+    margin-top: 0.65rem;
     text-align: center;
   }
 `;
@@ -179,8 +200,8 @@ export const Button = styled.button`
 
 export const Input = styled.input`
   width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  padding: 0.62rem 0.7rem;
+  margin-bottom: 0.65rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -188,8 +209,8 @@ export const Input = styled.input`
 
 export const Select = styled.select`
   width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  padding: 0.62rem 0.7rem;
+  margin-bottom: 0.65rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -244,9 +265,9 @@ export const FilterField = styled.label`
 
 export const CenteredButton = styled(Button)`
   display: block;
-  margin: 2rem auto; /* Căn giữa theo chiều ngang */
-  padding: 1rem 2rem; /* Tăng kích thước nút */
-  font-size: 1rem; /* Tăng kích thước chữ */
+  margin: 0.9rem auto 0;
+  padding: 0.78rem 1.35rem;
+  font-size: 0.95rem;
 `;
 
 export const TableViewport = styled.div`

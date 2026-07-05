@@ -53,7 +53,7 @@ export const LeftSection = styled.div`
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-  padding: clamp(0.85rem, 1.2vw, 1.2rem);
+  padding: clamp(0.75rem, 1vw, 1rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -70,7 +70,7 @@ export const RightSection = styled.div`
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: clamp(0.85rem, 1.2vw, 1.2rem);
+  padding: clamp(0.75rem, 1vw, 1rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -155,11 +155,13 @@ export const InvoiceInfo = styled.div`
   padding-right: 0.15rem;
 
   h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.45rem;
+    font-size: clamp(1.2rem, 1.65vw, 1.55rem);
+    line-height: 1.2;
   }
 
   h3 {
-    margin: 0.75rem 0;
+    margin: 0.5rem 0;
   }
 `;
 
@@ -221,8 +223,8 @@ export const Button = styled.button`
 
 export const Input = styled.input`
   width: 100%;
-  padding: 0.8rem;
-  margin-bottom: 0.85rem;
+  padding: 0.62rem 0.7rem;
+  margin-bottom: 0.65rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -248,8 +250,8 @@ export const Input = styled.input`
 export const Field = styled.label`
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  margin-bottom: 0.75rem;
+  gap: 0.25rem;
+  margin-bottom: 0.55rem;
   color: #334155;
   font-size: 0.83rem;
   font-weight: 700;
@@ -274,10 +276,10 @@ export const CountryPicker = styled.div`
 export const CountryButton = styled.button`
   display: flex;
   width: 100%;
-  min-height: 45px;
+  min-height: 40px;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.72rem 0.8rem;
+  padding: 0.56rem 0.65rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #ffffff;
@@ -312,7 +314,7 @@ export const CountryOption = styled.button`
   width: 100%;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.58rem 0.65rem;
+  padding: 0.5rem 0.6rem;
   border: 0;
   border-radius: 8px;
   background: ${({ $active }) => ($active ? '#e0f2fe' : 'transparent')};
@@ -326,27 +328,15 @@ export const CountryOption = styled.button`
   }
 `;
 
-export const FlagMark = styled.span`
-  position: relative;
+export const FlagMark = styled.img`
   flex: 0 0 auto;
   width: 24px;
   height: 16px;
   overflow: hidden;
   border: 1px solid rgba(15, 23, 42, 0.16);
   border-radius: 3px;
-  background: ${({ $background }) => $background || '#e5e7eb'};
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
-
-  &::after {
-    content: ${({ $symbol }) => ($symbol ? `'${$symbol}'` : "''")};
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    color: ${({ $symbolColor }) => $symbolColor || '#ffffff'};
-    font-size: 0.48rem;
-    line-height: 1;
-  }
+  background: #e5e7eb;
+  object-fit: cover;
 `;
 
 export const PhoneInputGroup = styled.div`
@@ -424,7 +414,7 @@ export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
   min-height: 0;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: visible;
 
   thead th {
@@ -455,8 +445,8 @@ export const EmptyCell = styled.td`
 
 export const Select = styled.select`
   width: 100%;
-  padding: 0.8rem;
-  margin-bottom: 0.85rem;
+  padding: 0.62rem 0.7rem;
+  margin-bottom: 0.65rem;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
