@@ -25,14 +25,11 @@ import {
   StatCard,
   StatTitle,
   StatValue,
+  RevenueBreakdown,
   RecentSection,
   SectionGrid,
   ChartGrid,
   InventoryInsightGrid,
-  BuyerMapCard,
-  WorldMapFrame,
-  MarketDot,
-  MarketTooltip,
   ResponsiveTableWrap,
   Table,
   TableHeader,
@@ -49,15 +46,6 @@ const REFRESH_INTERVAL_MS = 5000;
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
 const PIE_COLORS = ['#2563eb', '#16a34a', '#f97316', '#dc2626'];
-const MARKET_DATA = [
-  { country: 'Việt Nam', buyers: 1280, x: 73, y: 54 },
-  { country: 'Nhật Bản', buyers: 420, x: 81, y: 39 },
-  { country: 'Hàn Quốc', buyers: 365, x: 78, y: 42 },
-  { country: 'Thái Lan', buyers: 290, x: 70, y: 58 },
-  { country: 'Hoa Kỳ', buyers: 215, x: 21, y: 43 },
-  { country: 'Pháp', buyers: 150, x: 48, y: 39 },
-];
-
 const formatMoney = (value) => Number(value || 0).toLocaleString('vi-VN');
 const toNumber = (value) => Number(value || 0);
 const invoiceStatusLabels = {
@@ -94,7 +82,7 @@ const Dashboard = () => {
   const [invoiceStatusData, setInvoiceStatusData] = useState([]);
   const [employeeCount, setEmployeeCount] = useState(0);
   const [inventoryMovement, setInventoryMovement] = useState([]);
-  const [hoveredMarket, setHoveredMarket] = useState(MARKET_DATA[0]);
+  const [revenueBreakdown, setRevenueBreakdown] = useState({ monthly: [], yearly: [] });
 
   const fetchStats = useCallback(async () => {
     const token = sessionStorage.getItem('token');
@@ -138,6 +126,38 @@ const Dashboard = () => {
           ...invoice,
           totalAmount: toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0,
         }));
+
+      const monthlyRevenue = new Map();
+      const yearlyRevenue = new Map();
+
+      invoices.forEach((invoice) => {
+        const invoiceDate = toVietnamDate(invoice.invoiceTime);
+        if (!invoiceDate) return;
+
+        const totalAmount = toNumber(invoice.totalAmount) || invoiceTotals[invoice.invoiceID] || 0;
+        const year = invoiceDate.getFullYear();
+        const month = invoiceDate.getMonth() + 1;
+        const monthKey = `${year}-${String(month).padStart(2, '0')}`;
+
+        monthlyRevenue.set(monthKey, {
+          key: monthKey,
+          label: `Tháng ${String(month).padStart(2, '0')}/${year}`,
+          total: (monthlyRevenue.get(monthKey)?.total || 0) + totalAmount,
+        });
+        yearlyRevenue.set(year, {
+          key: String(year),
+          label: `Năm ${year}`,
+          total: (yearlyRevenue.get(year)?.total || 0) + totalAmount,
+        });
+      });
+
+      const revenueByMonth = Array.from(monthlyRevenue.values())
+        .sort((left, right) => right.key.localeCompare(left.key))
+        .slice(0, 3);
+
+      const revenueByYear = Array.from(yearlyRevenue.values())
+        .sort((left, right) => Number(right.key) - Number(left.key))
+        .slice(0, 3);
 
       const now = new Date();
       const expiredMedicines = medicines.filter((medicine) => {
@@ -221,6 +241,7 @@ const Dashboard = () => {
       setPaymentData(paymentChartData);
       setInvoiceStatusData(invoiceStatusChartData);
       setInventoryMovement(movementData.slice(0, 10));
+      setRevenueBreakdown({ monthly: revenueByMonth, yearly: revenueByYear });
       setStats({
         totalRevenue: Object.values(invoiceTotals).reduce((sum, total) => sum + total, 0),
         totalMedicines: medicines.length,
@@ -269,6 +290,16 @@ const Dashboard = () => {
             </IconWrapper>
             <StatTitle>Tổng doanh thu</StatTitle>
             <StatValue>{formatMoney(stats.totalRevenue)} VND</StatValue>
+            <RevenueBreakdown>
+              {[...revenueBreakdown.monthly, ...revenueBreakdown.yearly].map((item) => (
+                <span key={item.key}>
+                  <strong>{item.label}:</strong> {formatMoney(item.total)} đồng
+                </span>
+              ))}
+              {revenueBreakdown.monthly.length + revenueBreakdown.yearly.length === 0 && (
+                <span>Chưa có dữ liệu theo tháng/năm</span>
+              )}
+            </RevenueBreakdown>
             <ViewDetail>Xem chi tiết hóa đơn &raquo;</ViewDetail>
           </StatCard>
           <StatCard className="info" as={Link} to="/employees">
@@ -432,11 +463,11 @@ const Dashboard = () => {
           <RecentSection $wide>
             <h2>Số lượng tồn, nhập, bán</h2>
             <InventoryInsightGrid>
-              <ResponsiveContainer width="100%" height={320}>
-                <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 36, bottom: 18, left: 12 }}>
+              <ResponsiveContainer width="100%" height={380}>
+                <BarChart data={inventoryMovement} layout="vertical" margin={{ top: 12, right: 42, bottom: 18, left: 18 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" allowDecimals={false} />
-                  <YAxis dataKey="chartLabel" type="category" width={88} interval={0} />
+                  <YAxis dataKey="chartLabel" type="category" width={96} interval={0} />
                   <Tooltip labelFormatter={(_, payload) => payload?.[0]?.payload?.name || ''} />
                   <Legend verticalAlign="bottom" height={36} />
                   <Bar dataKey="stockQuantity" name="Tồn kho" fill="#16a34a" />
@@ -444,40 +475,6 @@ const Dashboard = () => {
                   <Bar dataKey="soldQuantity" name="Đã bán" fill="#f97316" />
                 </BarChart>
               </ResponsiveContainer>
-              <BuyerMapCard>
-                <h3>Bản đồ người mua minh họa</h3>
-                <p>Di chuột lên từng điểm để xem lượng người mua theo quốc gia.</p>
-                <WorldMapFrame>
-                  <svg viewBox="0 0 640 300" role="img" aria-label="Bản đồ thế giới minh họa" width="100%" height="100%" preserveAspectRatio="none">
-                    <g fill="#bae6fd" stroke="#7dd3fc" strokeWidth="2" opacity="0.95">
-                      <path d="M64 92 126 58 188 76 196 124 158 150 94 138Z" />
-                      <path d="M174 168 214 158 246 198 220 250 176 232Z" />
-                      <path d="M286 82 372 54 460 78 450 132 382 146 318 126Z" />
-                      <path d="M354 150 438 146 478 202 434 248 368 224Z" />
-                      <path d="M466 118 548 104 588 148 548 192 482 172Z" />
-                      <path d="M494 222 562 218 590 252 540 274Z" />
-                    </g>
-                  </svg>
-                  {MARKET_DATA.map((market) => (
-                    <MarketDot
-                      key={market.country}
-                      type="button"
-                      $x={market.x}
-                      $y={market.y}
-                      $active={hoveredMarket.country === market.country}
-                      aria-label={`${market.country}: ${market.buyers.toLocaleString('vi-VN')} người mua`}
-                      onMouseEnter={() => setHoveredMarket(market)}
-                      onFocus={() => setHoveredMarket(market)}
-                    />
-                  ))}
-                  {hoveredMarket && (
-                    <MarketTooltip $x={hoveredMarket.x} $y={hoveredMarket.y}>
-                      <strong>{hoveredMarket.country}</strong>
-                      <span>{hoveredMarket.buyers.toLocaleString('vi-VN')} người mua</span>
-                    </MarketTooltip>
-                  )}
-                </WorldMapFrame>
-              </BuyerMapCard>
             </InventoryInsightGrid>
           </RecentSection>
         </ChartGrid>

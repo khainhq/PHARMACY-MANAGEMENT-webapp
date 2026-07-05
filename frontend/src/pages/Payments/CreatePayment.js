@@ -554,6 +554,14 @@ const CreatePayment = () => {
         <PaymentDetailsTable>
           <h2>Chi tiết phiếu nhập</h2>
           <Table>
+            <colgroup>
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '18%' }} />
+              <col style={{ width: '24%' }} />
+              <col style={{ width: '19%' }} />
+            </colgroup>
             <thead>
               <tr>
                 <TableHeader>ID</TableHeader>

@@ -127,6 +127,11 @@ export const TableHeader = styled.th`
     text-align: center;
     white-space: nowrap;
   }
+
+  &:nth-child(8),
+  &:nth-child(9) {
+    text-align: center;
+  }
 `;
 
 export const TableCell = styled.td`
@@ -142,6 +147,11 @@ export const TableCell = styled.td`
   &:first-child {
     text-align: center;
     white-space: nowrap;
+  }
+
+  &:nth-child(8),
+  &:nth-child(9) {
+    text-align: center;
   }
 
   &:hover {
@@ -236,12 +246,12 @@ export const StatusBadge = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 86px;
-  padding: 0.28rem 0.6rem;
+  min-width: 70px;
+  padding: 0.24rem 0.48rem;
   border-radius: 999px;
   background: ${({ $active }) => ($active ? '#dcfce7' : '#fee2e2')};
   color: ${({ $active }) => ($active ? '#166534' : '#991b1b')};
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
   white-space: nowrap;
 `;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(360px, 0.78fr);
+  grid-template-columns: minmax(0, 1.42fr) minmax(330px, 0.68fr);
   align-items: stretch;
   box-sizing: border-box;
   width: calc(100% - 220px);
@@ -70,7 +70,7 @@ export const RightSection = styled.div`
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  padding: clamp(0.65rem, 0.9vw, 0.9rem);
+  padding: clamp(0.55rem, 0.8vw, 0.8rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -128,20 +128,21 @@ export const MedicineList = styled.div`
 `;
 
 export const Cart = styled.div`
-  flex: 0 0 min(30%, 210px);
-  min-height: 120px;
-  margin-bottom: 0.65rem;
-  overflow-x: auto;
+  flex: 0 0 148px;
+  min-height: 104px;
+  margin-bottom: 0.45rem;
+  overflow-x: hidden;
   overflow-y: auto;
 
   h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.45rem;
+    font-size: 1.05rem;
   }
 
   table {
-    min-width: 540px;
+    min-width: 0;
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
   }
 `;
 

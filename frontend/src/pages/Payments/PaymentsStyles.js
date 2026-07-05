@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.85fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(420px, 0.95fr);
   align-items: stretch;
   box-sizing: border-box;
   width: calc(100% - 220px);
@@ -125,13 +125,14 @@ export const PaymentDetailsTable = styled.div`
   min-height: 130px;
   max-height: 34vh;
   margin-bottom: 0.9rem;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
 
   table {
-    min-width: 640px;
+    min-width: 0;
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
+    margin-top: 0.65rem;
   }
 `;
 
@@ -170,20 +171,20 @@ export const Table = styled.table`
 export const TableHeader = styled.th`
   background-color: rgb(6, 150, 102);
   color: #ffffff;
-  padding: 0.65rem 0.7rem;
+  padding: 0.52rem 0.56rem;
   text-align: left;
-  font-size: 0.92rem;
-  line-height: 1.35;
+  font-size: 0.84rem;
+  line-height: 1.28;
   vertical-align: top;
-  overflow-wrap: normal;
-  word-break: keep-all;
+  overflow-wrap: break-word;
+  word-break: normal;
 `;
 
 export const TableCell = styled.td`
   border: 1px solid #e5e7eb;
-  padding: 0.65rem 0.7rem;
-  font-size: 0.88rem;
-  line-height: 1.4;
+  padding: 0.52rem 0.56rem;
+  font-size: 0.82rem;
+  line-height: 1.32;
   color: #374151;
   vertical-align: top;
   overflow-wrap: break-word;

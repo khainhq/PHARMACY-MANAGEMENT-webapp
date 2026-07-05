@@ -9,29 +9,37 @@ export const Content = styled.div`
   flex: 1;
   min-width: 0;
   margin-left: 220px;
-  padding: clamp(1rem, 1.5vw, 2rem);
+  padding: clamp(0.75rem, 1.1vw, 1.25rem);
   background-color: #ffffff; /* Màu nền trắng */
   min-height: 100vh;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
   overflow-x: hidden;
+
+  h1 {
+    margin: 0 0 0.75rem;
+    color: #0f172a;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    line-height: 1.15;
+  }
 `;
 
 export const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Giảm kích thước thẻ */
-  gap: 1.5rem; /* Giảm khoảng cách giữa các thẻ */
-  margin-top: 1.5rem; /* Giảm khoảng cách trên */
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); /* Giảm kích thước thẻ */
+  gap: 0.85rem; /* Giảm khoảng cách giữa các thẻ */
+  margin-top: 0.75rem; /* Giảm khoảng cách trên */
 `;
 
 export const StatCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   background-color: #ffffff;
   color: #0f172a;
-  padding: 1.5rem; /* Giảm padding */
-  border-radius: 12px; /* Bo góc mềm hơn */
+  min-height: 160px;
+  padding: 0.95rem; /* Giảm padding */
+  border-radius: 8px; /* Bo góc mềm hơn */
   text-align: center;
   text-decoration: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -65,24 +73,43 @@ export const StatCard = styled.div`
 `;
 
 export const StatTitle = styled.h3`
-  font-size: 1rem; /* Giảm kích thước tiêu đề */
+  font-size: 0.95rem; /* Giảm kích thước tiêu đề */
   font-weight: 600;
   color: #1e293b;
-  margin-bottom: 0.3rem; /* Giảm khoảng cách dưới */
+  margin: 0 0 0.25rem; /* Giảm khoảng cách dưới */
 `;
 
 export const StatValue = styled.p`
-  font-size: 1.5rem; /* Giảm kích thước giá trị */
+  font-size: 1.35rem; /* Giảm kích thước giá trị */
   font-weight: bold;
   color: #0f172a;
   margin: 0;
 `;
 
+export const RevenueBreakdown = styled.div`
+  display: grid;
+  width: 100%;
+  gap: 0.18rem;
+  margin-top: 0.45rem;
+  color: #334155;
+  font-size: 0.74rem;
+  line-height: 1.25;
+
+  span {
+    display: block;
+  }
+
+  strong {
+    color: #0f172a;
+  }
+`;
+
 export const RecentSection = styled.div`
-  margin-top: 1.5rem;
-  padding: 1.5rem;
+  grid-column: ${({ $wide }) => ($wide ? '1 / -1' : 'auto')};
+  margin-top: 1rem;
+  padding: 1rem;
   background-color: #ffffff;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   min-width: 0;
   overflow: hidden;
@@ -102,7 +129,7 @@ export const RecentSection = styled.div`
 export const SectionGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
 
   @media (max-width: 1180px) {
     grid-template-columns: 1fr;
@@ -112,7 +139,7 @@ export const SectionGrid = styled.div`
 export const ChartGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: stretch;
 
   @media (max-width: 1180px) {
@@ -122,87 +149,12 @@ export const ChartGrid = styled.div`
 
 export const InventoryInsightGrid = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   align-items: stretch;
 
   @media (max-width: 1180px) {
     grid-template-columns: 1fr;
-  }
-`;
-
-export const BuyerMapCard = styled.div`
-  display: flex;
-  min-height: 320px;
-  flex-direction: column;
-  padding: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #f8fafc;
-
-  h3 {
-    margin: 0 0 0.35rem;
-    color: #0f172a;
-    font-size: 1rem;
-  }
-
-  p {
-    margin: 0;
-    color: #64748b;
-    font-size: 0.84rem;
-    line-height: 1.45;
-  }
-`;
-
-export const WorldMapFrame = styled.div`
-  position: relative;
-  flex: 1;
-  min-height: 210px;
-  margin-top: 0.75rem;
-  overflow: hidden;
-  border-radius: 10px;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.15), transparent 28%),
-    linear-gradient(180deg, #e0f2fe 0%, #f8fafc 100%);
-`;
-
-export const MarketDot = styled.button`
-  position: absolute;
-  left: ${({ $x }) => `${$x}%`};
-  top: ${({ $y }) => `${$y}%`};
-  width: ${({ $active }) => ($active ? '18px' : '14px')};
-  height: ${({ $active }) => ($active ? '18px' : '14px')};
-  border: 3px solid #ffffff;
-  border-radius: 999px;
-  background: ${({ $active }) => ($active ? '#f97316' : '#2563eb')};
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-`;
-
-export const MarketTooltip = styled.div`
-  position: absolute;
-  left: ${({ $x }) => `${$x}%`};
-  top: ${({ $y }) => `${$y}%`};
-  min-width: 150px;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid #dbeafe;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16);
-  color: #0f172a;
-  transform: translate(-50%, calc(-100% - 0.7rem));
-  pointer-events: none;
-
-  strong {
-    display: block;
-    font-size: 0.9rem;
-  }
-
-  span {
-    color: #0369a1;
-    font-size: 0.82rem;
-    font-weight: 800;
   }
 `;
 
@@ -261,14 +213,14 @@ export const ChartContainer = styled.div`
 `;
 
 export const IconWrapper = styled.div`
-  font-size: 3rem; /* Tăng kích thước icon */
-  margin-bottom: 1rem;
+  font-size: 2.05rem; /* Tăng kích thước icon */
+  margin-bottom: 0.45rem;
   color: inherit;
 `;
 
 export const ViewDetail = styled.p`
-  margin-top: 1rem;
-  font-size: 1rem; /* Tăng kích thước chữ */
+  margin: 0.55rem 0 0;
+  font-size: 0.86rem; /* Tăng kích thước chữ */
   color: #3b82f6; /* Màu xanh dương */
   text-decoration: underline;
   cursor: pointer;
