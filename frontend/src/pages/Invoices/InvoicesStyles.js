@@ -212,6 +212,7 @@ export const CategoryTab = styled.button`
 
   &:hover,
   &:focus-visible {
+    background: #eff6ff;
     color: #1d4ed8;
     outline: none;
   }
@@ -787,6 +788,7 @@ export const Modal = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
@@ -796,6 +798,7 @@ export const Modal = styled.div`
 `;
 
 export const ModalContent = styled.div`
+  position: relative;
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
@@ -809,6 +812,7 @@ export const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-right: 3rem;
   margin-bottom: 1rem;
   font-size: 1.2rem;
   font-weight: bold;
@@ -823,4 +827,31 @@ export const ModalFooter = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+`;
+
+export const ModalCloseButton = styled.button`
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.18);
+
+  &:hover,
+  &:focus-visible {
+    background: #fee2e2;
+    outline: none;
+  }
 `;

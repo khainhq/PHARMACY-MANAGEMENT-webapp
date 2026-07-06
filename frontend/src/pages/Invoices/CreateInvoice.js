@@ -55,6 +55,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
+  ModalCloseButton,
   ModalBody,
   ModalFooter,
   Field,
@@ -1144,6 +1145,13 @@ const CreateInvoice = () => {
       {reviewInvoiceData && (
         <Modal>
           <ModalContent style={{ width: '440px', maxHeight: '90%' }}>
+            <ModalCloseButton
+              type="button"
+              aria-label="Đóng hóa đơn xem trước"
+              onClick={() => setReviewInvoiceData(null)}
+            >
+              X
+            </ModalCloseButton>
             <ModalHeader>Kiểm tra hóa đơn trước khi lưu</ModalHeader>
             <ModalBody>{renderInvoiceReceipt(reviewInvoiceData, { isReview: true })}</ModalBody>
             <ModalFooter>
@@ -1159,6 +1167,16 @@ const CreateInvoice = () => {
       {showInvoiceModal && invoiceData && (
         <Modal>
           <ModalContent style={{ width: '440px', maxHeight: '90%' }}>
+            <ModalCloseButton
+              type="button"
+              aria-label="Đóng phiếu in hóa đơn"
+              onClick={() => {
+                setShowInvoiceModal(false);
+                setInvoiceImagePreview(null);
+              }}
+            >
+              X
+            </ModalCloseButton>
             <ModalHeader>{invoiceImagePreview ? 'Xem trước ảnh hóa đơn PNG' : 'Phiếu in hóa đơn'}</ModalHeader>
             <ModalBody>
               {invoiceImagePreview ? (
