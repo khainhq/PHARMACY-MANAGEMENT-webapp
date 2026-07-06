@@ -3,18 +3,19 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1.28fr) minmax(340px, 0.72fr);
-  align-items: stretch;
+  align-items: start;
   box-sizing: border-box;
   width: calc(100% - 220px);
   max-width: calc(100% - 220px);
   min-width: 0;
-  height: 100vh;
+  min-height: calc(100vh + clamp(12rem, 28vh, 18rem));
   margin-left: 220px;
-  padding: clamp(0.85rem, 1.4vw, 1.5rem);
+  padding: clamp(0.85rem, 1.4vw, 1.5rem) clamp(0.85rem, 1.4vw, 1.5rem) clamp(4rem, 9vh, 6rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
   background-color: #f3f4f6;
   font-family: 'Roboto', sans-serif;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 
   *,
   *::before,
@@ -24,9 +25,6 @@ export const Container = styled.div`
 
   @media (max-width: 1120px) {
     grid-template-columns: 1fr;
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
   }
 `;
 
@@ -50,14 +48,13 @@ export const ListContainer = styled.div`
 export const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
   min-width: 0;
-  min-height: 0;
+  min-height: auto;
   padding: clamp(0.75rem, 1vw, 1rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: visible;
 
   @media (max-width: 1120px) {
     width: 100%;
@@ -69,12 +66,12 @@ export const RightSection = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 0;
+  min-height: auto;
   padding: clamp(0.55rem, 0.8vw, 0.8rem);
   background-color: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: visible;
 
   @media (max-width: 1120px) {
     width: 100%;
@@ -340,11 +337,12 @@ export const CategoryFilterSummary = styled.div`
 `;
 
 export const Cart = styled.div`
+  display: flex;
   flex: 0 0 auto;
-  max-height: 230px;
+  flex-direction: column;
   min-height: 118px;
   margin-top: 0.85rem;
-  overflow: hidden auto;
+  overflow: visible;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 0.75rem;
@@ -356,7 +354,9 @@ export const Cart = styled.div`
   }
 
   > div {
-    overflow-x: hidden;
+    flex: 0 0 auto;
+    min-height: auto;
+    overflow-x: auto;
     overflow-y: visible;
   }
 

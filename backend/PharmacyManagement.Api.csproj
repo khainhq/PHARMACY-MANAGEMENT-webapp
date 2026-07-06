@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Content Include="Docs\ChatbotGuide.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="SeedData\medicine-products.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

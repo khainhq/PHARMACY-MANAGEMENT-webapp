@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 
 public static class DataSeeder
@@ -123,138 +124,68 @@ public static class DataSeeder
 
     private static async Task AddCategoryMedicineGroupsAsync(PharmacyDbContext db)
     {
-        var groups = new[]
+        var seedPath = Path.Combine(AppContext.BaseDirectory, "SeedData", "medicine-products.json");
+        if (!File.Exists(seedPath))
         {
-            new MedicineSeedGroup("Vitamin & Khoang chat", "Vitamin & Khoáng chất", "CAT004", "UNT004", "ORG001", "/images/medicines/med020-berocca-bayer-10v.jpg"),
-            new MedicineSeedGroup("Mien dich De khang", "Miễn dịch - Đề kháng", "CAT004", "UNT004", "ORG003", "/images/medicines/med020-berocca-bayer-10v.jpg"),
-            new MedicineSeedGroup("Sinh ly Noi tiet to", "Sinh lý - Nội tiết tố", "CAT004", "UNT004", "ORG004", "/images/medicines/med018-myhemo-reliv-3x10.png"),
-            new MedicineSeedGroup("Mat Thi luc", "Mắt - Thị lực", "CAT004", "UNT004", "ORG003", "/images/medicines/med017-pokemine-medisun-20x10ml.png"),
-            new MedicineSeedGroup("Tieu hoa", "Tiêu hóa", "CAT002", "UNT004", "ORG001", "/images/medicines/med011-normagut-250mg-mega-3x10.jpg"),
-            new MedicineSeedGroup("Than kinh nao", "Thần kinh não", "CAT004", "UNT004", "ORG004", "/images/medicines/med027-panangin-gedeon-50v.jpg"),
-            new MedicineSeedGroup("Ho tro lam dep", "Hỗ trợ làm đẹp", "CAT004", "UNT004", "ORG007", "/images/medicines/med032-lifedovate-cream-0-05-hadiphar-10g.jpg"),
-            new MedicineSeedGroup("Duong huyet Tieu duong", "Đường huyết - Tiểu đường", "CAT006", "UNT004", "ORG001", "/images/medicines/med028-cardioton-30mg-3x10.png"),
-            new MedicineSeedGroup("Tim mach Huyet ap", "Tim mạch - Huyết áp", "CAT006", "UNT004", "ORG004", "/images/medicines/med029-pavicardi-50mg-250iu-cpc1hn-2x15.png"),
-            new MedicineSeedGroup("Ho hap Tai mui hong", "Hô hấp - Tai mũi họng", "CAT005", "UNT004", "ORG001", "/images/medicines/med023-thuoc-ho-nguoi-lon-opc-90ml.JPG"),
-            new MedicineSeedGroup("Co xuong khop", "Cơ xương khớp", "CAT004", "UNT004", "ORG006", "/images/medicines/med021-long-huyet-ph-2x12-tan-bam-tim-giam-phu-ne.jpg"),
-            new MedicineSeedGroup("Gan Mat", "Gan - Mật", "CAT004", "UNT004", "ORG001", "/images/medicines/med009-tra-gung-traphaco-10-goi.png"),
-            new MedicineSeedGroup("Than Tiet nieu", "Thận - Tiết niệu", "CAT004", "UNT004", "ORG001", "/images/medicines/med012-natri-bicarbonat-500mg-bidiphar-160v.jpg"),
-            new MedicineSeedGroup("Sua", "Sữa", "CAT004", "UNT005", "ORG003", "/images/medicines/med020-berocca-bayer-10v.jpg"),
-            new MedicineSeedGroup("Cham soc da mat", "Chăm sóc da mặt", "CAT007", "UNT006", "ORG002", "/images/medicines/med032-lifedovate-cream-0-05-hadiphar-10g.jpg"),
-            new MedicineSeedGroup("Cham soc co the", "Chăm sóc cơ thể", "CAT007", "UNT006", "ORG006", "/images/medicines/med030-ketoconazol-2-medipharco-10g.jpg"),
-            new MedicineSeedGroup("Giai phap lan da", "Giải pháp làn da", "CAT007", "UNT006", "ORG001", "/images/medicines/med031-promethazin-cream-2-medipharco-10g.jpg"),
-            new MedicineSeedGroup("Cham soc toc da dau", "Chăm sóc tóc - da đầu", "CAT007", "UNT002", "ORG001", "/images/medicines/med015-shampoo-clobetasol-vcp-100ml.jpg"),
-            new MedicineSeedGroup("My pham trang diem", "Mỹ phẩm trang điểm", "CAT007", "UNT006", "ORG007", "/images/medicines/med032-lifedovate-cream-0-05-hadiphar-10g.jpg"),
-            new MedicineSeedGroup("Cham soc da vung mat", "Chăm sóc da vùng mắt", "CAT007", "UNT006", "ORG002", "/images/medicines/med032-lifedovate-cream-0-05-hadiphar-10g.jpg"),
-            new MedicineSeedGroup("San pham tu thien nhien", "Sản phẩm từ thiên nhiên", "CAT007", "UNT002", "ORG001", "/images/medicines/med009-tra-gung-traphaco-10-goi.png"),
-            new MedicineSeedGroup("Ho tro tinh duc", "Hỗ trợ tình dục", "CAT004", "UNT001", "ORG004", "/images/medicines/med018-myhemo-reliv-3x10.png"),
-            new MedicineSeedGroup("Thuc pham Do uong", "Thực phẩm - Đồ uống", "CAT004", "UNT002", "ORG001", "/images/medicines/med009-tra-gung-traphaco-10-goi.png"),
-            new MedicineSeedGroup("Ve sinh ca nhan", "Vệ sinh cá nhân", "CAT007", "UNT001", "ORG001", "/images/medicines/med031-promethazin-cream-2-medipharco-10g.jpg"),
-            new MedicineSeedGroup("Cham soc rang mieng", "Chăm sóc răng miệng", "CAT007", "UNT006", "ORG003", "/images/medicines/med030-ketoconazol-2-medipharco-10g.jpg"),
-            new MedicineSeedGroup("Do dung gia dinh", "Đồ dùng gia đình", "CAT007", "UNT001", "ORG001", "/images/medicines/med001-panadol-extra.png"),
-            new MedicineSeedGroup("Hang tong hop", "Hàng tổng hợp", "CAT007", "UNT001", "ORG001", "/images/medicines/med001-panadol-extra.png"),
-            new MedicineSeedGroup("Tinh dau cac loai", "Tinh dầu các loại", "CAT007", "UNT002", "ORG001", "/images/medicines/med009-tra-gung-traphaco-10-goi.png"),
-            new MedicineSeedGroup("Thiet bi lam dep", "Thiết bị làm đẹp", "CAT007", "UNT001", "ORG007", "/images/medicines/med032-lifedovate-cream-0-05-hadiphar-10g.jpg"),
-            new MedicineSeedGroup("Dung cu y te", "Dụng cụ y tế", "CAT007", "UNT001", "ORG001", "/images/medicines/med001-panadol-extra.png"),
-            new MedicineSeedGroup("Dung cu theo doi", "Dụng cụ theo dõi", "CAT006", "UNT001", "ORG004", "/images/medicines/med027-panangin-gedeon-50v.jpg"),
-            new MedicineSeedGroup("Dung cu so cuu", "Dụng cụ sơ cứu", "CAT007", "UNT001", "ORG001", "/images/medicines/med001-panadol-extra.png"),
-            new MedicineSeedGroup("Khau trang", "Khẩu trang", "CAT005", "UNT001", "ORG001", "/images/medicines/med001-panadol-extra.png"),
-        };
+            seedPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedData", "medicine-products.json");
+        }
 
-        var supplementForms = new[]
+        if (!File.Exists(seedPath))
         {
-            "Viên uống hỗ trợ",
-            "Viên nang",
-            "Siro hỗ trợ",
-            "Gói pha tiện dụng",
-            "Dung dịch uống",
-            "Bột pha",
-            "Kẹo ngậm",
-            "Xịt tiện lợi",
-            "Hộp bổ sung",
-            "Combo gia đình",
-        };
+            throw new FileNotFoundException("Khong tim thay du lieu seed san pham.", seedPath);
+        }
 
-        var cosmeticForms = new[]
+        var json = await File.ReadAllTextAsync(seedPath);
+        var products = JsonSerializer.Deserialize<List<MedicineProductSeed>>(json, new JsonSerializerOptions
         {
-            "Kem chăm sóc",
-            "Gel chăm sóc",
-            "Serum",
-            "Sữa rửa",
-            "Dung dịch dịu nhẹ",
-            "Xịt khoáng",
-            "Dầu gội",
-            "Mặt nạ",
-            "Toner",
-            "Bộ chăm sóc",
-        };
+            PropertyNameCaseInsensitive = true,
+        }) ?? [];
 
-        var personalCareForms = new[]
-        {
-            "Sản phẩm tiện dụng",
-            "Dung dịch chăm sóc",
-            "Gel chuyên dụng",
-            "Xịt tiện lợi",
-            "Gói gia đình",
-            "Hộp sản phẩm",
-            "Bộ cá nhân",
-            "Chai dùng hằng ngày",
-            "Dụng cụ hỗ trợ",
-            "Combo gia đình",
-        };
+        var seedIds = products.Select(product => product.MedicineID).ToHashSet(StringComparer.Ordinal);
+        var obsoleteSeedMedicines = await db.Medicines
+            .Where(medicine => string.Compare(medicine.MedicineID, "MED1001") >= 0 &&
+                               string.Compare(medicine.MedicineID, "MED1330") <= 0 &&
+                               !seedIds.Contains(medicine.MedicineID))
+            .ToListAsync();
 
-        var medicalDeviceForms = new[]
-        {
-            "Hộp vật tư",
-            "Bộ dụng cụ",
-            "Thiết bị theo dõi",
-            "Gói sơ cứu",
-            "Bộ kit",
-            "Vật tư y tế",
-            "Máy hỗ trợ",
-            "Phụ kiện",
-            "Hộp dùng một lần",
-            "Combo phòng khám",
-        };
+        db.Medicines.RemoveRange(obsoleteSeedMedicines);
 
-        var seedNumber = 1001;
-        for (var groupIndex = 0; groupIndex < groups.Length; groupIndex++)
+        foreach (var product in products)
         {
-            var group = groups[groupIndex];
-            var forms = groupIndex switch
+            await AddMedicineIfMissing(db, new Medicine
             {
-                < 14 => supplementForms,
-                < 21 => cosmeticForms,
-                < 29 => personalCareForms,
-                _ => medicalDeviceForms,
-            };
-
-            for (var index = 0; index < forms.Length; index++)
-            {
-                var retailPrice = 45000 + (index * 7000) + ((seedNumber - 1001) % 9 * 3000);
-                var medicineName = $"{group.FilterText} {index + 1:00} - {forms[index]} PharmaCare";
-
-                await AddMedicineIfMissing(db, new Medicine
+                MedicineID = product.MedicineID,
+                MedicineName = product.MedicineName,
+                Image = product.Image,
+                Ingredients = string.Join("; ", new[]
                 {
-                    MedicineID = $"MED{seedNumber:D4}",
-                    MedicineName = medicineName,
-                    Image = group.Image,
-                    Ingredients = $"{group.FilterText}; {forms[index]}; dữ liệu minh họa theo nhóm thuốc",
-                    UnitID = group.UnitID,
-                    CatalogID = group.CatalogID,
-                    OriginID = group.OriginID,
-                    StockQuantity = 80 + (index * 6),
-                    ImportPrice = retailPrice * 0.7m,
-                    UnitPrice = retailPrice,
-                    ExpiryDate = DateTime.UtcNow.Date.AddYears(2).AddMonths(index),
-                });
-
-                seedNumber++;
-            }
+                    product.GroupLabel,
+                    string.IsNullOrWhiteSpace(product.Sku) ? null : $"SKU: {product.Sku}",
+                }.Where(value => !string.IsNullOrWhiteSpace(value))),
+                UnitID = product.UnitID,
+                CatalogID = product.CatalogID,
+                OriginID = product.OriginID,
+                StockQuantity = product.StockQuantity,
+                ImportPrice = product.ImportPrice,
+                UnitPrice = product.UnitPrice,
+                ExpiryDate = DateTime.UtcNow.Date.AddYears(2),
+            });
         }
     }
 
-    private sealed record MedicineSeedGroup(string Label, string FilterText, string CatalogID, string UnitID, string OriginID, string Image);
-
+    private sealed record MedicineProductSeed(
+        string MedicineID,
+        string GroupLabel,
+        string Sku,
+        string MedicineName,
+        string Image,
+        string UnitName,
+        string CatalogID,
+        string UnitID,
+        string OriginID,
+        int StockQuantity,
+        decimal ImportPrice,
+        decimal UnitPrice);
     private static async Task AddCatalogIfMissing(PharmacyDbContext db, string id, string name)
     {
         if (!await db.Catalogs.AnyAsync(x => x.CatalogID == id || x.CatalogName == name))
@@ -281,27 +212,36 @@ public static class DataSeeder
 
     private static async Task AddMedicineIfMissing(PharmacyDbContext db, Medicine medicine)
     {
+        if (IsGeneratedSeedMedicine(medicine.MedicineID))
+        {
+            var seededMedicine = await db.Medicines
+                .FirstOrDefaultAsync(x => x.MedicineID == medicine.MedicineID);
+
+            if (seededMedicine is null)
+            {
+                db.Medicines.Add(medicine);
+                return;
+            }
+
+            seededMedicine.MedicineName = medicine.MedicineName;
+            seededMedicine.Ingredients = medicine.Ingredients;
+            seededMedicine.Image = medicine.Image;
+            seededMedicine.UnitID = medicine.UnitID;
+            seededMedicine.CatalogID = medicine.CatalogID;
+            seededMedicine.OriginID = medicine.OriginID;
+            seededMedicine.StockQuantity = medicine.StockQuantity;
+            seededMedicine.ImportPrice = medicine.ImportPrice;
+            seededMedicine.UnitPrice = medicine.UnitPrice;
+            seededMedicine.ExpiryDate = medicine.ExpiryDate;
+            return;
+        }
+
         var existingMedicine = await db.Medicines
             .FirstOrDefaultAsync(x => x.MedicineID == medicine.MedicineID || x.MedicineName == medicine.MedicineName);
 
         if (existingMedicine is null)
         {
             db.Medicines.Add(medicine);
-            return;
-        }
-
-        if (IsGeneratedSeedMedicine(medicine.MedicineID))
-        {
-            existingMedicine.MedicineName = medicine.MedicineName;
-            existingMedicine.Ingredients = medicine.Ingredients;
-            existingMedicine.Image = medicine.Image;
-            existingMedicine.UnitID = medicine.UnitID;
-            existingMedicine.CatalogID = medicine.CatalogID;
-            existingMedicine.OriginID = medicine.OriginID;
-            existingMedicine.StockQuantity = medicine.StockQuantity;
-            existingMedicine.ImportPrice = medicine.ImportPrice;
-            existingMedicine.UnitPrice = medicine.UnitPrice;
-            existingMedicine.ExpiryDate = medicine.ExpiryDate;
             return;
         }
 
