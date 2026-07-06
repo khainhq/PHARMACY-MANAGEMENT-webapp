@@ -20,7 +20,6 @@ import {
   FaSyringe,
   FaTint,
   FaTooth,
-  FaTimes,
   FaVenusMars,
 } from 'react-icons/fa';
 import {
@@ -823,7 +822,7 @@ const CreateInvoice = () => {
                 setQuantity(1);
               }}
             >
-              <FaTimes aria-hidden="true" />
+              <span aria-hidden="true">X</span>
             </ClosePanelButton>
             <h2>THÔNG TIN THUỐC</h2>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
@@ -831,7 +830,7 @@ const CreateInvoice = () => {
                 <img
                   src={selectedMedicine.image}
                   alt={selectedMedicine.medicineName}
-                  style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
+                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
                 />
               )}
               <div style={{ flex: 1 }}>
@@ -936,7 +935,7 @@ const CreateInvoice = () => {
               <button type="button" onClick={clearCategoryFilter}>Bỏ lọc</button>
             </CategoryFilterSummary>
           )}
-          <TableViewport>
+          <TableViewport $medicineBox>
             <Table>
               <thead>
                 <tr>

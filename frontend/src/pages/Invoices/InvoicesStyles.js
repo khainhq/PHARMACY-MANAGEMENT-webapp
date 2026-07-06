@@ -81,18 +81,18 @@ export const RightSection = styled.div`
 export const MedicineDetails = styled.div`
   position: relative;
   flex: 0 0 auto;
-  max-height: min(330px, 42vh);
-  margin-bottom: 0.85rem;
-  padding: 0.9rem 1rem;
+  max-height: min(240px, 28vh);
+  margin-bottom: 0.65rem;
+  padding: 0.75rem 0.9rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
   overflow-y: auto;
 
   h2 {
-    margin: 0 2.6rem 0.75rem 0;
+    margin: 0 2.6rem 0.55rem 0;
     color: #0f172a;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   img {
@@ -102,8 +102,8 @@ export const MedicineDetails = styled.div`
   }
 
   p {
-    margin: 0.32rem 0;
-    font-size: 0.9rem;
+    margin: 0.2rem 0;
+    font-size: 0.84rem;
     color: #374151;
   }
 
@@ -128,7 +128,15 @@ export const ClosePanelButton = styled.button`
   color: #dc2626;
   cursor: pointer;
   font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
   box-shadow: 0 8px 18px rgba(220, 38, 38, 0.18);
+
+  span,
+  svg {
+    display: block;
+    color: currentColor;
+  }
 
   &:hover,
   &:focus-visible {
@@ -139,9 +147,9 @@ export const ClosePanelButton = styled.button`
 
 export const MedicineList = styled.div`
   display: flex;
-  flex: 1;
+  flex: 0 0 auto;
   flex-direction: column;
-  min-height: 0;
+  min-height: auto;
 
   h2 {
     margin: 0 0 0.75rem;
@@ -356,6 +364,9 @@ export const Cart = styled.div`
   > div {
     flex: 0 0 auto;
     min-height: auto;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
     overflow-x: auto;
     overflow-y: visible;
   }
@@ -666,8 +677,11 @@ export const TableViewport = styled.div`
   width: 100%;
   min-width: 0;
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: visible;
+  max-height: ${({ $medicineBox }) => ($medicineBox ? 'clamp(320px, 44vh, 500px)' : 'none')};
+  overflow-x: auto;
+  overflow-y: ${({ $medicineBox }) => ($medicineBox ? 'auto' : 'visible')};
+  border: ${({ $medicineBox }) => ($medicineBox ? '1px solid #e5e7eb' : '0')};
+  border-radius: ${({ $medicineBox }) => ($medicineBox ? '10px' : '0')};
 
   thead th {
     position: sticky;
