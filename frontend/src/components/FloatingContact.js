@@ -4,12 +4,12 @@ import { FaPhoneAlt } from 'react-icons/fa';
 
 const ContactDock = styled.div`
   position: fixed;
-  right: 1.25rem;
+  left: 1.25rem;
   bottom: 1.25rem;
   z-index: 30;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 0.65rem;
 `;
 

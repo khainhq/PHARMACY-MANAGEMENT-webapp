@@ -13,7 +13,8 @@ const borderColor = '#d0d7de';
 const ChatbotToggle = styled.button`
   position: fixed;
   bottom: ${({ $withContactDock }) => ($withContactDock ? '8.55rem' : '0.35rem')};
-  right: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : '0.25rem')};
+  left: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : 'auto')};
+  right: ${({ $withContactDock }) => ($withContactDock ? 'auto' : '0.25rem')};
   background-color: ${primaryBlue};
   color: white;
   border: none;
@@ -39,7 +40,8 @@ const ChatbotContainer = styled.div`
   --chat-bottom: ${({ $withContactDock }) => ($withContactDock ? '12.6rem' : '3.1rem')};
   position: fixed;
   bottom: var(--chat-bottom);
-  right: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : '0.35rem')};
+  left: ${({ $withContactDock }) => ($withContactDock ? '0.85rem' : 'auto')};
+  right: ${({ $withContactDock }) => ($withContactDock ? 'auto' : '0.35rem')};
   width: min(300px, calc(100vw - 1rem));
   height: min(360px, calc(100svh - var(--chat-bottom) - 0.75rem));
   background-color: white;
