@@ -8,7 +8,7 @@ export const Container = styled.div`
   width: calc(100% - 220px);
   max-width: calc(100% - 220px);
   min-width: 0;
-  min-height: calc(100vh + clamp(12rem, 28vh, 18rem));
+  min-height: calc(100vh + clamp(16rem, 34vh, 24rem));
   margin-left: 220px;
   padding: clamp(0.85rem, 1.4vw, 1.5rem) clamp(0.85rem, 1.4vw, 1.5rem) clamp(4rem, 9vh, 6rem);
   gap: clamp(0.85rem, 1.4vw, 1.5rem);
@@ -81,18 +81,18 @@ export const RightSection = styled.div`
 export const MedicineDetails = styled.div`
   position: relative;
   flex: 0 0 auto;
-  max-height: min(240px, 28vh);
-  margin-bottom: 0.65rem;
-  padding: 0.75rem 0.9rem;
+  max-height: none;
+  margin-bottom: 0.55rem;
+  padding: 0.65rem 0.8rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
-  overflow-y: auto;
+  overflow: hidden;
 
   h2 {
-    margin: 0 2.6rem 0.55rem 0;
+    margin: 0 2.6rem 0.45rem 0;
     color: #0f172a;
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   img {
@@ -102,13 +102,29 @@ export const MedicineDetails = styled.div`
   }
 
   p {
-    margin: 0.2rem 0;
-    font-size: 0.84rem;
+    margin: 0.16rem 0;
+    font-size: 0.8rem;
+    line-height: 1.28;
     color: #374151;
   }
 
   strong {
     color: #0f172a;
+  }
+
+  input[type='number'] {
+    width: 88px;
+    min-height: 32px;
+    margin: 0;
+    padding: 0.38rem 0.5rem;
+    font-size: 0.82rem;
+  }
+
+  button:not([aria-label]) {
+    min-height: 32px;
+    padding: 0.38rem 0.6rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
   }
 `;
 
@@ -170,17 +186,19 @@ export const CategoryFilter = styled.div`
 export const CategoryTabs = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.2rem;
-  overflow-x: auto;
-  scrollbar-width: thin;
+  justify-content: space-between;
+  gap: 0.45rem;
+  overflow: visible;
 `;
 
 export const CategoryTab = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  flex: 0 0 auto;
-  padding: 0.58rem 0.72rem;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.58rem 0.35rem;
   border: 0;
   border-bottom: 2px solid ${({ $active }) => ($active ? '#2563eb' : 'transparent')};
   background: #ffffff;
@@ -189,6 +207,7 @@ export const CategoryTab = styled.button`
   font-size: 0.84rem;
   font-weight: 700;
   line-height: 1.25;
+  white-space: nowrap;
   cursor: pointer;
 
   &:hover,
@@ -348,8 +367,9 @@ export const Cart = styled.div`
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
-  min-height: 118px;
+  min-height: clamp(220px, 30vh, 320px);
   margin-top: 0.85rem;
+  margin-bottom: clamp(5rem, 12vh, 8rem);
   overflow: visible;
   border: 1px solid #e5e7eb;
   border-radius: 10px;

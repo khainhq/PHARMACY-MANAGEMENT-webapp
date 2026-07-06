@@ -825,23 +825,34 @@ const CreateInvoice = () => {
               <span aria-hidden="true">X</span>
             </ClosePanelButton>
             <h2>THÔNG TIN THUỐC</h2>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
               {selectedMedicine.image && (
                 <img
                   src={selectedMedicine.image}
                   alt={selectedMedicine.medicineName}
-                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
+                  style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
                 />
               )}
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <p><strong>Mã thuốc:</strong> {selectedMedicine.medicineID}</p>
                 <p><strong>Tên thuốc:</strong> {selectedMedicine.medicineName}</p>
-                <p><strong>Thành phần:</strong> {selectedMedicine.ingredients}</p>
+                <p
+                  style={{
+                    display: '-webkit-box',
+                    overflow: 'hidden',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                  }}
+                >
+                  <strong>Thành phần:</strong> {selectedMedicine.ingredients}
+                </p>
                 <p><strong>Đơn vị tính:</strong> {unitMap[selectedMedicine.unit] || selectedMedicine.unit}</p>
                 <p><strong>Tồn kho:</strong> {selectedMedicine.stockQuantity}</p>
                 <p><strong>Đơn giá:</strong> {formatMoney(selectedMedicine.unitPrice)} VND</p>
-                <Input type="number" value={quantity} min="1" max={selectedMedicine.stockQuantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-                <Button onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                  <Input type="number" value={quantity} min="1" max={selectedMedicine.stockQuantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+                  <Button onClick={handleAddToCart}>Thêm vào giỏ hàng</Button>
+                </div>
               </div>
             </div>
           </MedicineDetails>
