@@ -114,6 +114,22 @@ describe('CreatePayment component', () => {
     expect(screen.getByText('5.000 VND')).toBeInTheDocument();
   });
 
+
+  test('nút đóng ẩn khung thông tin thuốc đang chọn trong phiếu nhập', async () => {
+    await renderPayment();
+
+    const medicineList = screen.getByText('Danh sách thuốc').closest('div');
+    const row = within(medicineList).getByText('MED001').closest('tr');
+    fireEvent.click(within(row).getByRole('button', { name: 'Chọn' }));
+
+    const closeButton = await screen.findByRole('button', { name: 'Đóng thông tin thuốc' });
+    expect(closeButton).toBeInTheDocument();
+    fireEvent.click(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Đóng thông tin thuốc' })).not.toBeInTheDocument();
+    });
+  });
   test('không tạo phiếu khi chưa thêm sản phẩm', async () => {
     await renderPayment();
     fillPaymentForm();

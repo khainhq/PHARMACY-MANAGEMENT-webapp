@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
 import { useToast } from '../../components/ToastProvider';
+import { FaTimes } from 'react-icons/fa';
 import {
   Container,
   LeftSection,
   RightSection,
   MedicineDetails,
+  ClosePanelButton,
   MedicineList,
   PaymentDetailsTable,
   PaymentInfo,
@@ -476,6 +478,13 @@ const CreatePayment = () => {
       <LeftSection>
         {selectedMedicine && (
           <MedicineDetails>
+            <ClosePanelButton
+              type="button"
+              aria-label="Đóng thông tin thuốc"
+              onClick={() => setSelectedMedicine(null)}
+            >
+              <FaTimes aria-hidden="true" />
+            </ClosePanelButton>
             <h2>THÔNG TIN THUỐC</h2>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
               {selectedMedicine.image && (

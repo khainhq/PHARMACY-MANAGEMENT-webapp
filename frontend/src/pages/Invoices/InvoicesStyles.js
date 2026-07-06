@@ -82,15 +82,18 @@ export const RightSection = styled.div`
   }
 `;
 export const MedicineDetails = styled.div`
+  position: relative;
   flex: 0 0 auto;
+  max-height: min(330px, 42vh);
   margin-bottom: 0.85rem;
-  padding: 0.9rem;
+  padding: 0.9rem 1rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
+  overflow-y: auto;
 
   h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 2.6rem 0.75rem 0;
     color: #0f172a;
     font-size: 1.1rem;
   }
@@ -109,6 +112,31 @@ export const MedicineDetails = styled.div`
 
   strong {
     color: #0f172a;
+  }
+`;
+
+export const ClosePanelButton = styled.button`
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 1.05rem;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.18);
+
+  &:hover,
+  &:focus-visible {
+    background: #fee2e2;
+    outline: none;
   }
 `;
 
@@ -152,6 +180,7 @@ export const CategoryTab = styled.button`
   border-bottom: 2px solid ${({ $active }) => ($active ? '#2563eb' : 'transparent')};
   background: #ffffff;
   color: ${({ $active }) => ($active ? '#1d4ed8' : '#0f172a')};
+  font-family: inherit;
   font-size: 0.84rem;
   font-weight: 700;
   line-height: 1.25;
@@ -207,8 +236,10 @@ export const CategorySubButton = styled.button`
   border-radius: 8px;
   background: ${({ $active }) => ($active ? '#eef2ff' : 'transparent')};
   color: ${({ $active }) => ($active ? '#0f172a' : '#475569')};
+  font-family: inherit;
   font-size: 0.82rem;
-  font-weight: ${({ $active }) => ($active ? 800 : 650)};
+  font-weight: 700;
+  line-height: 1.35;
   text-align: left;
   cursor: pointer;
 
@@ -233,10 +264,10 @@ export const CategoryPreview = styled.div`
 
 export const CategoryPreviewGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.7rem;
 
-  @media (max-width: 900px) {
+  @media (max-width: 720px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -252,6 +283,7 @@ export const CategoryPreviewCard = styled.button`
   border-radius: 10px;
   background: #ffffff;
   color: #0f172a;
+  font-family: inherit;
   text-align: left;
   cursor: pointer;
 

@@ -162,6 +162,22 @@ describe('CreateInvoice component', () => {
     });
   });
 
+
+  test('nút đóng ẩn khung thông tin thuốc đang chọn', async () => {
+    await renderInvoice();
+
+    const medicineList = screen.getByText('Danh sách thuốc').closest('div');
+    const row = within(medicineList).getByText('MED001').closest('tr');
+    fireEvent.click(within(row).getByRole('button', { name: 'Chọn' }));
+
+    const closeButton = await screen.findByRole('button', { name: 'Đóng thông tin thuốc' });
+    expect(closeButton).toBeInTheDocument();
+    fireEvent.click(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Đóng thông tin thuốc' })).not.toBeInTheDocument();
+    });
+  });
   test('không tạo hóa đơn khi số điện thoại khách hàng sai định dạng', async () => {
     await renderInvoice();
     await addFirstMedicineToCart();

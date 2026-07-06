@@ -244,13 +244,16 @@ export const SectionTitle = styled.h2`
 `;
 
 export const StatusBadge = styled.span`
-  display: inline;
+  display: inline-block;
   margin: 0 auto;
   padding: 0;
   border-radius: 0;
   background: transparent;
   color: ${({ $active }) => ($active ? '#166534' : '#991b1b')};
-  font-size: 0.82rem;
-  font-weight: 800;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.35;
   white-space: nowrap;
+  letter-spacing: 0;
 `;

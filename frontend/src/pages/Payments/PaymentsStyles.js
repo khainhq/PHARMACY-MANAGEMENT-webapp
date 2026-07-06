@@ -80,15 +80,18 @@ export const RightSection = styled.div`
 `;
 
 export const MedicineDetails = styled.div`
+  position: relative;
+  max-height: min(360px, 45vh);
   margin-bottom: 1.5rem;
   padding: 1.5rem;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   background-color: #f9fafb;
+  overflow-y: auto;
 
   h2 {
     text-align: center;
-    margin-bottom: 1rem;
+    margin: 0 2.6rem 1rem;
     color: #0f172a;
     font-size: 1.5rem;
   }
@@ -107,6 +110,31 @@ export const MedicineDetails = styled.div`
 
   strong {
     color: #0f172a;
+  }
+`;
+
+export const ClosePanelButton = styled.button`
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 1.05rem;
+  box-shadow: 0 8px 18px rgba(220, 38, 38, 0.18);
+
+  &:hover,
+  &:focus-visible {
+    background: #fee2e2;
+    outline: none;
   }
 `;
 

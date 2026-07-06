@@ -20,6 +20,7 @@ import {
   FaSyringe,
   FaTint,
   FaTooth,
+  FaTimes,
   FaVenusMars,
 } from 'react-icons/fa';
 import {
@@ -32,6 +33,7 @@ import {
   LeftSection,
   RightSection,
   MedicineDetails,
+  ClosePanelButton,
   MedicineList,
   CategoryFilter,
   CategoryTabs,
@@ -80,61 +82,60 @@ const CATEGORY_FILTERS = [
     label: 'Thực phẩm chức năng',
     terms: ['thực phẩm chức năng', 'vitamin', 'khoáng chất', 'miễn dịch', 'đề kháng', 'sinh lý', 'nội tiết', 'mắt', 'thị lực', 'tiêu hóa', 'thần kinh', 'làm đẹp', 'đường huyết', 'tiểu đường', 'tim mạch', 'huyết áp', 'hô hấp', 'tai mũi họng', 'cơ xương khớp', 'gan mật', 'thận', 'tiết niệu', 'sữa', 'CAT002', 'CAT004', 'CAT006'],
     children: [
-      { label: 'Vitamin & Khoáng chất', icon: FaMedkit, terms: ['vitamin', 'khoáng chất', 'CAT004'], examples: ['Vitamin C', 'Canxi', 'Kẽm'] },
-      { label: 'Miễn dịch - Đề kháng', icon: FaShieldAlt, terms: ['miễn dịch', 'đề kháng', 'vitamin c'], examples: ['Tăng đề kháng', 'Siro miễn dịch'] },
-      { label: 'Sinh lý - Nội tiết tố', icon: FaVenusMars, terms: ['sinh lý', 'nội tiết'], examples: ['Nội tiết tố', 'Sinh lý nam nữ'] },
-      { label: 'Mắt - Thị lực', icon: FaEye, terms: ['mắt', 'thị lực'], examples: ['Bổ mắt', 'Lutein'] },
-      { label: 'Tiêu hóa', icon: FaSmile, terms: ['tiêu hóa', 'dạ dày', 'men vi sinh', 'CAT002'], examples: ['Men tiêu hóa', 'Dạ dày'] },
-      { label: 'Thần kinh não', icon: FaBrain, terms: ['thần kinh', 'não', 'ginkgo'], examples: ['Tuần hoàn não', 'Ginkgo'] },
-      { label: 'Hỗ trợ làm đẹp', icon: FaMagic, terms: ['làm đẹp', 'collagen'], examples: ['Collagen', 'Đẹp da'] },
-      { label: 'Đường huyết - Tiểu đường', icon: FaTint, terms: ['đường huyết', 'tiểu đường'], examples: ['Ổn định đường huyết'] },
-      { label: 'Tim mạch - Huyết áp', icon: FaHeartbeat, terms: ['tim mạch', 'huyết áp', 'CAT006'], examples: ['Huyết áp', 'Omega 3'] },
-      { label: 'Hô hấp - Tai mũi họng', icon: FaLungs, terms: ['hô hấp', 'tai mũi họng', 'ho', 'cảm cúm', 'CAT005'], examples: ['Xịt mũi', 'Bổ phổi'] },
-      { label: 'Cơ xương khớp', icon: FaBone, terms: ['cơ xương khớp', 'xương khớp', 'canxi'], examples: ['Glucosamine', 'Canxi'] },
-      { label: 'Gan - Mật', icon: FaLeaf, terms: ['gan', 'mật'], examples: ['Giải độc gan'] },
-      { label: 'Thận - Tiết niệu', icon: FaTint, terms: ['thận', 'tiết niệu'], examples: ['Tiết niệu', 'Bổ thận'] },
-      { label: 'Sữa', icon: FaMedkit, terms: ['sữa'], examples: ['Sữa dinh dưỡng'] },
+      { label: 'Vitamin & Khoáng chất', icon: FaMedkit, terms: ['vitamin', 'khoáng chất', 'CAT004'], examples: ['Vitamin C 1000mg', 'Kudos Daily Vitamins', 'Immuvita Easylife', 'Prenatal One', 'Canxi D3', 'Kẽm hữu cơ'] },
+      { label: 'Miễn dịch - Đề kháng', icon: FaShieldAlt, terms: ['miễn dịch', 'đề kháng', 'vitamin c'], examples: ['Siro tăng đề kháng', 'Viên uống Beta Glucan', 'Kẽm tăng đề kháng', 'Vitamin C DHC', 'Xịt họng thảo dược', 'Men vi sinh miễn dịch'] },
+      { label: 'Sinh lý - Nội tiết tố', icon: FaVenusMars, terms: ['sinh lý', 'nội tiết'], examples: ['Tinh chất hàu', 'Maca sinh lý', 'Isoflavone nữ', 'Evening Primrose Oil', 'Sâm Alipas', 'Viên nội tiết tố'] },
+      { label: 'Mắt - Thị lực', icon: FaEye, terms: ['mắt', 'thị lực'], examples: ['Lutein bổ mắt', 'Dầu cá Omega 3', 'Blueberry Extract', 'Eyemiru', 'Bilberry Vision', 'Viên sáng mắt'] },
+      { label: 'Tiêu hóa', icon: FaSmile, terms: ['tiêu hóa', 'dạ dày', 'men vi sinh', 'CAT002'], examples: ['Men tiêu hóa', 'Men vi sinh BioGaia', 'Nghệ dạ dày', 'Gaviscon', 'Tràng phục linh', 'Lactomin Plus'] },
+      { label: 'Thần kinh não', icon: FaBrain, terms: ['thần kinh', 'não', 'ginkgo'], examples: ['Ginkgo Biloba', 'Hoạt huyết dưỡng não', 'Omega 3 Power', 'Magnesium B6', 'Viên ngủ ngon', 'Bổ não DHA'] },
+      { label: 'Hỗ trợ làm đẹp', icon: FaMagic, terms: ['làm đẹp', 'collagen'], examples: ['Collagen nước', 'Viên uống đẹp da', 'Glutathione', 'Biotin tóc móng', 'Tinh dầu hoa anh thảo', 'Kẽm giảm mụn'] },
+      { label: 'Đường huyết - Tiểu đường', icon: FaTint, terms: ['đường huyết', 'tiểu đường'], examples: ['Dây thìa canh', 'Ổn định đường huyết', 'Chromium', 'Diabetna', 'Khổ qua rừng', 'Viên hỗ trợ tiểu đường'] },
+      { label: 'Tim mạch - Huyết áp', icon: FaHeartbeat, terms: ['tim mạch', 'huyết áp', 'CAT006'], examples: ['Omega 3 Power', 'Coenzyme Q10', 'Tỏi đen', 'Viên huyết áp', 'Dầu cá Nordic', 'Mỡ máu HDL'] },
+      { label: 'Hô hấp - Tai mũi họng', icon: FaLungs, terms: ['hô hấp', 'tai mũi họng', 'ho', 'cảm cúm', 'CAT005'], examples: ['Xịt mũi biển sâu', 'Viên ngậm Bách Bộ', 'Siro ho thảo dược', 'Bổ phổi', 'Keo ong', 'Viên thông xoang'] },
+      { label: 'Cơ xương khớp', icon: FaBone, terms: ['cơ xương khớp', 'xương khớp', 'canxi'], examples: ['Glucosamine', 'Canxi D3 K2', 'MSM', 'Sụn cá mập', 'Jex Max', 'Magnesium'] },
+      { label: 'Gan - Mật', icon: FaLeaf, terms: ['gan', 'mật'], examples: ['Giải độc gan', 'Milk Thistle', 'Atiso', 'Bổ gan Boganic', 'Diệp hạ châu', 'Men gan'] },
+      { label: 'Thận - Tiết niệu', icon: FaTint, terms: ['thận', 'tiết niệu'], examples: ['Kim tiền thảo', 'Cranberry', 'Bổ thận', 'Tiết niệu nữ', 'Râu ngô', 'Viên lợi tiểu'] },
+      { label: 'Sữa', icon: FaMedkit, terms: ['sữa'], examples: ['Ensure Gold', 'Glucerna', 'Anlene', 'Nutren Diabetes', 'Sữa non Alpha Lipid', 'Sữa bột người lớn'] },
     ],
   },
   {
     label: 'Dược mỹ phẩm',
     terms: ['dược mỹ phẩm', 'da mặt', 'cơ thể', 'làn da', 'tóc', 'da đầu', 'trang điểm', 'vùng mắt', 'thiên nhiên', 'da liễu', 'CAT007'],
     children: [
-      { label: 'Chăm sóc da mặt', icon: FaSmile, terms: ['da mặt', 'sữa rửa mặt', 'kem dưỡng'], examples: ['Sữa rửa mặt', 'Kem dưỡng'] },
-      { label: 'Chăm sóc cơ thể', icon: FaLeaf, terms: ['cơ thể', 'dưỡng thể'], examples: ['Dưỡng thể', 'Sữa tắm'] },
-      { label: 'Giải pháp làn da', icon: FaMedkit, terms: ['làn da', 'da liễu', 'CAT007'], examples: ['Mụn', 'Da nhạy cảm'] },
-      { label: 'Chăm sóc tóc - da đầu', icon: FaLeaf, terms: ['tóc', 'da đầu', 'dầu gội'], examples: ['Dầu gội', 'Serum tóc'] },
-      { label: 'Mỹ phẩm trang điểm', icon: FaMagic, terms: ['trang điểm', 'mỹ phẩm'], examples: ['Kem nền', 'Tẩy trang'] },
-      { label: 'Chăm sóc da vùng mắt', icon: FaEye, terms: ['vùng mắt', 'quầng thâm'], examples: ['Kem mắt'] },
-      { label: 'Sản phẩm từ thiên nhiên', icon: FaLeaf, terms: ['thiên nhiên', 'thảo dược'], examples: ['Thảo dược', 'Organic'] },
+      { label: 'Chăm sóc da mặt', icon: FaSmile, terms: ['da mặt', 'sữa rửa mặt', 'kem dưỡng'], examples: ['Sữa rửa mặt Cerave', 'Kem chống nắng La Roche-Posay', 'Dưỡng ẩm Cetaphil', 'Serum Vichy', 'Toner dịu da', 'Nước tẩy trang Bioderma'] },
+      { label: 'Chăm sóc cơ thể', icon: FaLeaf, terms: ['cơ thể', 'dưỡng thể'], examples: ['Sữa tắm thảo dược', 'Dưỡng thể Eucerin', 'Kem nẻ gót chân', 'Lăn khử mùi', 'Gel rửa tay', 'Dầu mù u'] },
+      { label: 'Giải pháp làn da', icon: FaMedkit, terms: ['làn da', 'da liễu', 'CAT007'], examples: ['Kem giảm mụn', 'Gel ngừa sẹo', 'Kem phục hồi da', 'Sản phẩm cho da nhạy cảm', 'Kem giảm thâm', 'Xịt khoáng'] },
+      { label: 'Chăm sóc tóc - da đầu', icon: FaLeaf, terms: ['tóc', 'da đầu', 'dầu gội'], examples: ['Dầu gội dược liệu', 'Serum mọc tóc', 'Dầu gội gàu', 'Xịt dưỡng tóc', 'Biotin tóc', 'Ủ tóc phục hồi'] },
+      { label: 'Mỹ phẩm trang điểm', icon: FaMagic, terms: ['trang điểm', 'mỹ phẩm'], examples: ['Kem nền dược mỹ phẩm', 'Son dưỡng môi', 'Tẩy trang mắt môi', 'Phấn phủ', 'Kem che khuyết điểm', 'Mascara dịu nhẹ'] },
+      { label: 'Chăm sóc da vùng mắt', icon: FaEye, terms: ['vùng mắt', 'quầng thâm'], examples: ['Kem mắt Vichy', 'Gel giảm bọng mắt', 'Mặt nạ mắt', 'Serum mắt', 'Kem mờ quầng thâm', 'Viên bổ mắt đẹp da'] },
+      { label: 'Sản phẩm từ thiên nhiên', icon: FaLeaf, terms: ['thiên nhiên', 'thảo dược'], examples: ['Dầu tràm', 'Dầu dừa', 'Nha đam', 'Tinh dầu thiên nhiên', 'Sáp dưỡng thảo mộc', 'Xà phòng thảo dược'] },
     ],
   },
   {
     label: 'Chăm sóc cá nhân',
     terms: ['chăm sóc cá nhân', 'tình dục', 'thực phẩm', 'đồ uống', 'vệ sinh', 'răng miệng', 'gia đình', 'tinh dầu', 'làm đẹp'],
     children: [
-      { label: 'Hỗ trợ tình dục', icon: FaVenusMars, terms: ['tình dục', 'bao cao su', 'gel bôi trơn'], examples: ['Bao cao su', 'Gel bôi trơn'] },
-      { label: 'Thực phẩm - Đồ uống', icon: FaMedkit, terms: ['thực phẩm', 'đồ uống'], examples: ['Nước bù khoáng'] },
-      { label: 'Vệ sinh cá nhân', icon: FaShieldAlt, terms: ['vệ sinh cá nhân', 'dung dịch vệ sinh'], examples: ['Dung dịch vệ sinh'] },
-      { label: 'Chăm sóc răng miệng', icon: FaTooth, terms: ['răng miệng', 'kem đánh răng'], examples: ['Kem đánh răng'] },
-      { label: 'Đồ dùng gia đình', icon: FaMedkit, terms: ['gia đình', 'đồ dùng'], examples: ['Khăn', 'Bông'] },
-      { label: 'Hàng tổng hợp', icon: FaMedkit, terms: ['tổng hợp'], examples: ['Vật tư tiêu hao'] },
-      { label: 'Tinh dầu các loại', icon: FaLeaf, terms: ['tinh dầu'], examples: ['Tinh dầu tràm'] },
-      { label: 'Thiết bị làm đẹp', icon: FaMagic, terms: ['thiết bị làm đẹp'], examples: ['Máy rửa mặt'] },
+      { label: 'Hỗ trợ tình dục', icon: FaVenusMars, terms: ['tình dục', 'bao cao su', 'gel bôi trơn'], examples: ['Bao cao su Durex', 'Bao cao su Sagami', 'Bao cao su Safefit', 'Gel bôi trơn KLY', 'Gel làm mát', 'Que thử rụng trứng'] },
+      { label: 'Thực phẩm - Đồ uống', icon: FaMedkit, terms: ['thực phẩm', 'đồ uống'], examples: ['Nước bù khoáng', 'Viên ngậm Bách Bộ', 'Kẹo ngậm họng', 'Trà thảo mộc', 'Nước súc miệng', 'Đường ăn kiêng'] },
+      { label: 'Vệ sinh cá nhân', icon: FaShieldAlt, terms: ['vệ sinh cá nhân', 'dung dịch vệ sinh'], examples: ['Dung dịch vệ sinh phụ nữ', 'Khăn ướt', 'Bông tẩy trang', 'Nước rửa tay', 'Băng vệ sinh', 'Dung dịch sát khuẩn'] },
+      { label: 'Chăm sóc răng miệng', icon: FaTooth, terms: ['răng miệng', 'kem đánh răng'], examples: ['Kem đánh răng', 'Nước súc miệng Pearlie White', 'Bàn chải mềm', 'Chỉ nha khoa', 'Xịt thơm miệng', 'Gel nhiệt miệng'] },
+      { label: 'Đồ dùng gia đình', icon: FaMedkit, terms: ['gia đình', 'đồ dùng'], examples: ['Bông y tế', 'Gạc vô trùng', 'Băng keo cá nhân', 'Khăn giấy', 'Găng tay', 'Túi chườm'] },
+      { label: 'Hàng tổng hợp', icon: FaMedkit, terms: ['tổng hợp'], examples: ['Khẩu trang vải', 'Cồn sát khuẩn', 'Nhiệt kế', 'Bình rửa mũi', 'Tăm bông', 'Miếng dán giữ nhiệt'] },
+      { label: 'Tinh dầu các loại', icon: FaLeaf, terms: ['tinh dầu'], examples: ['Tinh dầu tràm', 'Tinh dầu bạc hà', 'Tinh dầu khuynh diệp', 'Dầu gió', 'Dầu nóng', 'Dầu xoa bóp'] },
+      { label: 'Thiết bị làm đẹp', icon: FaMagic, terms: ['thiết bị làm đẹp'], examples: ['Máy rửa mặt', 'Máy xông mặt', 'Cây lăn mặt', 'Bông mút trang điểm', 'Dụng cụ massage', 'Máy hút mụn'] },
     ],
   },
   {
     label: 'Thiết bị y tế',
     terms: ['thiết bị y tế', 'dụng cụ y tế', 'theo dõi', 'sơ cứu', 'khẩu trang'],
     children: [
-      { label: 'Dụng cụ y tế', icon: FaSyringe, terms: ['dụng cụ y tế', 'kim', 'bơm tiêm'], examples: ['Kim các loại', 'Bơm tiêm'] },
-      { label: 'Dụng cụ theo dõi', icon: FaStethoscope, terms: ['theo dõi', 'máy đo', 'huyết áp'], examples: ['Máy đo huyết áp'] },
-      { label: 'Dụng cụ sơ cứu', icon: FaMedkit, terms: ['sơ cứu', 'băng gạc'], examples: ['Băng gạc', 'Túi chườm'] },
-      { label: 'Khẩu trang', icon: FaShieldAlt, terms: ['khẩu trang'], examples: ['Khẩu trang y tế'] },
+      { label: 'Dụng cụ y tế', icon: FaSyringe, terms: ['dụng cụ y tế', 'kim', 'bơm tiêm'], examples: ['Kim các loại', 'Bơm tiêm', 'Dụng cụ vệ sinh mũi', 'Ống hút dịch', 'Cốc chia thuốc', 'Khay y tế'] },
+      { label: 'Dụng cụ theo dõi', icon: FaStethoscope, terms: ['theo dõi', 'máy đo', 'huyết áp'], examples: ['Máy đo huyết áp', 'Máy đo đường huyết', 'Nhiệt kế điện tử', 'Máy đo SpO2', 'Cân sức khỏe', 'Que thử đường huyết'] },
+      { label: 'Dụng cụ sơ cứu', icon: FaMedkit, terms: ['sơ cứu', 'băng gạc'], examples: ['Băng gạc vô trùng', 'Băng keo cá nhân', 'Nước muối sinh lý', 'Cồn sát khuẩn', 'Túi chườm', 'Kéo y tế'] },
+      { label: 'Khẩu trang', icon: FaShieldAlt, terms: ['khẩu trang'], examples: ['Khẩu trang y tế', 'Khẩu trang 3D', 'Khẩu trang N95', 'Khẩu trang trẻ em', 'Khẩu trang than hoạt tính', 'Mặt nạ chống bụi'] },
     ],
   },
 ];
-
 const normalizeSearchText = (value) => String(value || '').toLowerCase();
 const medicineSearchText = (medicine) => normalizeSearchText([
   medicine.medicineID,
@@ -803,6 +804,16 @@ const CreateInvoice = () => {
       <LeftSection>
         {selectedMedicine && (
           <MedicineDetails>
+            <ClosePanelButton
+              type="button"
+              aria-label="Đóng thông tin thuốc"
+              onClick={() => {
+                setSelectedMedicine(null);
+                setQuantity(1);
+              }}
+            >
+              <FaTimes aria-hidden="true" />
+            </ClosePanelButton>
             <h2>THÔNG TIN THUỐC</h2>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
               {selectedMedicine.image && (
@@ -880,13 +891,15 @@ const CreateInvoice = () => {
                 </CategorySubList>
                 <CategoryPreview>
                   <CategoryPreviewGrid>
-                    {activeCategory.children.slice(0, 4).map((child) => {
+                    {activeCategory.children.flatMap((child) =>
+                      child.examples.slice(0, 3).map((example) => ({ child, example }))
+                    ).slice(0, 18).map(({ child, example }) => {
                       const Icon = child.icon;
                       return (
-                        <CategoryPreviewCard key={child.label} type="button" onClick={() => applyCategoryFilter(child)}>
+                        <CategoryPreviewCard key={`${child.label}-${example}`} type="button" onClick={() => applyCategoryFilter(child)}>
                           <span><Icon aria-hidden="true" /></span>
                           <span>
-                            <strong>{child.examples[0]}</strong>
+                            <strong>{example}</strong>
                             <small>{child.label}</small>
                           </span>
                         </CategoryPreviewCard>
