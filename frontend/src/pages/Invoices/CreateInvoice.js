@@ -370,6 +370,7 @@ const CreateInvoice = () => {
   });
   const [selectedCountryCode, setSelectedCountryCode] = useState(DEFAULT_COUNTRY_CODE);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCategoryChild, setActiveCategoryChild] = useState(null);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
@@ -449,8 +450,18 @@ const CreateInvoice = () => {
     setSearchKeyword(e.target.value);
   };
 
+  const openCategoryMenu = (category) => {
+    setActiveCategory(category);
+    setActiveCategoryChild(category.children[0] || null);
+  };
+
+  const previewCategoryChild = (child) => {
+    setActiveCategoryChild(child);
+  };
+
   const applyCategoryFilter = (filter) => {
     setSelectedCategoryFilter(filter);
+    setActiveCategoryChild(filter.children?.[0] || filter);
     setSearchKeyword('');
   };
 
@@ -856,10 +867,10 @@ const CreateInvoice = () => {
                     key={category.label}
                     type="button"
                     $active={isActive}
-                    onMouseEnter={() => setActiveCategory(category)}
-                    onFocus={() => setActiveCategory(category)}
+                    onMouseEnter={() => openCategoryMenu(category)}
+                    onFocus={() => openCategoryMenu(category)}
                     onClick={() => {
-                      setActiveCategory(category);
+                      openCategoryMenu(category);
                       applyCategoryFilter(category);
                     }}
                   >
@@ -875,13 +886,18 @@ const CreateInvoice = () => {
                 <CategorySubList>
                   {activeCategory.children.map((child) => {
                     const Icon = child.icon;
-                    const isSelected = selectedCategoryFilter?.label === child.label;
+                    const isSelected = selectedCategoryFilter?.label === child.label || activeCategoryChild?.label === child.label;
                     return (
                       <CategorySubButton
                         key={child.label}
                         type="button"
                         $active={isSelected}
-                        onClick={() => applyCategoryFilter(child)}
+                        onMouseEnter={() => previewCategoryChild(child)}
+                        onFocus={() => previewCategoryChild(child)}
+                        onClick={() => {
+                          previewCategoryChild(child);
+                          applyCategoryFilter(child);
+                        }}
                       >
                         <Icon aria-hidden="true" />
                         <span>{child.label}</span>
@@ -891,16 +907,20 @@ const CreateInvoice = () => {
                 </CategorySubList>
                 <CategoryPreview>
                   <CategoryPreviewGrid>
-                    {activeCategory.children.flatMap((child) =>
-                      child.examples.slice(0, 3).map((example) => ({ child, example }))
-                    ).slice(0, 18).map(({ child, example }) => {
-                      const Icon = child.icon;
+                    {(activeCategoryChild || activeCategory.children[0]).examples.slice(0, 6).map((example) => {
+                      const previewFilter = activeCategoryChild || activeCategory.children[0];
+                      const Icon = previewFilter.icon;
                       return (
-                        <CategoryPreviewCard key={`${child.label}-${example}`} type="button" onClick={() => applyCategoryFilter(child)}>
+                        <CategoryPreviewCard
+                          key={`${previewFilter.label}-${example}`}
+                          type="button"
+                          data-testid="category-preview-card"
+                          onClick={() => applyCategoryFilter(previewFilter)}
+                        >
                           <span><Icon aria-hidden="true" /></span>
                           <span>
                             <strong>{example}</strong>
-                            <small>{child.label}</small>
+                            <small>{previewFilter.label}</small>
                           </span>
                         </CategoryPreviewCard>
                       );

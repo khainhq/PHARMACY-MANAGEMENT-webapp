@@ -264,7 +264,7 @@ export const CategoryPreview = styled.div`
 
 export const CategoryPreviewGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
 
   @media (max-width: 720px) {
@@ -274,11 +274,11 @@ export const CategoryPreviewGrid = styled.div`
 
 export const CategoryPreviewCard = styled.button`
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
+  grid-template-columns: 46px minmax(0, 1fr);
   align-items: center;
-  gap: 0.7rem;
-  min-height: 70px;
-  padding: 0.65rem;
+  gap: 0.6rem;
+  min-height: 64px;
+  padding: 0.58rem;
   border: 0;
   border-radius: 10px;
   background: #ffffff;
@@ -289,8 +289,8 @@ export const CategoryPreviewCard = styled.button`
 
   span:first-child {
     display: inline-flex;
-    width: 52px;
-    height: 46px;
+    width: 46px;
+    height: 42px;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
@@ -302,8 +302,8 @@ export const CategoryPreviewCard = styled.button`
   strong {
     display: block;
     margin-bottom: 0.18rem;
-    font-size: 0.84rem;
-    line-height: 1.25;
+    font-size: 0.8rem;
+    line-height: 1.22;
   }
 
   small {

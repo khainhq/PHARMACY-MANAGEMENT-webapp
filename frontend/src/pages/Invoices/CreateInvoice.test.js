@@ -147,6 +147,20 @@ describe('CreateInvoice component', () => {
     expect(screen.queryByText('Ibuprofen')).not.toBeInTheDocument();
   });
 
+  test('hi\u1ec3n th\u1ecb 6 thu\u1ed1c xem tr\u01b0\u1edbc theo \u0111\u00fang danh m\u1ee5c con \u0111ang ch\u1ecdn', async () => {
+    await renderInvoice();
+
+    fireEvent.mouseEnter(screen.getByRole('button', { name: /Ch\u0103m s\u00f3c c\u00e1 nh\u00e2n/i }));
+    fireEvent.mouseEnter(screen.getByRole('button', { name: /V\u1ec7 sinh c\u00e1 nh\u00e2n/i }));
+
+    const previewCards = screen.getAllByTestId('category-preview-card');
+
+    expect(previewCards).toHaveLength(6);
+    expect(screen.getByText('Dung d\u1ecbch v\u1ec7 sinh ph\u1ee5 n\u1eef')).toBeInTheDocument();
+    expect(screen.getByText('B\u0103ng v\u1ec7 sinh')).toBeInTheDocument();
+    expect(screen.queryByText('Bao cao su Durex')).not.toBeInTheDocument();
+  });
+
   test('thêm và xóa thuốc trong giỏ hàng', async () => {
     await renderInvoice();
     await addFirstMedicineToCart('2');
