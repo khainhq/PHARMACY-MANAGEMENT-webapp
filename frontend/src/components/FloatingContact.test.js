@@ -11,12 +11,9 @@ describe('FloatingContact component', () => {
     expect(screen.getByRole('link', { name: '0816151762' })).toHaveAttribute('href', 'tel:0816151762');
   });
 
-  test('mở đúng liên kết Zalo', () => {
+  test('không hiển thị liên kết Zalo', () => {
     render(<FloatingContact />);
 
-    expect(screen.getByRole('link', { name: 'Liên hệ qua Zalo' })).toHaveAttribute(
-      'href',
-      'https://zalo.me/0816151762'
-    );
+    expect(screen.queryByRole('link', { name: 'Liên hệ qua Zalo' })).not.toBeInTheDocument();
   });
 });

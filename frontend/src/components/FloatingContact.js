@@ -4,12 +4,12 @@ import { FaPhoneAlt } from 'react-icons/fa';
 
 const ContactDock = styled.div`
   position: fixed;
-  left: 1.25rem;
+  right: 1.25rem;
   bottom: 1.25rem;
   z-index: 30;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 0.65rem;
 `;
 
@@ -38,23 +38,6 @@ const ContactButton = styled.button`
   font-size: 1.25rem;
 `;
 
-const ZaloLink = styled.a`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #ffffff;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 10px 25px rgba(3, 105, 161, 0.3);
-  overflow: hidden;
-
-  img {
-    width: 38px;
-    height: 38px;
-    object-fit: contain;
-  }
-`;
-
 const FloatingContact = () => {
   const [showPhone, setShowPhone] = useState(false);
 
@@ -70,15 +53,6 @@ const FloatingContact = () => {
       >
         <FaPhoneAlt />
       </ContactButton>
-      <ZaloLink
-        href="https://zalo.me/0816151762"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Liên hệ qua Zalo"
-        title="Zalo"
-      >
-        <img src="/images/zalo.svg" alt="" />
-      </ZaloLink>
     </ContactDock>
   );
 };
