@@ -1,0 +1,16 @@
+THU MUC DATABASE
+
+Thu muc nay gom cac tep lien quan rieng den co so du lieu SQL Server cua du an PharmaCare.
+
+1. PharmacyManagement.sql
+- Day la script SQL duoc sinh tu Entity Framework Core migrations hien tai.
+- Co the dung de tham khao cau truc bang, khoa chinh, khoa ngoai va cac thay doi schema.
+- Khi chay bang Docker Compose, backend van tu dong ap dung migrations nen khong bat buoc chay file nay thu cong.
+
+2. seed/medicine-products.json
+- Day la du lieu mau san pham/thuoc duoc backend dung khi seed database.
+- File goc van nam trong backend/SeedData de ung dung chay dung.
+
+Luu y:
+- Khong di chuyen backend/Migrations ra khoi backend, vi EF Core can thu muc do de migrate database khi ung dung chay.
+- Neu muon reset database bang Docker, co the xoa volume SQL Server roi chay lai docker compose up -d --build.
