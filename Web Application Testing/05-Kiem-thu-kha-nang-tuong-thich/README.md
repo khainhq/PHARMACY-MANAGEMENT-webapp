@@ -15,7 +15,7 @@
 
 | Mã | Nội dung kiểm thử | Kết quả |
 |---|---|---|
-| COMP-01 | Chạy local bằng Docker Compose trên Windows | Chưa pass tại thời điểm kiểm thử vì Docker Desktop không chạy |
+| COMP-01 | Chạy local bằng Docker Compose trên Windows | Pass, Docker Compose chạy đủ frontend/backend/sqlserver |
 | COMP-02 | Frontend dùng React build qua Docker/Nginx | Pass theo cấu hình |
 | COMP-03 | Backend ASP.NET Core chạy trong container Linux | Pass theo Dockerfile |
 | COMP-04 | SQL Server chạy qua image chính thức Microsoft | Pass theo `docker-compose.yml` |

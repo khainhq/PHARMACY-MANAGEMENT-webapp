@@ -40,7 +40,15 @@ Web Application Testing/
 | Backend build | `dotnet build backend\PharmacyManagement.Api.csproj` | Pass, 0 warnings, 0 errors |
 | Frontend unit/component tests | `npm test -- --watchAll=false` trong thư mục `frontend` | Pass, 24/24 test suites, 133/133 tests, 9 snapshots |
 | Test case lỗi Zalo cũ | Cập nhật `frontend/src/App.test.js` | Pass sau khi test được sửa theo yêu cầu hiện tại là không còn Zalo |
-| Docker runtime | `docker compose ps` | Chưa pass tại thời điểm kiểm thử vì Docker Desktop không chạy |
+| Docker runtime | `docker compose ps` | Pass, 3 container `frontend`, `backend`, `sqlserver` đang chạy |
+
+## Kiểm tra Docker runtime bổ sung
+
+Sau khi Docker Desktop được khởi chạy lại, đã kiểm tra bổ sung:
+
+- `docker compose ps`: Pass, 3 container `frontend`, `backend`, `sqlserver` đang chạy.
+- `http://localhost:3000`: Pass, frontend trả `200 OK`.
+- `POST http://127.0.0.1:8000/api/auth/login/` với `admin/admin123`: Pass, backend trả `username=admin`, `role=Admin`.
 
 ## Kết luận nhanh
 

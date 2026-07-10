@@ -23,7 +23,7 @@
 | DB-05 | Tạo hóa đơn trừ tồn kho | Pass theo logic backend |
 | DB-06 | Tạo phiếu nhập cộng tồn kho | Pass theo logic backend |
 | DB-07 | Không bán quá tồn kho | Pass theo logic backend |
-| DB-08 | Kiểm tra trực tiếp bằng Docker tại thời điểm này | Chưa pass vì Docker Desktop không chạy |
+| DB-08 | Kiểm tra trực tiếp bằng Docker tại thời điểm này | Pass, SQL Server container đang chạy và backend đăng nhập admin thành công |
 
 ## Khuyến nghị
 

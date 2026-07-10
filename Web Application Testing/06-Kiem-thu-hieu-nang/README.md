@@ -10,8 +10,8 @@
 |---|---|---|
 | PERF-01 | Backend build không lỗi | Pass |
 | PERF-02 | Frontend test suite chạy hoàn tất | Pass |
-| PERF-03 | Docker Compose chạy đủ frontend/backend/sqlserver | Chưa pass tại thời điểm kiểm thử vì Docker Desktop không chạy |
-| PERF-04 | Kiểm tra thời gian phản hồi API login | Chưa pass tại thời điểm kiểm thử vì Docker Desktop không chạy |
+| PERF-03 | Docker Compose chạy đủ frontend/backend/sqlserver | Pass |
+| PERF-04 | Kiểm tra API login `admin/admin123` | Pass, backend trả `username=admin`, `role=Admin` |
 | PERF-05 | Kiểm thử tải nhiều người dùng đồng thời | Chưa pass |
 | PERF-06 | Kiểm thử stress test vượt tải | Chưa pass |
 | PERF-07 | Kiểm tra nén/static serving qua Nginx frontend | Pass theo cấu hình Docker frontend |
