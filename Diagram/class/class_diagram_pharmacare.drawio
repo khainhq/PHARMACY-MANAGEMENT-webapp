@@ -1,0 +1,162 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="luoc-do-lop-pharmacare" name="Lược đồ lớp">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1900" pageHeight="1250" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#000000;rounded=0;" value="Lược đồ lớp hệ thống PharmaCare" vertex="1">
+          <mxGeometry height="40" width="850" x="510" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="class_0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Người dùng&lt;/b&gt;&lt;hr&gt;- mã người dùng: int&lt;br&gt;- tên đăng nhập: string&lt;br&gt;- mật khẩu băm: string&lt;br&gt;- trạng thái: string&lt;hr&gt;+ đăng nhập()&lt;br&gt;+ đăng xuất()" vertex="1">
+          <mxGeometry height="190" width="290" x="10" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="class_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Vai trò&lt;/b&gt;&lt;hr&gt;- mã vai trò: int&lt;br&gt;- tên vai trò: string&lt;br&gt;- mô tả: string&lt;hr&gt;+ cấp quyền()&lt;br&gt;+ kiểm tra quyền()" vertex="1">
+          <mxGeometry height="165" width="270" x="410" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="class_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Nhân viên&lt;/b&gt;&lt;hr&gt;- mã nhân viên: int&lt;br&gt;- họ tên: string&lt;br&gt;- số điện thoại: string&lt;br&gt;- email: string&lt;br&gt;- trạng thái: string&lt;hr&gt;+ cập nhật thông tin()" vertex="1">
+          <mxGeometry height="205" width="300" x="750" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="class_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Quản lý&lt;/b&gt;&lt;hr&gt;- quyền duyệt: string&lt;hr&gt;+ quản lý nhân viên()&lt;br&gt;+ xem báo cáo()" vertex="1">
+          <mxGeometry height="145" width="235" x="620" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="class_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Dược sĩ&lt;/b&gt;&lt;hr&gt;- chứng chỉ: string&lt;hr&gt;+ tư vấn thuốc()&lt;br&gt;+ kiểm tra đơn thuốc()" vertex="1">
+          <mxGeometry height="145" width="245" x="900" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="class_5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Nhân viên bán hàng&lt;/b&gt;&lt;hr&gt;- ca làm việc: string&lt;hr&gt;+ lập hóa đơn()&lt;br&gt;+ thu tiền()" vertex="1">
+          <mxGeometry height="145" width="270" x="1190" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="class_6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Khách hàng&lt;/b&gt;&lt;hr&gt;- mã khách hàng: int&lt;br&gt;- họ tên: string&lt;br&gt;- địa chỉ: string&lt;br&gt;- số điện thoại: string&lt;hr&gt;+ cập nhật thông tin()" vertex="1">
+          <mxGeometry height="170" width="280" x="1160" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="class_7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Sản phẩm&lt;/b&gt;&lt;hr&gt;- mã sản phẩm: int&lt;br&gt;- tên sản phẩm: string&lt;br&gt;- hoạt chất: string&lt;br&gt;- đơn vị tính: string&lt;br&gt;- giá bán: decimal&lt;br&gt;- hạn sử dụng: date&lt;hr&gt;+ cập nhật thông tin()&lt;br&gt;+ kiểm tra tồn kho()" vertex="1">
+          <mxGeometry height="245" width="320" x="10" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="class_8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Danh mục sản phẩm&lt;/b&gt;&lt;hr&gt;- mã danh mục: int&lt;br&gt;- tên danh mục: string&lt;br&gt;- mô tả: string&lt;hr&gt;+ cập nhật danh mục()" vertex="1">
+          <mxGeometry height="150" width="280" x="430" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="class_9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Nhà cung cấp&lt;/b&gt;&lt;hr&gt;- mã nhà cung cấp: int&lt;br&gt;- tên nhà cung cấp: string&lt;br&gt;- địa chỉ: string&lt;br&gt;- số điện thoại: string&lt;hr&gt;+ cập nhật thông tin()" vertex="1">
+          <mxGeometry height="175" width="300" x="770" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="class_10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Hóa đơn&lt;/b&gt;&lt;hr&gt;- mã hóa đơn: int&lt;br&gt;- ngày lập: datetime&lt;br&gt;- tổng tiền: decimal&lt;br&gt;- trạng thái: string&lt;hr&gt;+ tính tổng tiền()&lt;br&gt;+ hủy hóa đơn()" vertex="1">
+          <mxGeometry height="180" width="300" x="1160" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="class_11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Chi tiết hóa đơn&lt;/b&gt;&lt;hr&gt;- mã chi tiết: int&lt;br&gt;- số lượng: int&lt;br&gt;- đơn giá: decimal&lt;br&gt;- thành tiền: decimal&lt;hr&gt;+ tính thành tiền()" vertex="1">
+          <mxGeometry height="170" width="300" x="1250" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="class_12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Giao dịch kho&lt;/b&gt;&lt;hr&gt;- mã giao dịch: int&lt;br&gt;- loại: nhập/xuất&lt;br&gt;- số lượng: int&lt;br&gt;- ngày tạo: datetime&lt;br&gt;- ghi chú: string&lt;hr&gt;+ cập nhật tồn kho()" vertex="1">
+          <mxGeometry height="190" width="320" x="60" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="class_13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Phiếu thu&lt;/b&gt;&lt;hr&gt;- mã phiếu thu: int&lt;br&gt;- số tiền: decimal&lt;br&gt;- nội dung: string&lt;br&gt;- ngày lập: datetime&lt;hr&gt;+ tạo phiếu thu()" vertex="1">
+          <mxGeometry height="165" width="270" x="470" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="class_14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Phiếu chi&lt;/b&gt;&lt;hr&gt;- mã phiếu chi: int&lt;br&gt;- số tiền: decimal&lt;br&gt;- nội dung: string&lt;br&gt;- ngày lập: datetime&lt;hr&gt;+ tạo phiếu chi()" vertex="1">
+          <mxGeometry height="165" width="270" x="910" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="class_15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontColor=#000000;align=left;verticalAlign=top;spacing=8;fontSize=13;" value="&lt;b&gt;Báo cáo&lt;/b&gt;&lt;hr&gt;- mã báo cáo: int&lt;br&gt;- từ ngày: date&lt;br&gt;- đến ngày: date&lt;br&gt;- loại báo cáo: string&lt;hr&gt;+ thống kê tồn kho()&lt;br&gt;+ thống kê doanh thu()" vertex="1">
+          <mxGeometry height="185" width="300" x="1540" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_0" edge="1" parent="1" source="class_0" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_1" value="n - 1\nsử dụng">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="170" />
+              <mxPoint x="380" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_1" edge="1" parent="1" source="class_2" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_0" value="1 - 1\ntài khoản">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="80" />
+              <mxPoint x="205" y="80" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_2" edge="1" parent="1" source="class_3" style="endArrow=block;endFill=0;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_2" value="kế thừa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_3" edge="1" parent="1" source="class_4" style="endArrow=block;endFill=0;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_2" value="kế thừa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_4" edge="1" parent="1" source="class_5" style="endArrow=block;endFill=0;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="class_2" value="kế thừa">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1325" y="320" />
+              <mxPoint x="1110" y="320" />
+              <mxPoint x="1110" y="254" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_5" edge="1" parent="1" source="class_7" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_8" value="n - 1\nthuộc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="695" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_6" edge="1" parent="1" source="class_7" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_9" value="n - 1\ncung cấp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="580" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_7" edge="1" parent="1" source="class_10" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;exitX=1.005;exitY=0.105;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.004;entryY=0.645;entryDx=0;entryDy=0;entryPerimeter=0;" target="class_6" value="n - 1\ncủa">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1500" y="619" />
+              <mxPoint x="1500" y="210" />
+            </Array>
+            <mxPoint x="1490" y="590" as="sourcePoint" />
+            <mxPoint x="1480" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_8" edge="1" parent="1" source="class_10" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_5" value="n - 1\nlập bởi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_9" edge="1" parent="1" source="class_10" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_11" value="1 - n\nbao gồm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1400" y="840" />
+              <mxPoint x="1400" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_10" edge="1" parent="1" source="class_11" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_7" value="n - 1\nsản phẩm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="1170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_11" edge="1" parent="1" source="class_12" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_7" value="n - 1\ncập nhật">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_12" edge="1" parent="1" source="class_13" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_10" value="1 - 1\nthu tiền">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="605" y="900" />
+              <mxPoint x="1310" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_13" edge="1" parent="1" source="class_14" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="class_9" value="n - 1\nchi trả">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1120" y="688" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_14" edge="1" parent="1" source="class_15" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_10" value="tổng hợp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_15" edge="1" parent="1" source="class_15" style="endArrow=block;html=1;rounded=0;strokeColor=#000000;fontColor=#000000;edgeStyle=orthogonalEdgeStyle;" target="class_12" value="tổng hợp">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
