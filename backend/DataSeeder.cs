@@ -17,7 +17,7 @@ public static class DataSeeder
         var salesRole = await EnsureRoleAsync(db, "Sales");
         var productRole = await EnsureRoleAsync(db, "Product_manager");
 
-        await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP001", FullName = "Nguyen Hoang Khai", PhoneNumber = "0900000001", Gender = "Male", BirthDate = new DateTime(2000, 3, 10), YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date });
+        await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP001", FullName = "Nguyen Ho Quang Khai", PhoneNumber = "0900000001", Gender = "Male", BirthDate = new DateTime(2000, 3, 10), YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date });
         await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP002", FullName = "Nhan vien ban hang", PhoneNumber = "0900000002", Gender = "Female", BirthDate = new DateTime(2001, 5, 12), YearOfBirth = 2001, HireDate = DateTime.UtcNow.Date });
         await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP003", FullName = "Quan ly san pham", PhoneNumber = "0900000003", Gender = "Male", BirthDate = new DateTime(1999, 9, 20), YearOfBirth = 1999, HireDate = DateTime.UtcNow.Date });
 
