@@ -6,50 +6,145 @@ public static class DataSeeder
     public static async Task SeedAsync(PharmacyDbContext db)
     {
         await EnsureReferenceDataAsync(db);
+        await EnsureDemoAccessDataAsync(db);
         await EnsureMedicineDataAsync(db);
+        await EnsureDemoTransactionsAsync(db);
+    }
 
-        if (await db.Roles.AnyAsync()) return;
+    private static async Task EnsureDemoAccessDataAsync(PharmacyDbContext db)
+    {
+        var adminRole = await EnsureRoleAsync(db, "Admin");
+        var salesRole = await EnsureRoleAsync(db, "Sales");
+        var productRole = await EnsureRoleAsync(db, "Product_manager");
 
-        db.Roles.AddRange(
-            new Role { RoleName = "Admin" },
-            new Role { RoleName = "Sales" },
-            new Role { RoleName = "Product_manager" });
-        await db.SaveChangesAsync();
+        await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP001", FullName = "Nguyen Hoang Khai", PhoneNumber = "0900000001", Gender = "Male", BirthDate = new DateTime(2000, 3, 10), YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date });
+        await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP002", FullName = "Nhan vien ban hang", PhoneNumber = "0900000002", Gender = "Female", BirthDate = new DateTime(2001, 5, 12), YearOfBirth = 2001, HireDate = DateTime.UtcNow.Date });
+        await EnsureEmployeeAsync(db, new Employee { EmployeeID = "EMP003", FullName = "Quan ly san pham", PhoneNumber = "0900000003", Gender = "Male", BirthDate = new DateTime(1999, 9, 20), YearOfBirth = 1999, HireDate = DateTime.UtcNow.Date });
 
-        var adminRole = await db.Roles.FirstAsync(x => x.RoleName == "Admin");
-        var salesRole = await db.Roles.FirstAsync(x => x.RoleName == "Sales");
-        var productRole = await db.Roles.FirstAsync(x => x.RoleName == "Product_manager");
+        await EnsureCustomerAsync(db, new Customer { CustomerID = "CUS001", FullName = "Khach hang 1", PhoneNumber = "0910000001", Gender = "Male" });
+        await EnsureCustomerAsync(db, new Customer { CustomerID = "CUS002", FullName = "Khach hang 2", PhoneNumber = "0910000002", Gender = "Female" });
 
-        db.Employees.AddRange(
-            new Employee { EmployeeID = "EMP001", FullName = "Nguyen Hoang Khai", PhoneNumber = "0900000001", Gender = "Male", BirthDate = new DateTime(2000, 3, 10), YearOfBirth = 2000, HireDate = DateTime.UtcNow.Date },
-            new Employee { EmployeeID = "EMP002", FullName = "Nhan vien ban hang", PhoneNumber = "0900000002", Gender = "Female", BirthDate = new DateTime(2001, 5, 12), YearOfBirth = 2001, HireDate = DateTime.UtcNow.Date },
-            new Employee { EmployeeID = "EMP003", FullName = "Quan ly san pham", PhoneNumber = "0900000003", Gender = "Male", BirthDate = new DateTime(1999, 9, 20), YearOfBirth = 1999, HireDate = DateTime.UtcNow.Date });
-
-        db.Customers.AddRange(
-            new Customer { CustomerID = "CUS001", FullName = "Khach hang 1", PhoneNumber = "0910000001", Gender = "Male" },
-            new Customer { CustomerID = "CUS002", FullName = "Khach hang 2", PhoneNumber = "0910000002", Gender = "Female" });
-
-        db.Suppliers.AddRange(
-            new Supplier { SupplierID = "SUP001", SupplierName = "Cong ty Duoc A", PhoneNumber = "0920000001", Address = "Thanh pho Ho Chi Minh" },
-            new Supplier { SupplierID = "SUP002", SupplierName = "Cong ty Duoc B", PhoneNumber = "0920000002", Address = "Ha Noi" });
-
-        db.Accounts.AddRange(
-            new Account { Username = "admin", PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"), EmployeeID = "EMP001", RoleID = adminRole.RoleID, IsStaff = true, IsActive = true },
-            new Account { Username = "sales", PasswordHash = BCrypt.Net.BCrypt.HashPassword("sales123"), EmployeeID = "EMP002", RoleID = salesRole.RoleID, IsStaff = false, IsActive = true },
-            new Account { Username = "product", PasswordHash = BCrypt.Net.BCrypt.HashPassword("product123"), EmployeeID = "EMP003", RoleID = productRole.RoleID, IsStaff = false, IsActive = true });
-
-        db.Orders.Add(new Order { OrderID = "ORD001", EmployeeID = "EMP002", CustomerID = "CUS001", TotalAmount = 70000 });
-        db.Payments.Add(new Payment { PaymentID = "PAY001", EmployeeID = "EMP003", SupplierID = "SUP001", TotalAmount = 50000, Status = "Paid" });
+        await EnsureSupplierAsync(db, new Supplier { SupplierID = "SUP001", SupplierName = "Cong ty Duoc A", PhoneNumber = "0920000001", Address = "Thanh pho Ho Chi Minh" });
+        await EnsureSupplierAsync(db, new Supplier { SupplierID = "SUP002", SupplierName = "Cong ty Duoc B", PhoneNumber = "0920000002", Address = "Ha Noi" });
 
         await db.SaveChangesAsync();
 
-        db.OrderDetails.Add(new OrderDetail { OrderID = "ORD001", MedicineID = "MED001", Quantity = 2, UnitPrice = 35000 });
-        db.PaymentDetails.Add(new PaymentDetail { PaymentID = "PAY001", MedicineID = "MED001", Quantity = 2, UnitPrice = 25000 });
-        var invoice = new Invoice { CustomerID = "CUS001", Address = "Thanh pho Ho Chi Minh", PaymentMethod = "Cash", Status = "Paid" };
-        db.Invoices.Add(invoice);
+        await EnsureDemoAccountAsync(db, "admin", "admin123", "EMP001", adminRole.RoleID, isStaff: true);
+        await EnsureDemoAccountAsync(db, "sales", "sales123", "EMP002", salesRole.RoleID, isStaff: false);
+        await EnsureDemoAccountAsync(db, "product", "product123", "EMP003", productRole.RoleID, isStaff: false);
+
         await db.SaveChangesAsync();
-        db.InvoiceDetails.Add(new InvoiceDetail { InvoiceID = invoice.InvoiceID, MedicineID = "MED001", Quantity = 1, UnitPrice = 35000 });
+    }
+
+    private static async Task EnsureDemoTransactionsAsync(PharmacyDbContext db)
+    {
+        if (!await db.Orders.AnyAsync(x => x.OrderID == "ORD001"))
+        {
+            db.Orders.Add(new Order { OrderID = "ORD001", EmployeeID = "EMP002", CustomerID = "CUS001", TotalAmount = 70000 });
+            db.OrderDetails.Add(new OrderDetail { OrderID = "ORD001", MedicineID = "MED001", Quantity = 2, UnitPrice = 35000 });
+        }
+
+        if (!await db.Payments.AnyAsync(x => x.PaymentID == "PAY001"))
+        {
+            db.Payments.Add(new Payment { PaymentID = "PAY001", EmployeeID = "EMP003", SupplierID = "SUP001", TotalAmount = 50000, Status = "Paid" });
+            db.PaymentDetails.Add(new PaymentDetail { PaymentID = "PAY001", MedicineID = "MED001", Quantity = 2, UnitPrice = 25000 });
+        }
+
+        if (!await db.Invoices.AnyAsync())
+        {
+            var invoice = new Invoice { CustomerID = "CUS001", Address = "Thanh pho Ho Chi Minh", PaymentMethod = "Cash", Status = "Paid" };
+            db.Invoices.Add(invoice);
+            await db.SaveChangesAsync();
+            db.InvoiceDetails.Add(new InvoiceDetail { InvoiceID = invoice.InvoiceID, MedicineID = "MED001", Quantity = 1, UnitPrice = 35000 });
+        }
+
         await db.SaveChangesAsync();
+    }
+
+    private static async Task<Role> EnsureRoleAsync(PharmacyDbContext db, string roleName)
+    {
+        var role = await db.Roles.FirstOrDefaultAsync(x => x.RoleName == roleName);
+        if (role is not null) return role;
+
+        role = new Role { RoleName = roleName };
+        db.Roles.Add(role);
+        await db.SaveChangesAsync();
+        return role;
+    }
+
+    private static async Task EnsureEmployeeAsync(PharmacyDbContext db, Employee seed)
+    {
+        var employee = await db.Employees.FirstOrDefaultAsync(x => x.EmployeeID == seed.EmployeeID);
+        if (employee is null)
+        {
+            db.Employees.Add(seed);
+            return;
+        }
+
+        employee.FullName = seed.FullName;
+        employee.PhoneNumber = seed.PhoneNumber;
+        employee.Gender = seed.Gender;
+        employee.BirthDate = seed.BirthDate;
+        employee.YearOfBirth = seed.YearOfBirth;
+        employee.HireDate = seed.HireDate;
+    }
+
+    private static async Task EnsureCustomerAsync(PharmacyDbContext db, Customer seed)
+    {
+        var customer = await db.Customers.FirstOrDefaultAsync(x => x.CustomerID == seed.CustomerID);
+        if (customer is null)
+        {
+            db.Customers.Add(seed);
+            return;
+        }
+
+        customer.FullName = seed.FullName;
+        customer.PhoneNumber = seed.PhoneNumber;
+        customer.Gender = seed.Gender;
+    }
+
+    private static async Task EnsureSupplierAsync(PharmacyDbContext db, Supplier seed)
+    {
+        var supplier = await db.Suppliers.FirstOrDefaultAsync(x => x.SupplierID == seed.SupplierID);
+        if (supplier is null)
+        {
+            db.Suppliers.Add(seed);
+            return;
+        }
+
+        supplier.SupplierName = seed.SupplierName;
+        supplier.PhoneNumber = seed.PhoneNumber;
+        supplier.Address = seed.Address;
+    }
+
+    private static async Task EnsureDemoAccountAsync(
+        PharmacyDbContext db,
+        string username,
+        string password,
+        string employeeID,
+        int roleID,
+        bool isStaff)
+    {
+        var account = await db.Accounts.FirstOrDefaultAsync(x => x.Username == username);
+        if (account is null)
+        {
+            db.Accounts.Add(new Account
+            {
+                Username = username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                EmployeeID = employeeID,
+                RoleID = roleID,
+                IsStaff = isStaff,
+                IsActive = true
+            });
+            return;
+        }
+
+        account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+        account.EmployeeID = employeeID;
+        account.RoleID = roleID;
+        account.IsStaff = isStaff;
+        account.IsActive = true;
     }
 
     private static async Task EnsureReferenceDataAsync(PharmacyDbContext db)
