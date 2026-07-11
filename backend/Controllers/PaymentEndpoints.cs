@@ -23,7 +23,7 @@ private static void MapPaymentEndpoints(WebApplication app)
 
     app.MapPost(route, async (Payment payment, PharmacyDbContext db) =>
     {
-        payment.Status = NormalizeStatus(payment.Status);
+        payment.Status = PharmacyRules.NormalizeStatus(payment.Status);
         db.Payments.Add(payment);
         await db.SaveChangesAsync();
         return Results.Created($"{route}{payment.PaymentID}/", await GetPaymentAsync(db, payment.PaymentID));
@@ -37,7 +37,7 @@ private static void MapPaymentEndpoints(WebApplication app)
         payment.EmployeeID = input.EmployeeID;
         payment.SupplierID = input.SupplierID;
         payment.TotalAmount = input.TotalAmount;
-        payment.Status = NormalizeStatus(input.Status);
+        payment.Status = PharmacyRules.NormalizeStatus(input.Status);
         await db.SaveChangesAsync();
         return Results.Ok(await GetPaymentAsync(db, id));
     }).RequireToken().WithTags(tag).WithOpenApi();
@@ -51,7 +51,7 @@ private static void MapPaymentEndpoints(WebApplication app)
         {
             if (jsonProp.NameEquals("status"))
             {
-                payment.Status = NormalizeStatus(jsonProp.Value.GetString());
+                payment.Status = PharmacyRules.NormalizeStatus(jsonProp.Value.GetString());
             }
         }
 

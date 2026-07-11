@@ -1,8 +1,3 @@
-using System.Globalization;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 
 public static partial class PharmacyEndpoints
@@ -46,6 +41,13 @@ public static partial class PharmacyEndpoints
 
         MapCrud<Role, int>(app, "/api/auth/roles/", db => db.Roles, x => x.RoleID, tag: "Authentication");
         MapEmployeeEndpoints(app);
-        MapCrud<Account, int>(app, "/api/auth/accounts/", db => db.Accounts, x => x.AccountID, NormalizeAccount, ValidateAccountAsync, "Authentication");
+        MapCrud<Account, int>(
+            app,
+            "/api/auth/accounts/",
+            db => db.Accounts,
+            x => x.AccountID,
+            EntityValidation.NormalizeAccount,
+            EntityValidation.ValidateAccountAsync,
+            "Authentication");
     }
 }

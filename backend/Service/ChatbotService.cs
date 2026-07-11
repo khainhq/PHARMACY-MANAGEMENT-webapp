@@ -1,12 +1,32 @@
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
 
-public static partial class PharmacyEndpoints
+public sealed class ChatbotService : IChatbotService
 {
+    public async Task<IResult> ReplyAsync(JsonElement body, IWebHostEnvironment environment)
+    {
+        var message = body.TryGetProperty("message", out var messageProperty)
+            ? messageProperty.GetString()?.Trim() ?? ""
+            : "";
+
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return Results.BadRequest(new { reply = "Bạn vui lòng nhập câu hỏi cần hỗ trợ." });
+        }
+
+        var guide = await ReadGuideAsync(environment);
+        var reply = BuildOfflineChatbotReply(message, guide);
+        return Results.Ok(new { reply });
+    }
+
+    private static async Task<string> ReadGuideAsync(IWebHostEnvironment environment)
+    {
+        var guidePath = Path.Combine(environment.ContentRootPath, "Docs", "ChatbotGuide.md");
+        return File.Exists(guidePath) ? await File.ReadAllTextAsync(guidePath) : "";
+    }
+
 private static string BuildOfflineChatbotReply(string message, string guide)
 {
     var normalized = NormalizeVietnameseSearchText(message);

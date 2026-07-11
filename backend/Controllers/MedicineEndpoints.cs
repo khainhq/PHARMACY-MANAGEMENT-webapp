@@ -8,7 +8,13 @@ public static partial class PharmacyEndpoints
         MapCrud<Unit, string>(app, "/api/medicines/units/", db => db.Units, x => x.UnitID, tag: "Medicines");
         MapCrud<Origin, string>(app, "/api/medicines/origins/", db => db.Origins, x => x.OriginID, tag: "Medicines");
         MapCrud<Medicine, string>(app, "/api/medicines/medicines/", db => db.Medicines, x => x.MedicineID, tag: "Medicines");
-        MapCrud<Supplier, string>(app, "/api/medicines/suppliers/", db => db.Suppliers, x => x.SupplierID, validate: ValidateSupplierAsync, tag: "Medicines");
+        MapCrud<Supplier, string>(
+            app,
+            "/api/medicines/suppliers/",
+            db => db.Suppliers,
+            x => x.SupplierID,
+            validate: EntityValidation.ValidateSupplierAsync,
+            tag: "Medicines");
         app.MapPost("/api/medicines/payment-checkout/", async (PaymentCheckoutRequest request, IPurchaseService purchaseService) =>
             await purchaseService.CreatePaymentAsync(request)).RequireToken().WithTags("Payments").WithOpenApi();
         app.MapGet("/api/medicines/payment-statistics/", async (PharmacyDbContext db) =>

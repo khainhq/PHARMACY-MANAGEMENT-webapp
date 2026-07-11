@@ -26,6 +26,7 @@ builder.Services.AddDbContext<PharmacyDbContext>(options =>
 builder.Services.AddSingleton<TokenStore>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+builder.Services.AddScoped<IChatbotService, ChatbotService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

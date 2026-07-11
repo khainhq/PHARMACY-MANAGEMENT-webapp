@@ -23,7 +23,7 @@ private static void MapInvoiceEndpoints(WebApplication app)
 
     app.MapPost(route, async (Invoice invoice, PharmacyDbContext db) =>
     {
-        invoice.Status = NormalizeStatus(invoice.Status);
+        invoice.Status = PharmacyRules.NormalizeStatus(invoice.Status);
         db.Invoices.Add(invoice);
         await db.SaveChangesAsync();
         return Results.Created($"{route}{invoice.InvoiceID}/", await GetInvoiceAsync(db, invoice.InvoiceID));
@@ -37,7 +37,7 @@ private static void MapInvoiceEndpoints(WebApplication app)
         invoice.CustomerID = input.CustomerID;
         invoice.Address = input.Address;
         invoice.PaymentMethod = input.PaymentMethod;
-        invoice.Status = NormalizeStatus(input.Status);
+        invoice.Status = PharmacyRules.NormalizeStatus(input.Status);
         invoice.ReceiptImage = input.ReceiptImage ?? "";
         invoice.ReceiptFileName = input.ReceiptFileName ?? "";
         await db.SaveChangesAsync();
@@ -53,7 +53,7 @@ private static void MapInvoiceEndpoints(WebApplication app)
         {
             if (jsonProp.NameEquals("status"))
             {
-                invoice.Status = NormalizeStatus(jsonProp.Value.GetString());
+                invoice.Status = PharmacyRules.NormalizeStatus(jsonProp.Value.GetString());
             }
             else if (jsonProp.NameEquals("address"))
             {

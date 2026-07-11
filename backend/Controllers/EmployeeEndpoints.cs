@@ -1,8 +1,5 @@
-using System.Globalization;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 
 public static partial class PharmacyEndpoints
@@ -35,7 +32,7 @@ private static void MapEmployeeEndpoints(WebApplication app)
         employee.IsActive = true;
         employee.ResignationDate = null;
 
-        var validationResult = await ValidateEmployeeAsync(employee, db);
+        var validationResult = await EntityValidation.ValidateEmployeeAsync(employee, db);
         if (validationResult is not null) return validationResult;
 
         db.Employees.Add(employee);
@@ -65,7 +62,7 @@ private static void MapEmployeeEndpoints(WebApplication app)
         employee.IsActive = input.IsActive;
         employee.ResignationDate = input.IsActive ? null : input.ResignationDate ?? DateTime.UtcNow.Date;
 
-        var validationResult = await ValidateEmployeeAsync(employee, db);
+        var validationResult = await EntityValidation.ValidateEmployeeAsync(employee, db);
         if (validationResult is not null) return validationResult;
 
         try
@@ -94,7 +91,7 @@ private static void MapEmployeeEndpoints(WebApplication app)
             prop.SetValue(employee, ConvertJson(jsonProp.Value, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType));
         }
 
-        var validationResult = await ValidateEmployeeAsync(employee, db);
+        var validationResult = await EntityValidation.ValidateEmployeeAsync(employee, db);
         if (validationResult is not null) return validationResult;
 
         try
