@@ -140,7 +140,7 @@ describe('Employees component', () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/employees/',
+        '/api/auth/employees/',
         expect.objectContaining({
           fullName: 'Le Thi C',
           phoneNumber: '0912345678',
@@ -206,7 +206,7 @@ describe('Employees component', () => {
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/employees/AB12CDEF/',
+        '/api/auth/employees/AB12CDEF/',
         expect.objectContaining({
           employeeID: 'AB12CDEF',
           fullName: 'Nguyen Van B',
@@ -240,7 +240,7 @@ describe('Employees component', () => {
     await waitFor(() => {
       expect(window.confirm).toHaveBeenCalled();
       expect(axios.delete).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/employees/AB12CDEF/',
+        '/api/auth/employees/AB12CDEF/',
         expect.any(Object)
       );
     });

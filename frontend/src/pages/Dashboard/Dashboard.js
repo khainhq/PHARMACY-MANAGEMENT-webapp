@@ -45,7 +45,7 @@ import {
 import { unitMap } from '../Medicines/MedicinesStyles';
 import { formatVietnamDate, formatVietnamDateTime, getVietnamDateKey, toVietnamDate } from '../../utils/listFilters';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 const REFRESH_INTERVAL_MS = 5000;
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';

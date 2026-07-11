@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { render, screen, fireEvent, act, within, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import Orders from './Orders';
@@ -50,11 +50,11 @@ describe('Orders component', () => {
 
     // Mock API responses with delay to simulate real API
     axios.get.mockImplementation((url) => new Promise(resolve => setTimeout(() => {
-      if (url === 'http://localhost:8000/api/sales/orders/') {
+      if (url === '/api/sales/orders/') {
         resolve({ data: mockOrders });
-      } else if (url === 'http://localhost:8000/api/auth/employees/') {
+      } else if (url === '/api/auth/employees/') {
         resolve({ data: mockEmployees });
-      } else if (url === 'http://localhost:8000/api/sales/customers/') {
+      } else if (url === '/api/sales/customers/') {
         resolve({ data: mockCustomers });
       } else {
         resolve({ data: null });

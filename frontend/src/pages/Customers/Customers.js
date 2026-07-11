@@ -30,7 +30,7 @@ import {
 } from '../../utils/listFilters';
 import { isValidVietnamPhoneNumber, PHONE_FORMAT_ERROR } from '../../utils/validation';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', joinDate: '' };
 
 const genderLabels = {

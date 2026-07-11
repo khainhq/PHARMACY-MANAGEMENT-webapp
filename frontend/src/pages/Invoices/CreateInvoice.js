@@ -71,7 +71,7 @@ import {
   unitMap,
 } from './InvoicesStyles';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 const REQUIRED_FIELD_ERROR = 'Không được để thiếu';
 const PHONE_FIELD_ERROR = 'Vui lòng nhập đúng định dạng số điện thoại.';

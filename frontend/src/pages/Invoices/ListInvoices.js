@@ -26,7 +26,7 @@ import {
 } from './InvoicesStyles';
 import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 const INVOICES_UPDATED_EVENT = 'pharmacare:invoices-updated';
 
 const invoiceStatusLabels = {

@@ -35,7 +35,7 @@ import {
   isValidVietnamPhoneNumber,
 } from '../../utils/validation';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 const emptyForm = { fullName: '', phoneNumber: '', gender: '', birthDate: '', hireDate: '' };
 
 const toDateInputValue = (value) => (value ? String(value).split('T')[0] : '');

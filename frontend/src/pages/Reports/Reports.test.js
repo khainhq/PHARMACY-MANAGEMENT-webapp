@@ -112,13 +112,13 @@ describe('Reports component', () => {
     sessionStorage.setItem('token', 'dummyToken');
 
     axios.get.mockImplementation((url) => {
-      if (url === 'http://127.0.0.1:8000/api/sales/invoices/') {
+      if (url === '/api/sales/invoices/') {
         return Promise.resolve({ data: mockInvoices });
       }
-      if (url === 'http://127.0.0.1:8000/api/sales/invoice-details/') {
+      if (url === '/api/sales/invoice-details/') {
         return Promise.resolve({ data: mockInvoiceDetails });
       }
-      if (url === 'http://127.0.0.1:8000/api/medicines/medicines/') {
+      if (url === '/api/medicines/medicines/') {
         return Promise.resolve({ data: mockMedicines });
       }
       return Promise.resolve({ data: [] });
@@ -176,11 +176,11 @@ describe('Reports component', () => {
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/sales/invoices/',
+        '/api/sales/invoices/',
         expect.any(Object)
       );
       expect(axios.get).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/sales/invoice-details/',
+        '/api/sales/invoice-details/',
         expect.any(Object)
       );
     }, { timeout: 5000 });

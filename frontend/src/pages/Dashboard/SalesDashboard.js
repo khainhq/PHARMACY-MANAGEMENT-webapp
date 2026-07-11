@@ -52,10 +52,10 @@ const SalesDashboard = () => {
 
     try {
       const [invoiceDetailsRes, invoicesRes, customersRes, medicinesRes] = await Promise.all([
-        axios.get('http://localhost:8000/api/sales/invoice-details/', { headers }),
-        axios.get('http://localhost:8000/api/sales/invoices/', { headers }),
-        axios.get('http://localhost:8000/api/sales/customers/', { headers }),
-        axios.get('http://localhost:8000/api/medicines/medicines/', { headers }),
+        axios.get('/api/sales/invoice-details/', { headers }),
+        axios.get('/api/sales/invoices/', { headers }),
+        axios.get('/api/sales/customers/', { headers }),
+        axios.get('/api/medicines/medicines/', { headers }),
       ]);
 
       console.log('API calls completed:', {

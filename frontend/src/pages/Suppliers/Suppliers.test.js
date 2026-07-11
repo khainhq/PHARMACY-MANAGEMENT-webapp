@@ -69,7 +69,7 @@ describe('Suppliers component', () => {
 
     // Mock API responses
     axios.get.mockImplementation((url) => {
-      if (url === 'http://localhost:8000/api/medicines/suppliers/') {
+      if (url === '/api/medicines/suppliers/') {
         console.log('Mock API /api/medicines/suppliers/ called, returning:', mockSuppliers);
         return Promise.resolve({ data: mockSuppliers });
       }
@@ -125,7 +125,7 @@ describe('Suppliers component', () => {
 
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalledWith(
-        'http://localhost:8000/api/medicines/suppliers/',
+        '/api/medicines/suppliers/',
         expect.any(Object)
       );
     }, { timeout: 5000 });
@@ -203,7 +203,7 @@ describe('Suppliers component', () => {
     await waitFor(() => {
       console.log('POST call:', axios.post.mock.calls);
       expect(axios.post).toHaveBeenCalledWith(
-        'http://localhost:8000/api/medicines/suppliers/',
+        '/api/medicines/suppliers/',
         expect.objectContaining({
           supplierName: 'Supplier C',
           phoneNumber: '0934567890',
@@ -263,7 +263,7 @@ describe('Suppliers component', () => {
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith(
-        'http://localhost:8000/api/medicines/suppliers/AB-123456/',
+        '/api/medicines/suppliers/AB-123456/',
         expect.objectContaining({
           supplierName: 'Supplier A Updated',
           phoneNumber: '0123456789',
@@ -295,7 +295,7 @@ describe('Suppliers component', () => {
     await waitFor(() => {
       expect(mockConfirm).toHaveBeenCalledWith('Bạn có chắc chắn muốn xóa nhà cung cấp này?');
       expect(axios.delete).toHaveBeenCalledWith(
-        'http://localhost:8000/api/medicines/suppliers/AB-123456/',
+        '/api/medicines/suppliers/AB-123456/',
         expect.any(Object)
       );
     }, { timeout: 5000 });

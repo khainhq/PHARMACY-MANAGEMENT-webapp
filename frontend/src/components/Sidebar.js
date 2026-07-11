@@ -189,7 +189,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      await axios.post('http://localhost:8000/api/auth/logout/', {}, {
+      await axios.post('/api/auth/logout/', {}, {
         headers: { Authorization: `Token ${token}` },
       });
       sessionStorage.removeItem('token');

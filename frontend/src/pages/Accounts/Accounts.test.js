@@ -42,10 +42,10 @@ describe('Accounts component', () => {
     jest.clearAllMocks();
 
     axios.get.mockImplementation((url) => {
-      if (url === 'http://127.0.0.1:8000/api/auth/employees/') {
+      if (url === '/api/auth/employees/') {
         return Promise.resolve({ data: mockEmployees });
       }
-      if (url === 'http://127.0.0.1:8000/api/auth/accounts/') {
+      if (url === '/api/auth/accounts/') {
         return Promise.resolve({ data: mockAccounts });
       }
       return Promise.reject(new Error(`Unexpected API call: ${url}`));
@@ -135,7 +135,7 @@ describe('Accounts component', () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/accounts/',
+        '/api/auth/accounts/',
         {
           username: 'newuser',
           password: 'password123',
@@ -195,7 +195,7 @@ describe('Accounts component', () => {
 
     await waitFor(() => {
       expect(axios.patch).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/accounts/1/',
+        '/api/auth/accounts/1/',
         {
           username: 'updateduser',
           role: 2,
@@ -220,7 +220,7 @@ describe('Accounts component', () => {
 
     await waitFor(() => {
       expect(axios.delete).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/accounts/1/',
+        '/api/auth/accounts/1/',
         { headers: { Authorization: 'Token dummyToken' } }
       );
     });
@@ -239,7 +239,7 @@ describe('Accounts component', () => {
 
     await waitFor(() => {
       expect(axios.patch).toHaveBeenCalledWith(
-        'http://127.0.0.1:8000/api/auth/accounts/1/',
+        '/api/auth/accounts/1/',
         { is_active: false },
         { headers: { Authorization: 'Token dummyToken' } }
       );

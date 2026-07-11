@@ -6,7 +6,7 @@ import ListInvoices from './ListInvoices';
 jest.mock('axios');
 jest.mock('../../components/Sidebar', () => () => <div>Mocked Sidebar</div>);
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 
 describe('ListInvoices component', () => {
   let mockInvoices;

@@ -20,7 +20,7 @@ import {
 } from './PaymentsStyles';
 import { applyListFilters, formatVietnamDate } from '../../utils/listFilters';
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = '';
 const PAYMENTS_UPDATED_EVENT = 'pharmacare:payments-updated';
 
 const paymentStatusLabels = {

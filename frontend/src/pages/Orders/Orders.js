@@ -36,7 +36,7 @@ const Orders = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/sales/orders/', { headers });
+      const response = await axios.get('/api/sales/orders/', { headers });
       setOrders(response.data);
       setFilteredOrders(response.data);
     } catch (error) {
@@ -50,7 +50,7 @@ const Orders = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/auth/employees/', { headers });
+      const response = await axios.get('/api/auth/employees/', { headers });
       setEmployees(response.data);
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -63,7 +63,7 @@ const Orders = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/sales/customers/', { headers });
+      const response = await axios.get('/api/sales/customers/', { headers });
       setCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -105,7 +105,7 @@ const Orders = () => {
         // Update order
         payload.orderID = editingOrderID;
         await axios.put(
-          `http://localhost:8000/api/sales/orders/${editingOrderID}/`,
+          `/api/sales/orders/${editingOrderID}/`,
           payload,
           { headers }
         );
@@ -113,7 +113,7 @@ const Orders = () => {
       } else {
         // Add new order
         payload.orderID = generateOrderID();
-        await axios.post('http://localhost:8000/api/sales/orders/', payload, { headers });
+        await axios.post('/api/sales/orders/', payload, { headers });
         showSuccess('Thêm đơn hàng thành công.');
       }
 
@@ -145,7 +145,7 @@ const Orders = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.delete(`http://localhost:8000/api/sales/orders/${orderID}/`, { headers });
+      await axios.delete(`/api/sales/orders/${orderID}/`, { headers });
       showSuccess('Xóa đơn hàng thành công.');
       fetchOrders();
     } catch (error) {

@@ -20,7 +20,7 @@ import {
   Select,
 } from './AccountsStyles';
 
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = '';
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);

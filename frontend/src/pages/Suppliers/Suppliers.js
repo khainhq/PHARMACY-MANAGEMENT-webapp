@@ -38,7 +38,7 @@ const Suppliers = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      const response = await axios.get('http://localhost:8000/api/medicines/suppliers/', { headers });
+      const response = await axios.get('/api/medicines/suppliers/', { headers });
       setSuppliers(response.data);
       setFilteredSuppliers(response.data);
     } catch (error) {
@@ -95,7 +95,7 @@ const Suppliers = () => {
     try {
       if (editingSupplierID) {
         await axios.put(
-          `http://localhost:8000/api/medicines/suppliers/${editingSupplierID}/`,
+          `/api/medicines/suppliers/${editingSupplierID}/`,
           { ...trimmedForm, supplierID: editingSupplierID },
           { headers }
         );
@@ -103,7 +103,7 @@ const Suppliers = () => {
       } else {
         const newSupplierID = generateSupplierID();
         await axios.post(
-          'http://localhost:8000/api/medicines/suppliers/',
+          '/api/medicines/suppliers/',
           { ...trimmedForm, supplierID: newSupplierID },
           { headers }
         );
@@ -138,7 +138,7 @@ const Suppliers = () => {
     const headers = { Authorization: `Token ${token}` };
 
     try {
-      await axios.delete(`http://localhost:8000/api/medicines/suppliers/${supplierID}/`, { headers });
+      await axios.delete(`/api/medicines/suppliers/${supplierID}/`, { headers });
       showSuccess('Xóa nhà cung cấp thành công.');
       fetchSuppliers();
     } catch (error) {

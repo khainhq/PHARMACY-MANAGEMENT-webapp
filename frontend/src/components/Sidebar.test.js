@@ -82,7 +82,7 @@ describe('Sidebar component', () => {
 
     await waitFor(() => {
       expect(axios.post).toHaveBeenCalledWith(
-        'http://localhost:8000/api/auth/logout/',
+        '/api/auth/logout/',
         {},
         { headers: { Authorization: 'Token dummyToken' } }
       );

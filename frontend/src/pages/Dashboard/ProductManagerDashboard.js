@@ -62,10 +62,10 @@ const ProductManagerDashboard = () => {
 
     try {
       const [medicinesRes, suppliersRes, paymentsRes, paymentDetailsRes] = await Promise.all([
-        axios.get('http://localhost:8000/api/medicines/medicines/', { headers }),
-        axios.get('http://localhost:8000/api/medicines/suppliers/', { headers }),
-        axios.get('http://localhost:8000/api/medicines/payments/', { headers }),
-        axios.get('http://localhost:8000/api/medicines/payment-details/', { headers }),
+        axios.get('/api/medicines/medicines/', { headers }),
+        axios.get('/api/medicines/suppliers/', { headers }),
+        axios.get('/api/medicines/payments/', { headers }),
+        axios.get('/api/medicines/payment-details/', { headers }),
       ]);
       console.log('API calls completed', {
         medicines: medicinesRes.data,
