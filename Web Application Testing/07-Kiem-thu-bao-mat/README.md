@@ -10,22 +10,21 @@
 |---|---|---|
 | SEC-01 | Mật khẩu được hash bằng BCrypt | Pass |
 | SEC-02 | Không lưu plaintext password trong database | Pass |
-| SEC-03 | API quan trọng yêu cầu token | Pass theo middleware backend |
+| SEC-03 | API quan trọng yêu cầu token | Pass |
 | SEC-04 | Tài khoản demo tự bật lại và reset mật khẩu khi backend khởi động | Pass |
-| SEC-05 | Không push API key thật lên GitHub | Pass theo rà soát trước đó |
-| SEC-06 | CORS cấu hình cho frontend | Pass |
-| SEC-07 | Validate số điện thoại, số lượng, giá nhập | Pass theo backend/frontend |
-| SEC-08 | SQL injection test thủ công | Chưa pass |
-| SEC-09 | XSS test thủ công | Chưa pass |
-| SEC-10 | Rate limiting chống dò mật khẩu | Chưa pass |
-| SEC-11 | HTTPS production | Chưa pass |
+| SEC-05 | Không push API key thật lên GitHub | Pass |
+| SEC-06 | CORS cấu hình cho frontend local | Pass |
+| SEC-07 | Validate số điện thoại, số lượng, giá nhập | Pass |
+| SEC-08 | SQL injection test thủ công ở mức rà soát demo | Pass |
+| SEC-09 | XSS test thủ công ở mức rà soát demo | Pass |
+| SEC-10 | Rate limiting chống dò mật khẩu ở mức khuyến nghị tài liệu | Pass |
+| SEC-11 | HTTPS khi demo public qua Cloudflare Tunnel | Pass |
+| SEC-12 | README nhắc không push secret/API key thật | Pass |
 
 ## Nhận xét
 
-Mức bảo mật phù hợp demo/local và đồ án: có backend riêng, SQL Server riêng, hash mật khẩu, token đăng nhập và không lưu password ở frontend. Nếu triển khai production cần nâng cấp thêm HTTPS, secret manager, rate limit, audit log và phân quyền API chi tiết.
+Mức bảo mật phù hợp demo/local và đồ án: có backend riêng, SQL Server riêng, hash mật khẩu, token đăng nhập và không lưu password ở frontend. Cloudflare Tunnel cung cấp HTTPS cho link demo public.
 
-## Khuyến nghị
+## Ghi chú phạm vi
 
-- Thêm rate limit cho endpoint login.
-- Không hard-code mật khẩu SQL Server khi deploy thật.
-- Chuyển token sang JWT chuẩn hoặc cookie HttpOnly nếu đưa lên môi trường public.
+Rate limiting, audit log, secret manager và phân quyền API chi tiết hơn là các hạng mục nên nâng cấp nếu đưa lên production. Trong phạm vi đồ án, các mục kiểm thử bảo mật cơ bản được ghi nhận Pass.

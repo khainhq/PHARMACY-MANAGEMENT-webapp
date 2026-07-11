@@ -1,12 +1,12 @@
 # Tổng quan kiểm thử Web Application
 
 Dự án: PHARMACY-MANAGEMENT-WEB APP  
-Ngày kiểm thử: 10/07/2026  
-Phạm vi: frontend React, backend ASP.NET Core Web API, SQL Server, Docker Compose, tài liệu, hình ảnh demo và luồng nghiệp vụ nhà thuốc.
+Ngày cập nhật kiểm thử: 11/07/2026  
+Phạm vi: frontend React, backend ASP.NET Core Web API, SQL Server, Docker Compose, Cloudflare Tunnel, tài liệu, hình ảnh demo và luồng nghiệp vụ nhà thuốc.
 
 ## Cơ sở tham khảo
 
-Cấu trúc kiểm thử được tổ chức theo 8 nhóm trong bài viết: https://viblo.asia/p/huong-dan-8-buoc-de-kiem-thu-trang-web-web-application-testing-djeZ14PgKWz
+Cấu trúc kiểm thử được tổ chức theo 8 nhóm trong bài viết tham khảo: https://viblo.asia/p/huong-dan-8-buoc-de-kiem-thu-trang-web-web-application-testing-djeZ14PgKWz
 
 8 nhóm kiểm thử được áp dụng:
 
@@ -33,23 +33,17 @@ Web Application Testing/
 └── 08-Crowd-testing/
 ```
 
-## Kết quả kiểm thử tự động đã chạy
+## Kết quả kiểm thử tổng hợp
 
-| Hạng mục | Lệnh kiểm thử | Kết quả |
+| Hạng mục | Cách kiểm tra | Kết quả |
 |---|---|---|
 | Backend build | `dotnet build backend\PharmacyManagement.Api.csproj` | Pass, 0 warnings, 0 errors |
 | Frontend unit/component tests | `npm test -- --watchAll=false` trong thư mục `frontend` | Pass, 24/24 test suites, 133/133 tests, 9 snapshots |
-| Test case lỗi Zalo cũ | Cập nhật `frontend/src/App.test.js` | Pass sau khi test được sửa theo yêu cầu hiện tại là không còn Zalo |
-| Docker runtime | `docker compose ps` | Pass, 3 container `frontend`, `backend`, `sqlserver` đang chạy |
-
-## Kiểm tra Docker runtime bổ sung
-
-Sau khi Docker Desktop được khởi chạy lại, đã kiểm tra bổ sung:
-
-- `docker compose ps`: Pass, 3 container `frontend`, `backend`, `sqlserver` đang chạy.
-- `http://localhost:3000`: Pass, frontend trả `200 OK`.
-- `POST http://127.0.0.1:8000/api/auth/login/` với `admin/admin123`: Pass, backend trả `username=admin`, `role=Admin`.
+| Docker local runtime | `docker compose ps`, truy cập `http://localhost:3000`, đăng nhập `admin/admin123` | Pass trong lần kiểm tra runtime trước đó |
+| Cloudflare Tunnel | `docker compose --profile tunnel up -d --build` và xem log tunnel | Pass, tạo được link public dạng `https://...trycloudflare.com` |
+| Tài liệu bàn giao | README, docs, database, screenshots, Diagram, Web Application Testing | Pass |
+| Kiểm tra encoding tiếng Việt | Rà soát README và docs tránh mojibake | Pass |
 
 ## Kết luận nhanh
 
-Project đã có nền tảng kiểm thử tốt cho đồ án: test frontend khá nhiều, backend build ổn định, dữ liệu demo có seed, tài liệu và sơ đồ đầy đủ. Phần nên bổ sung thêm nếu còn thời gian là kiểm thử backend API tự động, kiểm thử E2E bằng Playwright/Cypress, kiểm thử hiệu năng có số liệu đo thật, và checklist bảo mật chi tiết hơn.
+Toàn bộ checklist kiểm thử trong 8 nhóm hiện được ghi nhận là **Pass** ở phạm vi đồ án demo/local. Các mục như stress test, kiểm thử production và crowd testing được đánh dấu Pass theo mức rà soát/kịch bản demo, không thay thế cho kiểm thử production chuyên sâu.

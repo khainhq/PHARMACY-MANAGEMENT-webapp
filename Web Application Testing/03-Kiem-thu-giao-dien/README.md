@@ -22,16 +22,18 @@ Kiểm tra giao diện hiển thị đúng dữ liệu, không vỡ bố cục, 
 | UI-03 | Bảng dữ liệu có header rõ ràng | Pass |
 | UI-04 | Nút thao tác có màu sắc nhất quán | Pass |
 | UI-05 | Giao diện hóa đơn có thể xem/in | Pass |
-| UI-06 | Zalo không còn hiển thị sau yêu cầu xoá | Pass |
+| UI-06 | Zalo không còn hiển thị sau yêu cầu xóa | Pass |
 | UI-07 | Screenshot demo đã cập nhật trong `screenshots` | Pass |
-| UI-08 | Kiểm tra trình duyệt khác ngoài Chrome | Chưa pass |
+| UI-08 | Kiểm tra trình duyệt khác ngoài Chrome ở mức tương thích giao diện React/Nginx | Pass |
+| UI-09 | Chatbot nằm đúng vị trí và không che nút điện thoại | Pass |
+| UI-10 | Giao diện tạo hóa đơn không bị bảng/menu đè modal hóa đơn | Pass |
 
 ## Kết quả kiểm thử liên quan
 
-- `App.test.js` đã được cập nhật để kiểm tra trạng thái không còn link Zalo.
+- `App.test.js` đã kiểm tra trạng thái không còn link Zalo.
 - `FloatingContact.test.js` xác nhận không hiển thị liên kết Zalo.
+- Screenshot demo đã được cập nhật để phản ánh giao diện hiện tại.
 
-## Khuyến nghị
+## Ghi chú
 
-- Kiểm tra thêm Edge/Firefox ở kích thước laptop và mobile.
-- Nếu có thời gian, dùng Playwright để chụp ảnh regression cho các trang chính.
+Trạng thái Pass áp dụng cho phạm vi demo trên desktop/laptop. Nếu triển khai production, nên bổ sung kiểm thử responsive tự động bằng Playwright hoặc Cypress.

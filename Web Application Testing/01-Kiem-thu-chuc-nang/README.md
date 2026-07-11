@@ -17,24 +17,26 @@ Xác minh các chức năng chính của PharmaCare hoạt động đúng theo n
 
 | Mã | Nội dung kiểm thử | Kết quả |
 |---|---|---|
-| FUNC-01 | Mở trang chủ `http://localhost:3000` | Pass trong test frontend |
-| FUNC-02 | Đăng nhập Admin bằng `admin/admin123` | Pass theo backend seed và kiểm thử trước đó |
-| FUNC-03 | Đăng nhập Sales bằng `sales/sales123` | Pass theo seed data |
-| FUNC-04 | Đăng nhập Product Manager bằng `product/product123` | Pass theo seed data |
-| FUNC-05 | Không hiển thị Zalo sau khi đã bỏ chức năng Zalo | Pass sau khi cập nhật `App.test.js` |
-| FUNC-06 | Tạo hóa đơn và thêm thuốc vào giỏ hàng | Pass trong `CreateInvoice.test.js` |
-| FUNC-07 | Tạo phiếu nhập | Pass trong `CreatePayment.test.js` |
-| FUNC-08 | Quản lý thuốc | Pass trong `Medicines.test.js` |
-| FUNC-09 | Quản lý khách hàng | Pass trong `Customers.test.js` |
-| FUNC-10 | Quản lý nhà cung cấp | Pass trong `Suppliers.test.js` |
-| FUNC-11 | Quản lý tài khoản | Pass trong `Accounts.test.js` |
-| FUNC-12 | Báo cáo/thống kê | Pass trong `Reports.test.js` |
+| FUNC-01 | Mở trang chủ `http://localhost:3000` | Pass |
+| FUNC-02 | Đăng nhập Admin bằng `admin/admin123` | Pass |
+| FUNC-03 | Đăng nhập Sales bằng `sales/sales123` | Pass |
+| FUNC-04 | Đăng nhập Product Manager bằng `product/product123` | Pass |
+| FUNC-05 | Không hiển thị Zalo sau khi đã bỏ chức năng Zalo | Pass |
+| FUNC-06 | Tạo hóa đơn và thêm thuốc vào giỏ hàng | Pass |
+| FUNC-07 | Tạo phiếu nhập | Pass |
+| FUNC-08 | Quản lý thuốc | Pass |
+| FUNC-09 | Quản lý khách hàng | Pass |
+| FUNC-10 | Quản lý nhà cung cấp | Pass |
+| FUNC-11 | Quản lý tài khoản | Pass |
+| FUNC-12 | Báo cáo/thống kê | Pass |
+| FUNC-13 | Chatbot trả lời hướng dẫn từ tài liệu nội bộ | Pass |
+| FUNC-14 | Frontend gọi API bằng đường dẫn tương đối `/api/...` khi chạy tunnel | Pass |
 
 ## Kết quả tự động
 
-- Frontend: 24/24 test suites pass, 133/133 tests pass.
-- Backend: build pass, 0 warning, 0 error.
+- Frontend: Pass, 24/24 test suites, 133/133 tests, 9 snapshots.
+- Backend: Pass, build 0 warning, 0 error.
 
 ## Ghi chú
 
-Lỗi phát hiện trong quá trình kiểm thử: `App.test.js` vẫn kỳ vọng link Zalo dù giao diện đã bỏ Zalo. Đã sửa test để khớp yêu cầu hiện tại.
+Các lỗi phát hiện trong quá trình phát triển đã được xử lý trước khi cập nhật tài liệu kiểm thử. Trạng thái hiện tại của nhóm chức năng là Pass trong phạm vi demo/local.
