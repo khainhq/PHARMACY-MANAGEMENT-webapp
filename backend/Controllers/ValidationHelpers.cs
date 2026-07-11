@@ -1,21 +1,10 @@
-using System.Globalization;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 
 public static partial class PharmacyEndpoints
 {
-private static string NormalizeStatus(string? status) =>
-    string.Equals(status, "Paid", StringComparison.OrdinalIgnoreCase) ||
-    string.Equals(status, "Đã thanh toán", StringComparison.OrdinalIgnoreCase)
-        ? "Paid"
-        : "Pending";
+private static string NormalizeStatus(string? status) => PharmacyRules.NormalizeStatus(status);
 
-private static bool IsValidPhoneNumber(string? phoneNumber) =>
-    !string.IsNullOrWhiteSpace(phoneNumber) &&
-    Regex.IsMatch(phoneNumber.Trim(), @"^(0\d{9}|\+\d{7,15})$", RegexOptions.CultureInvariant);
+private static bool IsValidPhoneNumber(string? phoneNumber) => PharmacyRules.IsValidPhoneNumber(phoneNumber);
 
 private static Task<IResult?> ValidateSupplierAsync(Supplier supplier, PharmacyDbContext db)
 {
@@ -129,33 +118,9 @@ private static async Task<IResult?> ValidateAccountAsync(Account account, Pharma
     return null;
 }
 
-private static async Task<string> GenerateCustomerIdAsync(PharmacyDbContext db)
-{
-    var next = await db.Customers.CountAsync() + 1;
-    string id;
-    do
-    {
-        id = $"CUS{next:000}";
-        next++;
-    }
-    while (await db.Customers.AnyAsync(x => x.CustomerID == id));
+private static Task<string> GenerateCustomerIdAsync(PharmacyDbContext db) => PharmacyRules.GenerateCustomerIdAsync(db);
 
-    return id;
-}
-
-private static async Task<string> GeneratePaymentIdAsync(PharmacyDbContext db)
-{
-    var next = await db.Payments.CountAsync() + 1;
-    string id;
-    do
-    {
-        id = $"PAY{next:000}";
-        next++;
-    }
-    while (await db.Payments.AnyAsync(x => x.PaymentID == id));
-
-    return id;
-}
+private static Task<string> GeneratePaymentIdAsync(PharmacyDbContext db) => PharmacyRules.GeneratePaymentIdAsync(db);
 
 private static void NormalizeAccount(Account account)
 {
