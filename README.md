@@ -156,11 +156,22 @@ Luồng chính:
 ```text
 PHARMACY-MANAGEMENT-webapp/
 ├── backend/                 # ASP.NET Core Web API
+│   ├── Controllers/         # Nhóm endpoint API theo nghiệp vụ
+│   ├── Data/                # DbContext và khởi tạo database
+│   ├── Dtos/                # Request/response DTO dùng cho API
+│   ├── Extensions/          # Extension methods cho endpoint/middleware
+│   ├── Middleware/          # Middleware xác thực token
+│   ├── Models/              # Entity model ánh xạ database
+│   ├── Security/            # Token store và session đăng nhập
+│   ├── Helpers/             # Vị trí mở rộng helper nghiệp vụ
+│   ├── Interfaces/          # Vị trí mở rộng interface service/repository
+│   ├── Mappers/             # Vị trí mở rộng mapper entity/DTO
+│   ├── Repository/          # Vị trí mở rộng repository pattern
 │   ├── Migrations/          # EF Core migrations
 │   ├── SeedData/            # Dữ liệu mẫu dùng khi seed database
 │   ├── Docs/                # Tài liệu nội bộ cho chatbot
 │   ├── DataSeeder.cs        # Tạo dữ liệu demo và tài khoản demo
-│   ├── Program.cs           # API endpoints và cấu hình backend
+│   ├── Program.cs           # Cấu hình app, DI, Swagger, middleware
 │   └── Dockerfile
 ├── frontend/                # React frontend
 │   ├── public/images/       # Logo, hero images, ảnh thuốc, assets
@@ -314,6 +325,12 @@ Khi backend đang chạy, mở Swagger tại:
 
 ```text
 http://127.0.0.1:8000/swagger
+```
+
+Swagger đã được cấu hình tiêu đề, mô tả API, thông tin liên hệ và cơ chế nhập token theo header:
+
+```http
+Authorization: Token <token>
 ```
 
 ## Biến môi trường
