@@ -1,358 +1,150 @@
-# 📌 **Tài liệu API - Ứng dụng Medicines**
+﻿# Tài liệu API thuốc, nhà cung cấp và phiếu nhập
 
-## 1️⃣ **Xác thực và bảo mật**
+Base URL local:
 
-Tất cả API yêu cầu **đăng nhập trước** và **phải có quyền Product Manager**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
-
-```http
-Authorization: Bearer <access_token>
+```text
+http://127.0.0.1:8000
 ```
 
-## 2️⃣ **Lập hóa đơn phiếu thu**
+Base URL qua Cloudflare Tunnel:
 
-### Tạo hóa đơn phiếu thu
+```text
+https://ten-ngau-nhien.trycloudflare.com
+```
 
-- **Endpoint**: `/api/medicines/payments/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "employee": 1,
-      "supplier": 1
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "paymentID": 1,
-      "paymentTime": "2025-03-10T15:52:00Z",
-      "employee": 1,
-      "supplier": 1
-  }
-  ```
-
-## 3️⃣ **Tìm kiếm, quản lý thuốc**
-
-### Lấy danh sách thuốc
-
-- **Endpoint**: `/api/medicines/medicines/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "medicineID": 1,
-          "medicineName": "Paracetamol",
-          "image": "http://example.com/media/medicines/paracetamol.jpg",
-          "ingredients": "Paracetamol 500mg",
-          "unit": 1,
-          "catalog": 1,
-          "origin": 1,
-          "stockQuantity": 100,
-          "importPrice": "5000.00",
-          "unitPrice": "10000.00"
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một thuốc
-
-- **Endpoint**: `/api/medicines/medicines/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "medicineID": 1,
-      "medicineName": "Paracetamol",
-      "image": "http://example.com/media/medicines/paracetamol.jpg",
-      "ingredients": "Paracetamol 500mg",
-      "unit": 1,
-      "catalog": 1,
-      "origin": 1,
-      "stockQuantity": 100,
-      "importPrice": "5000.00",
-      "unitPrice": "10000.00"
-  }
-  ```
-
-### Thêm mới một thuốc
-
-- **Endpoint**: `/api/medicines/medicines/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "medicineName": "Ibuprofen",
-      "ingredients": "Ibuprofen 200mg",
-      "unit": 1,
-      "catalog": 1,
-      "origin": 1,
-      "stockQuantity": 50,
-      "importPrice": "3000.00",
-      "unitPrice": "6000.00"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "medicineID": 2,
-      "medicineName": "Ibuprofen",
-      "ingredients": "Ibuprofen 200mg",
-      "unit": 1,
-      "catalog": 1,
-      "origin": 1,
-      "stockQuantity": 50,
-      "importPrice": "3000.00",
-      "unitPrice": "6000.00"
-  }
-  ```
-
-### Cập nhật thông tin thuốc
-
-- **Endpoint**: `/api/medicines/medicines/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "medicineName": "Ibuprofen",
-      "ingredients": "Ibuprofen 400mg",
-      "unit": 1,
-      "catalog": 1,
-      "origin": 1,
-      "stockQuantity": 75,
-      "importPrice": "3500.00",
-      "unitPrice": "7000.00"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "medicineID": 2,
-      "medicineName": "Ibuprofen",
-      "ingredients": "Ibuprofen 400mg",
-      "unit": 1,
-      "catalog": 1,
-      "origin": 1,
-      "stockQuantity": 75,
-      "importPrice": "3500.00",
-      "unitPrice": "7000.00"
-  }
-  ```
-
-### Xóa thuốc
-
-- **Endpoint**: `/api/medicines/medicines/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa thuốc thành công"
-  }
-  ```
-
-## 4️⃣ **Tìm kiếm, quản lý nhà cung cấp**
-
-### Lấy danh sách nhà cung cấp
-
-- **Endpoint**: `/api/medicines/suppliers/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "supplierID": 1,
-          "supplierName": "ABC Pharma",
-          "phoneNumber": "0123456789",
-          "address": "123 Main St"
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một nhà cung cấp
-
-- **Endpoint**: `/api/medicines/suppliers/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "supplierID": 1,
-      "supplierName": "ABC Pharma",
-      "phoneNumber": "0123456789",
-      "address": "123 Main St"
-  }
-  ```
-
-### Thêm mới một nhà cung cấp
-
-- **Endpoint**: `/api/medicines/suppliers/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "supplierName": "XYZ Pharma",
-      "phoneNumber": "0987654321",
-      "address": "456 Elm St"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "supplierID": 2,
-      "supplierName": "XYZ Pharma",
-      "phoneNumber": "0987654321",
-      "address": "456 Elm St"
-  }
-  ```
-
-### Cập nhật thông tin nhà cung cấp
-
-- **Endpoint**: `/api/medicines/suppliers/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "supplierName": "XYZ Pharma",
-      "phoneNumber": "0987654321",
-      "address": "789 Oak St"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "supplierID": 2,
-      "supplierName": "XYZ Pharma",
-      "phoneNumber": "0987654321",
-      "address": "789 Oak St"
-  }
-  ```
-
-### Xóa nhà cung cấp
-
-- **Endpoint**: `/api/medicines/suppliers/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa nhà cung cấp thành công"
-  }
-  ```
-
-## 5️⃣ **Tìm kiếm, quản lý phiếu thu**
-
-### Lấy danh sách phiếu thu
-
-- **Endpoint**: `/api/medicines/payment-details/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "id": 1,
-          "payment": 1,
-          "medicine": 1,
-          "quantity": 100,
-          "unitPrice": "5000.00"
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một phiếu thu
-
-- **Endpoint**: `/api/medicines/payment-details/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "id": 1,
-      "payment": 1,
-      "medicine": 1,
-      "quantity": 100,
-      "unitPrice": "5000.00"
-  }
-  ```
-
-### Thêm mới một phiếu thu
-
-- **Endpoint**: `/api/medicines/payment-details/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "payment": 1,
-      "medicine": 2,
-      "quantity": 50,
-      "unitPrice": "3000.00"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "id": 2,
-      "payment": 1,
-      "medicine": 2,
-      "quantity": 50,
-      "unitPrice": "3000.00"
-  }
-  ```
-
-### Cập nhật thông tin phiếu thu
-
-- **Endpoint**: `/api/medicines/payment-details/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "payment": 1,
-      "medicine": 2,
-      "quantity": 75,
-      "unitPrice": "3500.00"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "id": 2,
-      "payment": 1,
-      "medicine": 2,
-      "quantity": 75,
-      "unitPrice": "3500.00"
-  }
-  ```
-
-### Xóa phiếu thu
-
-- **Endpoint**: `/api/medicines/payment-details/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa phiếu thu thành công"
-  }
-  ```
-
-## 6️⃣ **Xem thống kê phiếu thu**
-
-### Lấy thống kê số lượng phiếu thu và tổng chi phí
-
-- **Endpoint**: `/api/medicines/statistics/payments/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "payment_count": 10,
-      "total_payment": 500000
-  }
-  ```
-
----
-
-## 🔑 **Xác thực và bảo mật**
-
-Tất cả API trên yêu cầu **đăng nhập trước** và **phải có quyền Product Manager**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
+Với các API yêu cầu đăng nhập, gửi token:
 
 ```http
-Authorization: Bearer <access_token>
+Authorization: Token <token>
 ```
+
+## 1. Nhóm thuốc
+
+```http
+GET    /api/medicines/catalogs/
+GET    /api/medicines/catalogs/{id}/
+POST   /api/medicines/catalogs/
+PUT    /api/medicines/catalogs/{id}/
+PATCH  /api/medicines/catalogs/{id}/
+DELETE /api/medicines/catalogs/{id}/
+```
+
+Dùng để quản lý nhóm/danh mục thuốc.
+
+## 2. Đơn vị tính
+
+```http
+GET    /api/medicines/units/
+GET    /api/medicines/units/{id}/
+POST   /api/medicines/units/
+PUT    /api/medicines/units/{id}/
+PATCH  /api/medicines/units/{id}/
+DELETE /api/medicines/units/{id}/
+```
+
+Ví dụ đơn vị: `Hộp`, `Viên`, `Tuýp`, `Chai`.
+
+## 3. Xuất xứ
+
+```http
+GET    /api/medicines/origins/
+GET    /api/medicines/origins/{id}/
+POST   /api/medicines/origins/
+PUT    /api/medicines/origins/{id}/
+PATCH  /api/medicines/origins/{id}/
+DELETE /api/medicines/origins/{id}/
+```
+
+## 4. Thuốc
+
+```http
+GET    /api/medicines/medicines/
+GET    /api/medicines/medicines/{id}/
+POST   /api/medicines/medicines/
+PUT    /api/medicines/medicines/{id}/
+PATCH  /api/medicines/medicines/{id}/
+DELETE /api/medicines/medicines/{id}/
+```
+
+Body thuốc mẫu:
+
+```json
+{
+  "medicineID": "MED001",
+  "medicineName": "Panadol Extra",
+  "ingredients": "Paracetamol, caffeine",
+  "unit": "Hộp",
+  "stockQuantity": 100,
+  "price": 35000,
+  "catalog": "Thuốc giảm đau",
+  "origin": "Việt Nam",
+  "imageUrl": "/images/medicines/panadol-extra.png"
+}
+```
+
+## 5. Nhà cung cấp
+
+```http
+GET    /api/medicines/suppliers/
+GET    /api/medicines/suppliers/{id}/
+POST   /api/medicines/suppliers/
+PUT    /api/medicines/suppliers/{id}/
+PATCH  /api/medicines/suppliers/{id}/
+DELETE /api/medicines/suppliers/{id}/
+```
+
+Body nhà cung cấp mẫu:
+
+```json
+{
+  "supplierID": "SUP001",
+  "supplierName": "Cong ty Duoc A",
+  "phoneNumber": "0900000000",
+  "address": "Thanh pho Ho Chi Minh"
+}
+```
+
+## 6. Phiếu nhập
+
+```http
+GET    /api/medicines/payments/
+GET    /api/medicines/payments/{id}/
+POST   /api/medicines/payments/
+PUT    /api/medicines/payments/{id}/
+PATCH  /api/medicines/payments/{id}/
+DELETE /api/medicines/payments/{id}/
+```
+
+## 7. Chi tiết phiếu nhập
+
+```http
+GET    /api/medicines/payment-details/
+GET    /api/medicines/payment-details/{id}/
+POST   /api/medicines/payment-details/
+PUT    /api/medicines/payment-details/{id}/
+PATCH  /api/medicines/payment-details/{id}/
+DELETE /api/medicines/payment-details/{id}/
+```
+
+## 8. Tạo phiếu nhập và cộng tồn kho
+
+```http
+POST /api/medicines/payment-checkout/
+```
+
+Endpoint này dùng cho màn hình tạo phiếu nhập. Backend sẽ tạo phiếu nhập, tạo chi tiết phiếu nhập và cộng số lượng thuốc vào tồn kho.
+
+## 9. Thống kê phiếu nhập
+
+```http
+GET /api/medicines/payment-statistics/
+```
+
+Dùng cho dashboard/báo cáo nhập hàng.
+
+## 10. Lưu ý nghiệp vụ
+
+- Không nhập số lượng âm hoặc đơn giá âm.
+- Khi tạo phiếu nhập thành công, tồn kho thuốc được cập nhật tự động.
+- Dữ liệu thuốc demo được seed từ `backend/SeedData/medicine-products.json`.
+- Hình ảnh thuốc được lưu trong frontend assets, không phụ thuộc link ngoài.

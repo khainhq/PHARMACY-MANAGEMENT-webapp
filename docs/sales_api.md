@@ -1,327 +1,141 @@
-# 📌 **Tài liệu API - Ứng dụng Sales**
+﻿# Tài liệu API bán hàng, khách hàng và hóa đơn
 
-## 1️⃣ **Xác thực và bảo mật**
+Base URL local:
 
-Tất cả API yêu cầu **đăng nhập trước** và **phải có quyền Sales**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
-
-```http
-Authorization: Bearer <access_token>
+```text
+http://127.0.0.1:8000
 ```
 
-## 2️⃣ **Lập hóa đơn bán hàng**
+Base URL qua Cloudflare Tunnel:
 
-### Tạo hóa đơn bán hàng
+```text
+https://ten-ngau-nhien.trycloudflare.com
+```
 
-- **Endpoint**: `/api/sales/invoices/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "customer": 1,
-      "address": "123 Main St",
-      "paymentMethod": "Cash",
-      "status": "Paid"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "invoiceID": 1,
-      "invoiceTime": "2025-03-10T15:52:00Z",
-      "customer": 1,
-      "address": "123 Main St",
-      "paymentMethod": "Cash",
-      "status": "Paid"
-  }
-  ```
-
-## 3️⃣ **Tìm kiếm, quản lý hóa đơn**
-
-### Lấy danh sách hóa đơn
-
-- **Endpoint**: `/api/sales/invoices/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "invoiceID": 1,
-          "invoiceTime": "2025-03-10T15:52:00Z",
-          "customer": 1,
-          "address": "123 Main St",
-          "paymentMethod": "Cash",
-          "status": "Paid"
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một hóa đơn
-
-- **Endpoint**: `/api/sales/invoices/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "invoiceID": 1,
-      "invoiceTime": "2025-03-10T15:52:00Z",
-      "customer": 1,
-      "address": "123 Main St",
-      "paymentMethod": "Cash",
-      "status": "Paid"
-  }
-  ```
-
-### Cập nhật thông tin hóa đơn
-
-- **Endpoint**: `/api/sales/invoices/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "address": "456 Elm St",
-      "paymentMethod": "Card",
-      "status": "Pending"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "invoiceID": 1,
-      "invoiceTime": "2025-03-10T15:52:00Z",
-      "customer": 1,
-      "address": "456 Elm St",
-      "paymentMethod": "Card",
-      "status": "Pending"
-  }
-  ```
-
-### Xóa hóa đơn
-
-- **Endpoint**: `/api/sales/invoices/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa hóa đơn thành công"
-  }
-  ```
-
-## 4️⃣ **Tìm kiếm, quản lý khách hàng**
-
-### Lấy danh sách khách hàng
-
-- **Endpoint**: `/api/sales/customers/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "customerID": 1,
-          "fullName": "Nguyen Van A",
-          "phoneNumber": "0123456789",
-          "gender": "Male",
-          "joinDate": "2025-01-01"
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một khách hàng
-
-- **Endpoint**: `/api/sales/customers/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "customerID": 1,
-      "fullName": "Nguyen Van A",
-      "phoneNumber": "0123456789",
-      "gender": "Male",
-      "joinDate": "2025-01-01"
-  }
-  ```
-
-### Thêm mới một khách hàng
-
-- **Endpoint**: `/api/sales/customers/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "fullName": "Nguyen Van B",
-      "phoneNumber": "0987654321",
-      "gender": "Female"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "customerID": 2,
-      "fullName": "Nguyen Van B",
-      "phoneNumber": "0987654321",
-      "gender": "Female",
-      "joinDate": "2025-02-01"
-  }
-  ```
-
-### Cập nhật thông tin khách hàng
-
-- **Endpoint**: `/api/sales/customers/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "fullName": "Nguyen Van C",
-      "phoneNumber": "0123456789",
-      "gender": "Male"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "customerID": 1,
-      "fullName": "Nguyen Van C",
-      "phoneNumber": "0123456789",
-      "gender": "Male",
-      "joinDate": "2025-01-01"
-  }
-  ```
-
-### Xóa khách hàng
-
-- **Endpoint**: `/api/sales/customers/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa khách hàng thành công"
-  }
-  ```
-
-## 5️⃣ **Tìm kiếm, quản lý đơn đặt hàng**
-
-### Lấy danh sách đơn đặt hàng
-
-- **Endpoint**: `/api/sales/orders/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "orderID": 1,
-          "orderTime": "2025-03-10T15:52:00Z",
-          "employee": 1,
-          "customer": 1
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một đơn đặt hàng
-
-- **Endpoint**: `/api/sales/orders/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "orderID": 1,
-      "orderTime": "2025-03-10T15:52:00Z",
-      "employee": 1,
-      "customer": 1
-  }
-  ```
-
-### Thêm mới một đơn đặt hàng
-
-- **Endpoint**: `/api/sales/orders/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "employee": 1,
-      "customer": 1
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "orderID": 2,
-      "orderTime": "2025-03-11T10:00:00Z",
-      "employee": 1,
-      "customer": 1
-  }
-  ```
-
-### Cập nhật thông tin đơn đặt hàng
-
-- **Endpoint**: `/api/sales/orders/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "employee": 2,
-      "customer": 2
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "orderID": 1,
-      "orderTime": "2025-03-10T15:52:00Z",
-      "employee": 2,
-      "customer": 2
-  }
-  ```
-
-### Xóa đơn đặt hàng
-
-- **Endpoint**: `/api/sales/orders/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa đơn đặt hàng thành công"
-  }
-  ```
-
-## 6️⃣ **Xem thống kê khách hàng**
-
-### Lấy thống kê số lượng khách hàng
-
-- **Endpoint**: `/api/sales/statistics/customers/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "customer": "Nguyen Van A",
-          "total_orders": 5
-      },
-      ...
-  ]
-  ```
-
-## 7️⃣ **Xem thống kê hóa đơn**
-
-### Lấy thống kê số lượng hóa đơn và tổng doanh thu
-
-- **Endpoint**: `/api/sales/statistics/invoices/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "invoice_count": 10,
-      "total_revenue": 1000000
-  }
-  ```
-
----
-
-## 🔑 **Xác thực và bảo mật**
-
-Tất cả API trên yêu cầu **đăng nhập trước** và **phải có quyền Sales**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
+Với các API yêu cầu đăng nhập, gửi token:
 
 ```http
-Authorization: Bearer <access_token>
+Authorization: Token <token>
 ```
+
+## 1. Khách hàng
+
+```http
+GET    /api/sales/customers/
+GET    /api/sales/customers/{id}/
+POST   /api/sales/customers/
+PUT    /api/sales/customers/{id}/
+PATCH  /api/sales/customers/{id}/
+DELETE /api/sales/customers/{id}/
+```
+
+Body khách hàng mẫu:
+
+```json
+{
+  "customerID": "CUS001",
+  "customerName": "Nguyen Van A",
+  "phoneNumber": "0816151762",
+  "gender": "Nam",
+  "address": "Thanh pho Ho Chi Minh"
+}
+```
+
+## 2. Đơn đặt hàng
+
+```http
+GET    /api/sales/orders/
+GET    /api/sales/orders/{id}/
+POST   /api/sales/orders/
+PUT    /api/sales/orders/{id}/
+PATCH  /api/sales/orders/{id}/
+DELETE /api/sales/orders/{id}/
+```
+
+## 3. Chi tiết đơn đặt hàng
+
+```http
+GET    /api/sales/order-details/
+GET    /api/sales/order-details/{id}/
+POST   /api/sales/order-details/
+PUT    /api/sales/order-details/{id}/
+PATCH  /api/sales/order-details/{id}/
+DELETE /api/sales/order-details/{id}/
+```
+
+## 4. Hóa đơn
+
+```http
+GET    /api/sales/invoices/
+GET    /api/sales/invoices/{id}/
+POST   /api/sales/invoices/
+PUT    /api/sales/invoices/{id}/
+PATCH  /api/sales/invoices/{id}/
+DELETE /api/sales/invoices/{id}/
+```
+
+Hóa đơn lưu thông tin khách hàng, thời gian lập hóa đơn, trạng thái thanh toán, phương thức thanh toán và tổng tiền.
+
+## 5. Chi tiết hóa đơn
+
+```http
+GET    /api/sales/invoice-details/
+GET    /api/sales/invoice-details/{id}/
+POST   /api/sales/invoice-details/
+PUT    /api/sales/invoice-details/{id}/
+PATCH  /api/sales/invoice-details/{id}/
+DELETE /api/sales/invoice-details/{id}/
+```
+
+Chi tiết hóa đơn lưu thuốc, số lượng, đơn giá và thành tiền.
+
+## 6. Tạo hóa đơn và trừ tồn kho
+
+```http
+POST /api/sales/checkout/
+```
+
+Endpoint này dùng cho màn hình tạo hóa đơn. Backend sẽ:
+
+1. Kiểm tra giỏ hàng.
+2. Kiểm tra tồn kho.
+3. Tạo hóa đơn.
+4. Tạo chi tiết hóa đơn.
+5. Trừ số lượng thuốc trong kho.
+6. Trả thông tin hóa đơn để frontend hiển thị hoặc in.
+
+Body checkout mẫu:
+
+```json
+{
+  "customerName": "Nguyen Van A",
+  "phoneNumber": "0816151762",
+  "gender": "Nam",
+  "address": "Thanh pho Ho Chi Minh",
+  "paymentMethod": "Tiền mặt",
+  "status": "Đã thanh toán",
+  "items": [
+    {
+      "medicineID": "MED001",
+      "quantity": 2,
+      "unitPrice": 35000
+    }
+  ]
+}
+```
+
+## 7. Thống kê hóa đơn
+
+```http
+GET /api/sales/invoice-statistics/
+```
+
+Dùng cho màn hình báo cáo doanh thu và dashboard.
+
+## 8. Lưu ý nghiệp vụ
+
+- Không cho phép tạo hóa đơn khi giỏ hàng trống.
+- Không cho phép bán vượt tồn kho.
+- Khi tạo hóa đơn thành công, tồn kho thuốc được trừ tự động.
+- Hóa đơn có thể xem trước và in từ giao diện frontend.
+- Nếu dữ liệu demo cần làm mới, chạy `docker compose down -v` rồi chạy lại `docker compose up -d --build`.

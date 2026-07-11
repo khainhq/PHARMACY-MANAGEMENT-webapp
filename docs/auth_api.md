@@ -1,287 +1,154 @@
-# 📌 **Tài liệu API - Ứng dụng Authentication**
+﻿# Tài liệu API xác thực và tài khoản
 
-## 1️⃣ **Xác thực và bảo mật**
+Base URL khi chạy local:
 
-Tất cả API yêu cầu **đăng nhập trước** và **phải có quyền Admin**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
-
-```http
-Authorization: Bearer <access_token>
+```text
+http://127.0.0.1:8000
 ```
 
-```http
-Nếu test bằng postman Authorization: Token <access_token>
+Base URL khi chạy Cloudflare Tunnel:
+
+```text
+https://ten-ngau-nhien.trycloudflare.com
 ```
 
-## 2️⃣ **Đăng nhập và Đăng xuất**
-
-### Đăng nhập
-
-- **Endpoint**: `/api/auth/login/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "username": "admin",
-      "password": "password123"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "token": "your_jwt_token",
-      "username": "admin",
-      "role": "Admin"
-  }
-  ```
-
-### Đăng xuất
-
-- **Endpoint**: `/api/auth/logout/`
-- **Phương thức**: `POST`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Đăng xuất thành công"
-  }
-  ```
-
-## 3️⃣ **Quản lý Nhân viên**
-
-### Lấy danh sách tất cả nhân viên
-
-- **Endpoint**: `/api/auth/employees/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "employeeID": 1,
-          "fullName": "Nguyen Van A",
-          "phoneNumber": "0123456789",
-          "gender": "Male",
-          "yearOfBirth": 1990,
-          "hireDate": "2025-01-01",
-          "is_active": true
-      },
-      ...
-  ]
-  ```
-
-### Lấy thông tin chi tiết một nhân viên
-
-- **Endpoint**: `/api/auth/employees/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "employeeID": 1,
-      "fullName": "Nguyen Van A",
-      "phoneNumber": "0123456789",
-      "gender": "Male",
-      "yearOfBirth": 1990,
-      "hireDate": "2025-01-01",
-      "is_active": true
-  }
-  ```
-
-### Thêm mới một nhân viên
-
-- **Endpoint**: `/api/auth/employees/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "fullName": "Nguyen Van B",
-      "phoneNumber": "0987654321",
-      "gender": "Female",
-      "yearOfBirth": 1992,
-      "hireDate": "2025-02-01"
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "employeeID": 2,
-      "fullName": "Nguyen Van B",
-      "phoneNumber": "0987654321",
-      "gender": "Female",
-      "yearOfBirth": 1992,
-      "hireDate": "2025-02-01",
-      "is_active": true
-  }
-  ```
-
-### Cập nhật thông tin nhân viên
-
-- **Endpoint**: `/api/auth/employees/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "fullName": "Nguyen Van C",
-      "phoneNumber": "0123456789",
-      "gender": "Male",
-      "yearOfBirth": 1990,
-      "hireDate": "2025-01-01",
-      "is_active": false
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "employeeID": 1,
-      "fullName": "Nguyen Van C",
-      "phoneNumber": "0123456789",
-      "gender": "Male",
-      "yearOfBirth": 1990,
-      "hireDate": "2025-01-01",
-      "is_active": false
-  }
-  ```
-
-### Xóa nhân viên
-
-- **Endpoint**: `/api/auth/employees/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa nhân viên thành công"
-  }
-  ```
-
-## 4️⃣ **Quản lý Tài khoản Nhân viên**
-
-### Lấy danh sách tài khoản nhân viên
-
-- **Endpoint**: `/api/auth/accounts/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {
-          "accountID": 1,
-          "username": "admin",
-          "employee": 1,
-          "role": 1,
-          "is_staff": true,
-          "is_active": true
-      },
-      ...
-  ]
-  ```
-
-### Lấy chi tiết tài khoản
-
-- **Endpoint**: `/api/auth/accounts/{id}/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "accountID": 1,
-      "username": "admin",
-      "employee": 1,
-      "role": 1,
-      "is_staff": true,
-      "is_active": true
-  }
-  ```
-
-### Tạo tài khoản mới
-
-- **Endpoint**: `/api/auth/accounts/`
-- **Phương thức**: `POST`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "username": "user1",
-      "password": "password123",
-      "employee": 2,
-      "role": 2
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "accountID": 2,
-      "username": "user1",
-      "employee": 2,
-      "role": 2,
-      "is_staff": false,
-      "is_active": true
-  }
-  ```
-
-### Cập nhật tài khoản
-
-- **Endpoint**: `/api/auth/accounts/{id}/`
-- **Phương thức**: `PUT`
-- **Dữ liệu yêu cầu**:
-  ```json
-  {
-      "password": "newpassword123",
-      "role": 3
-  }
-  ```
-- **Phản hồi**:
-  ```json
-  {
-      "accountID": 1,
-      "username": "admin",
-      "employee": 1,
-      "role": 3,
-      "is_staff": true,
-      "is_active": true
-  }
-  ```
-
-### Xóa tài khoản
-
-- **Endpoint**: `/api/auth/accounts/{id}/`
-- **Phương thức**: `DELETE`
-- **Phản hồi**:
-  ```json
-  {
-      "message": "Xóa tài khoản thành công"
-  }
-  ```
-
-## 5️⃣ **Thống kê Doanh thu - Chi phí - Lợi nhuận**
-
-### Lấy tổng doanh thu, chi phí, lợi nhuận
-
-- **Endpoint**: `/api/auth/statistics/finace/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  {
-      "total_revenue": 1000000,
-      "total_cost": 500000,
-      "profit": 500000
-  }
-  ```
-
-## 6️⃣ **Thống kê Nhân viên theo quyền**
-
-### Lấy số lượng nhân viên theo từng role
-
-- **Endpoint**: `/api/auth/statistics/employee/`
-- **Phương thức**: `GET`
-- **Phản hồi**:
-  ```json
-  [
-      {"roleName": "Sales", "total": 10},
-      {"roleName": "Product Manager", "total": 5}
-  ]
-  ```
-
----
-
-## 🔑 **Xác thực và bảo mật**
-
-Tất cả API trên yêu cầu **đăng nhập trước** và **phải có quyền Admin**. Token xác thực JWT sẽ được gửi qua **Authorization Header** như sau:
+Các endpoint bên dưới dùng JSON. Với API yêu cầu đăng nhập, gửi token trong header:
 
 ```http
-Authorization: Bearer (or Token) <access_token>
-
+Authorization: Token <token>
 ```
+
+## 1. Đăng nhập
+
+```http
+POST /api/auth/login/
+```
+
+Body mẫu:
+
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+Response mẫu:
+
+```json
+{
+  "token": "token_dang_nhap",
+  "username": "admin",
+  "role": "Admin"
+}
+```
+
+Tài khoản demo:
+
+```text
+Admin: admin / admin123
+Sales: sales / sales123
+Product manager: product / product123
+```
+
+## 2. Đăng xuất
+
+```http
+POST /api/auth/logout/
+```
+
+Yêu cầu header token.
+
+## 3. Kiểm tra tài khoản hiện tại
+
+```http
+GET /api/auth/me/
+```
+
+Response trả về tên đăng nhập, vai trò và nhân viên liên kết với tài khoản.
+
+## 4. Đổi mật khẩu
+
+```http
+POST /api/auth/reset-password/
+```
+
+Body mẫu:
+
+```json
+{
+  "username": "admin",
+  "oldPassword": "admin123",
+  "newPassword": "matkhauMoi123"
+}
+```
+
+## 5. Quản lý vai trò
+
+```http
+GET    /api/auth/roles/
+GET    /api/auth/roles/{id}/
+POST   /api/auth/roles/
+PUT    /api/auth/roles/{id}/
+PATCH  /api/auth/roles/{id}/
+DELETE /api/auth/roles/{id}/
+```
+
+Dùng để quản lý các vai trò như `Admin`, `Sales`, `Product_manager`.
+
+## 6. Quản lý nhân viên
+
+```http
+GET    /api/auth/employees/
+GET    /api/auth/employees/{id}/
+POST   /api/auth/employees/
+PUT    /api/auth/employees/{id}/
+PATCH  /api/auth/employees/{id}/
+DELETE /api/auth/employees/{id}/
+```
+
+Body tạo/cập nhật nhân viên mẫu:
+
+```json
+{
+  "employeeID": "EMP001",
+  "fullName": "Nguyen Ho Quang Khai",
+  "phoneNumber": "0900000001",
+  "gender": "Nam",
+  "birthDate": "2000-03-10",
+  "hireDate": "2026-07-10",
+  "isActive": true
+}
+```
+
+## 7. Quản lý tài khoản
+
+```http
+GET    /api/auth/accounts/
+GET    /api/auth/accounts/{id}/
+POST   /api/auth/accounts/
+PUT    /api/auth/accounts/{id}/
+PATCH  /api/auth/accounts/{id}/
+DELETE /api/auth/accounts/{id}/
+```
+
+Body tạo tài khoản mẫu:
+
+```json
+{
+  "username": "sales",
+  "password": "sales123",
+  "employeeID": "EMP002",
+  "roleID": 2,
+  "isActive": true
+}
+```
+
+Mật khẩu được backend hash bằng BCrypt trước khi lưu database.
+
+## 8. Lưu ý kiểm thử
+
+- Đăng nhập trước để lấy token.
+- Dùng header `Authorization: Token <token>` cho các API quản trị.
+- Nếu đăng nhập admin không được, chạy `docker compose restart backend` để backend đảm bảo lại dữ liệu demo.
+- Không lưu hoặc gửi mật khẩu thật trong tài liệu, ảnh chụp hoặc repository.
