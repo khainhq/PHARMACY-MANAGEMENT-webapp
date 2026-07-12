@@ -94,51 +94,68 @@ public sealed class InvoiceService : IInvoiceService
 
     private async Task<List<object>> BuildInvoiceListAsync()
     {
-        var invoices = await QueryInvoices()
+        var invoices = await db.Invoices
+            .AsNoTracking()
             .OrderByDescending(x => x.InvoiceTime)
             .ToListAsync();
 
-        return invoices.Cast<object>().ToList();
+        return await BuildInvoiceDtosAsync(invoices);
     }
 
     private async Task<object?> BuildInvoiceAsync(int id)
     {
-        return await QueryInvoices()
-            .Where(invoice => invoice.InvoiceID == id)
-            .FirstOrDefaultAsync();
-    }
-
-    private IQueryable<InvoiceListProjection> QueryInvoices()
-    {
-        return db.Invoices
+        var invoice = await db.Invoices
             .AsNoTracking()
-            .GroupJoin(db.Customers.AsNoTracking(), invoice => invoice.CustomerID, customer => customer.CustomerID, (invoice, customers) => new { invoice, customers })
-            .SelectMany(x => x.customers.DefaultIfEmpty(), (x, customer) => new InvoiceListProjection(
-                x.invoice.InvoiceID,
-                x.invoice.InvoiceTime,
-                x.invoice.CustomerID,
-                customer != null ? customer.FullName : x.invoice.CustomerID,
-                customer != null ? customer.PhoneNumber : "",
-                x.invoice.Address,
-                x.invoice.PaymentMethod,
-                x.invoice.Status,
-                x.invoice.ReceiptImage,
-                x.invoice.ReceiptFileName,
-                db.InvoiceDetails
-                    .Where(detail => detail.InvoiceID == x.invoice.InvoiceID)
-                    .Sum(detail => (decimal?)detail.UnitPrice * detail.Quantity) ?? 0));
+            .FirstOrDefaultAsync(x => x.InvoiceID == id);
+
+        if (invoice is null) return null;
+
+        return (await BuildInvoiceDtosAsync(new[] { invoice })).FirstOrDefault();
     }
 
-    private sealed record InvoiceListProjection(
-        int InvoiceID,
-        DateTime InvoiceTime,
-        string customer,
-        string customerName,
-        string customerPhone,
-        string Address,
-        string PaymentMethod,
-        string Status,
-        string ReceiptImage,
-        string ReceiptFileName,
-        decimal totalAmount);
+    private async Task<List<object>> BuildInvoiceDtosAsync(IReadOnlyCollection<Invoice> invoices)
+    {
+        var invoiceIds = invoices.Select(invoice => invoice.InvoiceID).ToList();
+        var customerIds = invoices.Select(invoice => invoice.CustomerID).Distinct().ToList();
+
+        var customers = await db.Customers
+            .AsNoTracking()
+            .Where(customer => customerIds.Contains(customer.CustomerID))
+            .ToDictionaryAsync(customer => customer.CustomerID);
+
+        var totals = await db.InvoiceDetails
+            .AsNoTracking()
+            .Where(detail => invoiceIds.Contains(detail.InvoiceID))
+            .GroupBy(detail => detail.InvoiceID)
+            .Select(group => new
+            {
+                invoiceID = group.Key,
+                totalAmount = group.Sum(detail => detail.UnitPrice * detail.Quantity)
+            })
+            .ToDictionaryAsync(item => item.invoiceID, item => item.totalAmount);
+
+        return invoices
+            .Select(invoice =>
+            {
+                customers.TryGetValue(invoice.CustomerID, out var customer);
+                totals.TryGetValue(invoice.InvoiceID, out var totalAmount);
+
+                return new
+                {
+                    invoiceID = invoice.InvoiceID,
+                    invoiceTime = invoice.InvoiceTime,
+                    customer = invoice.CustomerID,
+                    customerName = customer?.FullName ?? invoice.CustomerID,
+                    customerPhone = customer?.PhoneNumber ?? "",
+                    address = invoice.Address,
+                    paymentMethod = invoice.PaymentMethod,
+                    status = invoice.Status,
+                    receiptImage = invoice.ReceiptImage,
+                    receiptFileName = invoice.ReceiptFileName,
+                    totalAmount
+                };
+            })
+            .Cast<object>()
+            .ToList();
+    }
 }

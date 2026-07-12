@@ -71,30 +71,47 @@ public sealed class PaymentService : IPaymentService
 
     private async Task<List<object>> BuildPaymentListAsync()
     {
-        var payments = await QueryPayments()
+        var payments = await db.Payments
+            .AsNoTracking()
             .OrderByDescending(x => x.PaymentTime)
             .ToListAsync();
 
-        var paymentIds = payments.Select(x => x.PaymentID).ToList();
+        var paymentIds = payments.Select(payment => payment.PaymentID).ToList();
+        var employeeIds = payments.Select(payment => payment.EmployeeID).Distinct().ToList();
+        var supplierIds = payments.Select(payment => payment.SupplierID).Distinct().ToList();
+
+        var employees = await db.Employees
+            .AsNoTracking()
+            .Where(employee => employeeIds.Contains(employee.EmployeeID))
+            .ToDictionaryAsync(employee => employee.EmployeeID);
+
+        var suppliers = await db.Suppliers
+            .AsNoTracking()
+            .Where(supplier => supplierIds.Contains(supplier.SupplierID))
+            .ToDictionaryAsync(supplier => supplier.SupplierID);
+
         var details = await BuildPaymentDetailsAsync(paymentIds);
 
         return payments
             .Select(payment =>
             {
+                employees.TryGetValue(payment.EmployeeID, out var employee);
+                suppliers.TryGetValue(payment.SupplierID, out var supplier);
+
                 var paymentDetails = details
                     .Where(detail => detail.payment == payment.PaymentID)
                     .ToList();
 
                 return (object)new
                 {
-                    payment.PaymentID,
-                    payment.PaymentTime,
-                    payment.employee,
-                    payment.employeeName,
-                    payment.supplier,
-                    payment.supplierName,
-                    payment.TotalAmount,
-                    payment.Status,
+                    paymentID = payment.PaymentID,
+                    paymentTime = payment.PaymentTime,
+                    employee = payment.EmployeeID,
+                    employeeName = employee?.FullName ?? payment.EmployeeID,
+                    supplier = payment.SupplierID,
+                    supplierName = supplier?.SupplierName ?? payment.SupplierID,
+                    totalAmount = payment.TotalAmount,
+                    status = payment.Status,
                     details = paymentDetails,
                     medicineSummary = string.Join(", ", paymentDetails.Select(detail => $"{detail.medicineName} x{detail.quantity}"))
                 };
@@ -107,52 +124,37 @@ public sealed class PaymentService : IPaymentService
         return (await BuildPaymentListAsync())
             .FirstOrDefault(item =>
             {
-                var paymentID = item.GetType().GetProperty("PaymentID")?.GetValue(item)?.ToString();
+                var paymentID = item.GetType().GetProperty("paymentID")?.GetValue(item)?.ToString();
                 return string.Equals(paymentID, id, StringComparison.OrdinalIgnoreCase);
             });
     }
 
-    private IQueryable<PaymentListProjection> QueryPayments()
-    {
-        return db.Payments
-            .AsNoTracking()
-            .GroupJoin(db.Suppliers.AsNoTracking(), payment => payment.SupplierID, supplier => supplier.SupplierID, (payment, suppliers) => new { payment, suppliers })
-            .SelectMany(x => x.suppliers.DefaultIfEmpty(), (x, supplier) => new { x.payment, supplier })
-            .GroupJoin(db.Employees.AsNoTracking(), x => x.payment.EmployeeID, employee => employee.EmployeeID, (x, employees) => new { x.payment, x.supplier, employees })
-            .SelectMany(x => x.employees.DefaultIfEmpty(), (x, employee) => new PaymentListProjection(
-                x.payment.PaymentID,
-                x.payment.PaymentTime,
-                x.payment.EmployeeID,
-                employee != null ? employee.FullName : x.payment.EmployeeID,
-                x.payment.SupplierID,
-                x.supplier != null ? x.supplier.SupplierName : x.payment.SupplierID,
-                x.payment.TotalAmount,
-                x.payment.Status));
-    }
-
     private async Task<List<PaymentDetailListItem>> BuildPaymentDetailsAsync(List<string> paymentIds)
     {
-        return await db.PaymentDetails
+        var details = await db.PaymentDetails
             .AsNoTracking()
             .Where(detail => paymentIds.Contains(detail.PaymentID))
-            .GroupJoin(db.Medicines.AsNoTracking(), detail => detail.MedicineID, medicine => medicine.MedicineID, (detail, medicines) => new { detail, medicines })
-            .SelectMany(x => x.medicines.DefaultIfEmpty(), (x, medicine) => new PaymentDetailListItem(
-                x.detail.Id,
-                x.detail.PaymentID,
-                x.detail.MedicineID,
-                medicine != null ? medicine.MedicineName : x.detail.MedicineID,
-                x.detail.Quantity,
-                x.detail.UnitPrice))
             .ToListAsync();
-    }
 
-    private sealed record PaymentListProjection(
-        string PaymentID,
-        DateTime PaymentTime,
-        string employee,
-        string employeeName,
-        string supplier,
-        string supplierName,
-        decimal TotalAmount,
-        string Status);
+        var medicineIds = details.Select(detail => detail.MedicineID).Distinct().ToList();
+        var medicines = await db.Medicines
+            .AsNoTracking()
+            .Where(medicine => medicineIds.Contains(medicine.MedicineID))
+            .ToDictionaryAsync(medicine => medicine.MedicineID);
+
+        return details
+            .Select(detail =>
+            {
+                medicines.TryGetValue(detail.MedicineID, out var medicine);
+
+                return new PaymentDetailListItem(
+                    detail.Id,
+                    detail.PaymentID,
+                    detail.MedicineID,
+                    medicine?.MedicineName ?? detail.MedicineID,
+                    detail.Quantity,
+                    detail.UnitPrice);
+            })
+            .ToList();
+    }
 }

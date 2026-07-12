@@ -1,5 +1,6 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import ContactUs from './pages/ContactUs';
@@ -20,10 +21,36 @@ import Customers from './pages/Customers/Customers';
 import Chatbot from './components/Chatbot';
 import { ToastProvider } from './components/ToastProvider';
 
+const PUBLIC_ROUTES = ['/', '/login', '/admin-login', '/contact', '/about'];
+
 function AppRoutes() {
   const location = useLocation();
+  const navigate = useNavigate();
   const hideChatbot = ['/login', '/admin-login'].includes(location.pathname);
   const isLandingPage = location.pathname === '/';
+
+  useEffect(() => {
+    const interceptorID = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401 && !PUBLIC_ROUTES.includes(location.pathname)) {
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('role');
+          navigate('/login', { replace: true });
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    return () => axios.interceptors.response.eject(interceptorID);
+  }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!PUBLIC_ROUTES.includes(location.pathname) && !sessionStorage.getItem('token')) {
+      navigate('/login', { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   return (
     <>
